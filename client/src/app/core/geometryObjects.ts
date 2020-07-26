@@ -14,6 +14,17 @@ export class Vector {
     return new Vector(this.X / mag, this.Y / mag);
   }
 
+  public static Random(minX: number, maxX: number, minY: number = 0, maxY: number): Vector {
+    return new Vector(
+      Math.random() * (maxX - minX) + minX,
+      Math.random() * (maxY - minY) + minY
+    );
+  }
+
+  public static RandomSquare(min: number, max: number): Vector {
+    return this.Random(min, max, min, max);
+  }
+
   public add(other: Vector): Vector {
     return new Vector(this.X + other.X, this.Y + other.Y);
   }

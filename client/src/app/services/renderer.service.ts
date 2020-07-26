@@ -1,12 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
 import { RendererOptions } from '../models/rendererOptions.model';
-import { DrawableObject, Rectangle, Circle } from '../models/rendererObjects/drawableObject';
-import { Vector } from '../models/rendererObjects/geometryObjects';
 import { fromEvent } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { GameObject } from '../core/gameplayObjects';
+import { Vector } from '../core/geometryObjects';
+import { BoxCollider } from '../core/physicsObjects';
+import { Rectangle } from '../core/drawableObjects';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RendererService {
   private defaultBg = '#000000';
@@ -14,7 +16,7 @@ export class RendererService {
   private height: number;
   private ctx: CanvasRenderingContext2D;
 
-  public renderedObjects: DrawableObject[];
+  public gameplayObjects: GameObject[];
 
   constructor(private ngZone: NgZone) {}
 
@@ -28,7 +30,7 @@ export class RendererService {
     ctx.fillStyle = this.defaultBg;
     ctx.fillRect(0, 0, this.width, this.height);
 
-    this.renderedObjects = [];
+    this.gameplayObjects = [];
 
     this.ngZone.runOutsideAngular(() => {
       if (document.readyState !== 'loading') {
@@ -41,14 +43,30 @@ export class RendererService {
     });
   }
 
+  public CreateStaticBlock(
+    position: Vector,
+    size: Vector = new Vector(10, 10),
+    color: string = 'gray',
+    outlineColor: string = null,
+    outlineSize: number = 0
+  ) {
+    const gameObject = new GameObject(position);
+    gameObject.collider = new BoxCollider(true, true, gameObject, size);
+    gameObject.texture = new Rectangle(gameObject, color, size, outlineColor, outlineSize);
+
+    this.gameplayObjects.push(gameObject);
+  }
+
   private draw() {
     const id = requestAnimationFrame(() => {
       this.draw();
     });
     // draw stuff
 
-    this.renderedObjects.forEach(obj => {
-      obj.draw(this.ctx);
-    });
+    this.gameplayObjects
+      .filter((obj) => obj.texture)
+      .forEach((obj) => {
+        obj.texture.draw(this.ctx);
+      });
   }
 }
