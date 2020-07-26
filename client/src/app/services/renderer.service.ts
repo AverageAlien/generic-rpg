@@ -3,9 +3,10 @@ import { RendererOptions } from '../models/rendererOptions.model';
 import { fromEvent } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { GameObject } from '../core/gameplayObjects';
+import { EntitySpawnerService } from './entity-spawner.service';
+import { PhysicsService } from './physics.service';
+import { InputService } from './input.service';
 import { Vector } from '../core/geometryObjects';
-import { BoxCollider } from '../core/physicsObjects';
-import { Rectangle } from '../core/drawableObjects';
 
 @Injectable({
   providedIn: 'root',
@@ -16,9 +17,17 @@ export class RendererService {
   private height: number;
   private ctx: CanvasRenderingContext2D;
 
+  private physicsInterval;
+  private physicsRate = 20;
+
   public gameplayObjects: GameObject[];
 
-  constructor(private ngZone: NgZone) {}
+  constructor(
+    private ngZone: NgZone,
+    private entitySpawner: EntitySpawnerService,
+    private physicsService: PhysicsService,
+    private inputService: InputService
+  ) {}
 
   public init(ctx: CanvasRenderingContext2D, options: RendererOptions) {
     this.defaultBg = options.defaultBg;
@@ -27,34 +36,40 @@ export class RendererService {
 
     this.ctx = ctx;
 
-    ctx.fillStyle = this.defaultBg;
-    ctx.fillRect(0, 0, this.width, this.height);
+    this.cleanCanvas();
 
     this.gameplayObjects = [];
 
+    this.inputService.init();
+
     this.ngZone.runOutsideAngular(() => {
       if (document.readyState !== 'loading') {
-        this.draw();
+        this.runGame();
       } else {
         fromEvent(window, 'DOMContentLoaded')
           .pipe(take(1))
-          .subscribe(() => this.draw());
+          .subscribe(() => this.runGame());
       }
     });
   }
 
-  public CreateStaticBlock(
-    position: Vector,
-    size: Vector = new Vector(10, 10),
-    color: string = 'gray',
-    outlineColor: string = null,
-    outlineSize: number = 0
-  ) {
-    const gameObject = new GameObject(position);
-    gameObject.collider = new BoxCollider(true, true, gameObject, size);
-    gameObject.texture = new Rectangle(gameObject, color, size, outlineColor, outlineSize);
+  private runGame() {
+    this.physicsInterval = setInterval(() => {
+      this.physicsService.update(this.gameplayObjects);
+    }, this.physicsRate);
 
-    this.gameplayObjects.push(gameObject);
+    this.draw();
+
+    this.gameplayObjects.push(this.entitySpawner.CreatePlayer('DefaultPlayer', this.inputService.controller));
+
+    this.gameplayObjects.push(this.entitySpawner.CreateStaticBlock(Vector.Random(0, 720, 0, 512), Vector.RandomSquare(10, 150), 'gray'));
+    this.gameplayObjects.push(this.entitySpawner.CreateStaticBlock(Vector.Random(0, 720, 0, 512), Vector.RandomSquare(10, 150), 'gray'));
+    this.gameplayObjects.push(this.entitySpawner.CreateStaticBlock(Vector.Random(0, 720, 0, 512), Vector.RandomSquare(10, 150), 'gray'));
+  }
+
+  private cleanCanvas() {
+    this.ctx.fillStyle = this.defaultBg;
+    this.ctx.fillRect(0, 0, this.width, this.height);
   }
 
   private draw() {
@@ -62,6 +77,7 @@ export class RendererService {
       this.draw();
     });
     // draw stuff
+    this.cleanCanvas();
 
     this.gameplayObjects
       .filter((obj) => obj.texture)

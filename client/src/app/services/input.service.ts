@@ -10,40 +10,45 @@ export class InputService {
   controller: PlayerController;
   moveKeysState: MoveKeysState;
 
-  public init(controller: PlayerController) {
-    this.controller = controller;
+  public init() {
+    this.controller = new PlayerController();
 
     this.moveKeysState = {
-      vert: 0,
-      hor: 0
+      up: false,
+      down: false,
+      left: false,
+      right: false
     };
   }
 
   public moveUp(input: boolean): void {
-    this.moveKeysState.vert = +input;
+    this.moveKeysState.up = input;
     this.sendMovement();
   }
 
   public moveDown(input: boolean): void {
-    this.moveKeysState.vert = -input;
+    this.moveKeysState.down = input;
     this.sendMovement();
   }
 
   public moveLeft(input: boolean): void {
-    this.moveKeysState.hor = -input;
+    this.moveKeysState.left = input;
     this.sendMovement();
   }
 
   public moveRight(input: boolean): void {
-    this.moveKeysState.hor = +input;
+    this.moveKeysState.right = input;
     this.sendMovement();
   }
 
   public Attack(input: Vector): void {
-    this.controller.$attack.next(input);
+    this.controller.attack$.next(input);
   }
 
   private sendMovement() {
-    this.controller.$move.next(new Vector(this.moveKeysState.hor, this.moveKeysState.vert).Unit);
+    const movementVector = new Vector(
+      +this.moveKeysState.right - +this.moveKeysState.left,
+      +this.moveKeysState.up - +this.moveKeysState.down);
+    this.controller.move$.next(movementVector.Unit);
   }
 }

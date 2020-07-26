@@ -7,14 +7,14 @@ export interface Controller {
 }
 
 export class PlayerController implements Controller {
-  $move: Subject<Vector> = new Subject<Vector>();
-  $attack: Subject<Vector> = new Subject<Vector>();
+  move$: Subject<Vector> = new Subject<Vector>();
+  attack$: Subject<Vector> = new Subject<Vector>();
 
   get move(): Observable<Vector> {
-    return this.$move.asObservable();
+    return this.move$.asObservable();
   }
 
   get attack(): Observable<Vector> {
-    return this.$attack.asObservable();
+    return this.attack$.asObservable();
   }
 }

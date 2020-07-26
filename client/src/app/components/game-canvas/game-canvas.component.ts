@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { RendererService } from 'src/app/services/renderer.service';
 import { Vector } from 'src/app/core/geometryObjects';
+import { InputService } from 'src/app/services/input.service';
+import { PlayerController } from 'src/app/core/controllerObjects';
 
 @Component({
   selector: 'app-game-canvas',
@@ -12,13 +14,13 @@ export class GameCanvasComponent implements OnInit {
   private ctx: CanvasRenderingContext2D;
 
   keybinds = {
-    up: 'w',
-    down: 's',
-    left: 'a',
-    right: 'd'
+    up: 'KeyS', // X axis is inverted!
+    down: 'KeyW',
+    left: 'KeyA',
+    right: 'KeyD'
   };
 
-  constructor(private renderService: RendererService) {}
+  constructor(private renderService: RendererService, private inputService: InputService) {}
 
   ngOnInit() {
     this.ctx = this.canvas.nativeElement.getContext('2d');
@@ -28,20 +30,40 @@ export class GameCanvasComponent implements OnInit {
       width: this.canvas.nativeElement.width,
       height: this.canvas.nativeElement.height
     });
-
-    setInterval(() => {
-      const size = Math.random() * 25 + 5;
-      this.renderService.CreateStaticBlock(Vector.Random(0, 720, 0, 512), new Vector(size, size), 'blue', 'white', 2);
-    }, 1000);
   }
 
   public onKeyDown(event: KeyboardEvent) {
-    console.log(event);
-    console.log(typeof event);
+    if (event.repeat) { return; }
+    switch (event.code) {
+      case this.keybinds.up:
+        this.inputService.moveUp(true);
+        break;
+      case this.keybinds.down:
+        this.inputService.moveDown(true);
+        break;
+      case this.keybinds.left:
+        this.inputService.moveLeft(true);
+        break;
+      case this.keybinds.right:
+        this.inputService.moveRight(true);
+        break;
+    }
   }
 
   public onKeyUp(event: KeyboardEvent) {
-    console.log(event);
-    console.log(typeof event);
+    switch (event.code) {
+      case this.keybinds.up:
+        this.inputService.moveUp(false);
+        break;
+      case this.keybinds.down:
+        this.inputService.moveDown(false);
+        break;
+      case this.keybinds.left:
+        this.inputService.moveLeft(false);
+        break;
+      case this.keybinds.right:
+        this.inputService.moveRight(false);
+        break;
+    }
   }
 }
