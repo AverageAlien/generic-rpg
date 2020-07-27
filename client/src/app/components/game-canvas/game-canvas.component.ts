@@ -1,8 +1,7 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { RendererService } from 'src/app/services/renderer.service';
-import { Vector, Line } from 'src/app/core/geometryObjects';
+import { Component, OnInit } from '@angular/core';
+import Phaser from 'phaser';
+import { MainScene } from 'src/app/core/mainScene.ts';
 import { InputService } from 'src/app/services/input.service';
-import { PlayerController } from 'src/app/core/controllerObjects';
 
 @Component({
   selector: 'app-game-canvas',
@@ -10,64 +9,29 @@ import { PlayerController } from 'src/app/core/controllerObjects';
   styleUrls: ['./game-canvas.component.scss']
 })
 export class GameCanvasComponent implements OnInit {
-  @ViewChild('gameCanvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
-  private ctx: CanvasRenderingContext2D;
+  phaserGame: Phaser.Game;
+  config: Phaser.Types.Core.GameConfig;
 
-  keybinds = {
-    up: 'KeyS', // X axis is inverted!
-    down: 'KeyW',
-    left: 'KeyA',
-    right: 'KeyD'
-  };
+  constructor(private inputService: InputService) {
+    this.config = {
+      type: Phaser.AUTO,
+      height: 600,
+      width: 800,
+      scene: [ new MainScene(inputService) ],
+      parent: 'gameContainer',
+      physics: {
+        default: 'arcade',
+        arcade: {
+          gravity: {
+            y: 500
+          }
+        }
+      },
+    };
 
-  constructor(private renderService: RendererService, private inputService: InputService) {}
+  }
 
   ngOnInit() {
-    this.ctx = this.canvas.nativeElement.getContext('2d');
-
-    this.renderService.init(this.ctx, {
-      defaultBg: '#000000',
-      width: this.canvas.nativeElement.width,
-      height: this.canvas.nativeElement.height
-    });
-
-    const lineA = new Line(new Vector(0, 2), new Vector(3, 2));
-    const lineB = new Line(new Vector(5, -7), new Vector(5, 13));
-    console.log(lineA.intersect(lineB));
-  }
-
-  public onKeyDown(event: KeyboardEvent) {
-    if (event.repeat) { return; }
-    switch (event.code) {
-      case this.keybinds.up:
-        this.inputService.moveUp(true);
-        break;
-      case this.keybinds.down:
-        this.inputService.moveDown(true);
-        break;
-      case this.keybinds.left:
-        this.inputService.moveLeft(true);
-        break;
-      case this.keybinds.right:
-        this.inputService.moveRight(true);
-        break;
-    }
-  }
-
-  public onKeyUp(event: KeyboardEvent) {
-    switch (event.code) {
-      case this.keybinds.up:
-        this.inputService.moveUp(false);
-        break;
-      case this.keybinds.down:
-        this.inputService.moveDown(false);
-        break;
-      case this.keybinds.left:
-        this.inputService.moveLeft(false);
-        break;
-      case this.keybinds.right:
-        this.inputService.moveRight(false);
-        break;
-    }
+    this.phaserGame = new Phaser.Game(this.config);
   }
 }
