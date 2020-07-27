@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { RendererService } from 'src/app/services/renderer.service';
-import { Vector } from 'src/app/core/geometryObjects';
+import { Vector, Line } from 'src/app/core/geometryObjects';
 import { InputService } from 'src/app/services/input.service';
 import { PlayerController } from 'src/app/core/controllerObjects';
 
@@ -30,6 +30,10 @@ export class GameCanvasComponent implements OnInit {
       width: this.canvas.nativeElement.width,
       height: this.canvas.nativeElement.height
     });
+
+    const lineA = new Line(new Vector(0, 2), new Vector(3, 2));
+    const lineB = new Line(new Vector(5, -7), new Vector(5, 13));
+    console.log(lineA.intersect(lineB));
   }
 
   public onKeyDown(event: KeyboardEvent) {

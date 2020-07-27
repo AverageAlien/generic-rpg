@@ -77,12 +77,20 @@ export class BoxCollider implements Collider {
 
           const movementPath = new Line(this.gameObject.position, this.gameObject.position.sub(this.gameObject.velocity));
 
-          const collisionOffset = Math.max(...[
+          const intersects = [
             movementPath.intersect(verticalWall),
             movementPath.intersect(horizontalWall)
-          ].map(v => this.gameObject.position.sub(v).Magnitude));
+          ];
 
-          this.gameObject.position.add(this.gameObject.velocity.Unit.scale(-collisionOffset));
+          const collisionOffset = Math.min(...intersects.map(v => this.gameObject.position.sub(v).Magnitude).filter(d => d !== Infinity));
+
+          console.log(collisionOffset);
+
+          if (collisionOffset === Infinity) {
+            debugger;
+          }
+
+          this.gameObject.position = this.gameObject.position.add(this.gameObject.velocity.Unit.scale(-collisionOffset));
         }
 
         return true;

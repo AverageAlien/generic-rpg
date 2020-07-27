@@ -42,13 +42,13 @@ export class InputService {
   }
 
   public Attack(input: Vector): void {
-    this.controller.attack$.next(input);
+    this.controller.attack = input;
   }
 
   private sendMovement() {
     const movementVector = new Vector(
       +this.moveKeysState.right - +this.moveKeysState.left,
       +this.moveKeysState.up - +this.moveKeysState.down);
-    this.controller.move$.next(movementVector.Unit);
+    this.controller.move = movementVector.Unit;
   }
 }

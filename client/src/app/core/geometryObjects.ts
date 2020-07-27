@@ -52,6 +52,7 @@ export class Line {
 
   public intersect(other: Line): Vector {
     const determinant = (this.A.X - this.B.X) * (other.A.Y - other.B.Y) - (this.A.Y - this.B.Y) * (other.A.X - other.B.X);
+
     if (determinant === 0) {
       console.log('Parallel lines!');
       return new Vector(Infinity, Infinity);
@@ -62,6 +63,6 @@ export class Line {
     const Y = (this.A.X * this.B.Y - this.A.Y * this.B.X) * (other.A.Y - other.B.Y) -
     (this.A.Y - this.B.Y) * (other.A.X * other.B.Y - other.A.Y * other.B.X);
 
-    return new Vector(X, Y);
+    return new Vector(X / determinant, Y / determinant);
   }
 }

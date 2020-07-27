@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GameObject, MovingObject } from '../core/gameplayObjects';
+import { GameObject, MovingObject, Entity } from '../core/gameplayObjects';
 import { Line } from '../core/geometryObjects';
 
 @Injectable({
@@ -28,6 +28,13 @@ export class PhysicsService {
             console.log('yep!');
           }
         });
+    });
+
+    objects.forEach(obj => {
+      if (obj instanceof Entity) {
+        console.log(obj);
+        obj.velocity = obj.controller.move.scale(obj.speed);
+      }
     });
   }
 }

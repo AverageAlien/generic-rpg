@@ -27,7 +27,7 @@ export class EntitySpawnerService {
     const entity = new Entity(playerName, 100, 50, 1, new Vector(150, 150));
     const playerSize = new Vector(20, 20);
     entity.collider = new BoxCollider(false, true, entity, playerSize);
-    entity.texture = new Rectangle(entity, 'red', playerSize, 'blue', 2);
+    entity.texture = new Rectangle(entity, 'red', playerSize);
 
     console.log(controller);
     entity.controller = controller;

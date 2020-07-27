@@ -19,27 +19,11 @@ export class MovingObject extends GameObject {
 
 export class Entity extends MovingObject {
   public health: number;
-  private _controller: Controller;
-  private unsub$: Subject<void> = new Subject();
+  public controller: Controller;
 
   constructor(public name: string, public maxHealth: number, public speed: number, public level: number, position: Vector) {
     super(position);
 
     this.health = maxHealth;
-  }
-
-  set controller(value: Controller) {
-    if (this._controller) {
-      this.unsub$.next();
-    }
-
-    this._controller = value;
-    this._controller.move.pipe(takeUntil(this.unsub$)).subscribe((vector) => {
-      this.velocity = vector.scale(this.speed);
-    });
-
-    this._controller.attack.pipe(takeUntil(this.unsub$)).subscribe((vector) => {
-      console.log(`attacking ${vector}`);
-    });
   }
 }
