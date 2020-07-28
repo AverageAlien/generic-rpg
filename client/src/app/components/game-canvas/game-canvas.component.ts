@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
-import { MainScene } from 'src/app/core/mainScene.ts';
 import { InputService } from 'src/app/services/input.service';
+import { Level } from 'src/app/scenes/levelScene';
+import { EntitySpawnerService } from 'src/app/services/entity-spawner.service';
 
 @Component({
   selector: 'app-game-canvas',
@@ -15,17 +16,12 @@ export class GameCanvasComponent implements OnInit {
   constructor(private inputService: InputService) {
     this.config = {
       type: Phaser.AUTO,
-      height: 600,
+      height: 608,
       width: 800,
-      scene: [ new MainScene(inputService) ],
+      scene: [ new Level(inputService) ],
       parent: 'gameContainer',
       physics: {
-        default: 'arcade',
-        arcade: {
-          gravity: {
-            y: 500
-          }
-        }
+        default: 'arcade'
       },
     };
 
