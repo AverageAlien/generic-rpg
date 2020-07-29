@@ -4,14 +4,14 @@ import { BlockPlacer } from './blockPlacer';
 import { BlockInfo } from './blocks';
 
 export class MapGrid {
-  private map = new Map<Math.Vector3, StaticBlock>();
+  private map = new Map<string, StaticBlock>();
 
   constructor(private blockPlacer: BlockPlacer) {}
 
   public addBlock(pos: Math.Vector2, block: string | BlockInfo, layer = 0) {
     const staticBlock = this.blockPlacer.addBlock(pos, block);
 
-    this.map.set(new Phaser.Math.Vector3(pos.x, pos.y, layer), staticBlock);
+    this.map.set(this.numbersToStr(pos.x, pos.y, layer), staticBlock);
   }
 
   public fillArea(pos: Math.Vector2, size: Math.Vector2, block: string | BlockInfo, layer = 0) {
@@ -24,7 +24,7 @@ export class MapGrid {
   }
 
   public getBlockAt(pos: Math.Vector2, layer = 0) {
-    return this.map.get(new Math.Vector3(pos.x, pos.y, layer));
+    return this.map.get(this.numbersToStr(pos.x, pos.y, layer));
   }
 
   public getAll(): StaticBlock[] {
@@ -33,8 +33,26 @@ export class MapGrid {
 
   public removeBlockAt(pos: Math.Vector2, layer = 0) {
     const key = new Math.Vector3(pos.x, pos.y, layer);
-    const target = this.map.get(key);
-    this.map.delete(key);
+    const target = this.map.get(this.numbersToStr(pos. x, pos.y, layer));
+    this.map.delete(this.numbersToStr(pos.x, pos.y, layer));
     target.gameObject.destroy();
+  }
+
+  private strToVector3(str: string): Math.Vector3 {
+    const numbers = str.split('/');
+
+    return new Math.Vector3(
+      Number.parseInt(numbers[0], 10),
+      Number.parseInt(numbers[1], 10),
+      Number.parseInt(numbers[2], 10),
+    );
+  }
+
+  private vector3ToStr(vector: Math.Vector3): string {
+    return `${vector.x}/${vector.y}/${vector.z}`;
+  }
+
+  private numbersToStr(x: number, y: number, layer: number) {
+    return `${x}/${y}/${layer}`;
   }
 }

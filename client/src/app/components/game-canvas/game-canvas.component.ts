@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { InputService } from 'src/app/services/input.service';
 import { Level } from 'src/app/scenes/levelScene';
 import { EntitySpawnerService } from 'src/app/services/entity-spawner.service';
+import { LevelEditor } from 'src/app/scenes/levelEditor';
 
 @Component({
   selector: 'app-game-canvas',
@@ -18,7 +19,7 @@ export class GameCanvasComponent implements OnInit {
       type: Phaser.AUTO,
       height: 608,
       width: 800,
-      scene: [ new Level(inputService) ],
+      scene: [ new LevelEditor(inputService) ],
       parent: 'gameContainer',
       physics: {
         default: 'arcade'

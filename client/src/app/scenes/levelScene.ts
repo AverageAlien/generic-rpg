@@ -12,12 +12,12 @@ export class Level extends Scene {
   public entities: Entity[] = [];
   public player: CharacterEntity;
 
-  private entitySpawner: EntitySpawnerService;
-  private blockPlacer: BlockPlacer;
+  protected entitySpawner: EntitySpawnerService;
+  protected blockPlacer: BlockPlacer;
 
-  private backgroundImage: GameObjects.TileSprite;
+  protected backgroundImage: GameObjects.TileSprite;
 
-  constructor(private inputService: InputService) {
+  constructor(protected inputService: InputService) {
     super({ key: 'level' });
   }
 
