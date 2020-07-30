@@ -2,6 +2,7 @@ import { Math } from 'phaser';
 import { StaticBlock } from '../gameplay/statics/baseStatic';
 import { BlockPlacer } from './blockPlacer';
 import { BlockInfo } from './blocks';
+import { LevelSerialization } from '../models/levelSerialization.model';
 
 export class MapGrid {
   private map = new Map<string, StaticBlock>();
@@ -31,11 +32,43 @@ export class MapGrid {
     return Array.from(this.map.values());
   }
 
+  public getAllOfLayer(layer: number): StaticBlock[] {
+    return Array.from(this.map.entries())
+      .filter(e => this.strToVector3(e[0]).z === layer)
+      .map(e => e[1]);
+  }
+
+  public getAllOfLayerSerialized(layer: number): LevelSerialization.Block[] {
+    return Array.from(this.map.entries())
+      .filter(e => this.strToVector3(e[0]).z === layer)
+      .map(e => {
+        return {
+          name: e[1].name,
+          x: this.strToVector3(e[0]).x,
+          y: this.strToVector3(e[0]).y
+        };
+      });
+  }
+
+  public getUsedLayers(): number[] {
+    const usedLayers = new Set<number>();
+
+    for (const key of this.map.keys()) {
+      usedLayers.add(this.strToArray(key)[2]);
+    }
+
+    return Array.from(usedLayers);
+  }
+
   public removeBlockAt(pos: Math.Vector2, layer = 0) {
     const key = new Math.Vector3(pos.x, pos.y, layer);
     const target = this.map.get(this.numbersToStr(pos. x, pos.y, layer));
     this.map.delete(this.numbersToStr(pos.x, pos.y, layer));
     target.gameObject.destroy();
+  }
+
+  public clearGrid() {
+    this.map.clear();
   }
 
   private strToVector3(str: string): Math.Vector3 {
@@ -46,6 +79,16 @@ export class MapGrid {
       Number.parseInt(numbers[1], 10),
       Number.parseInt(numbers[2], 10),
     );
+  }
+
+  private strToArray(str: string): number[] {
+    const numbers = str.split('/');
+
+    return [
+      Number.parseInt(numbers[0], 10),
+      Number.parseInt(numbers[1], 10),
+      Number.parseInt(numbers[2], 10)
+    ];
   }
 
   private vector3ToStr(vector: Math.Vector3): string {

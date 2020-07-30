@@ -6,6 +6,8 @@ import { BlockPlacer } from '../core/blockPlacer';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { AssetService } from '../services/asset.service';
 import { MapGrid } from '../core/mapGrid';
+import { LevelLoaderService } from '../services/level-loader.service';
+import { Constants } from '../core/constants';
 
 export class Level extends Scene {
   public mapGrid: MapGrid;
@@ -17,7 +19,7 @@ export class Level extends Scene {
 
   protected backgroundImage: GameObjects.TileSprite;
 
-  constructor(protected inputService: InputService) {
+  constructor(protected inputService: InputService, protected levelLoader: LevelLoaderService) {
     super({ key: 'level' });
   }
 
@@ -30,7 +32,6 @@ export class Level extends Scene {
 
     this.mapGrid = new MapGrid(this.blockPlacer);
 
-    // this.blockPlacer.addTiledBlock(new Phaser.Math.Vector2(3, 3), new Phaser.Math.Vector2(3, 4), 'stone_floor');
     this.mapGrid.fillArea(new Phaser.Math.Vector2(3, 3), new Phaser.Math.Vector2(3, 4), 'stone_floor');
     this.mapGrid.addBlock(new Phaser.Math.Vector2(2, 2), 'stone_bricks');
 
@@ -39,7 +40,13 @@ export class Level extends Scene {
 
     this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(30, 20), 25);
 
-    this.backgroundImage = this.add.tileSprite(0, 0, 900, 708, 'grass01');
+    this.backgroundImage = this.add.tileSprite(
+      0, 0,
+      Constants.Screen.SCREEN_W + 100,
+      Constants.Screen.SCREEN_H + 100,
+      'grass01'
+    );
+
     this.backgroundImage.setDepth(-50);
   }
 

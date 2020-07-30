@@ -17,8 +17,9 @@ export class LevelEditor extends Level {
 
     this.mapGrid = new MapGrid(this.blockPlacer);
 
-    this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(11, 9), 60);
+    this.player = this.entitySpawner.spawnPlayer('Editor', Phaser.Math.Vector2.ZERO, 60);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
+    this.input.mouse.disableContextMenu();
 
     this.grid = this.add.grid(0, 0, 900, 708, 32, 32, 0x000000, 0, 0xffffff, 0.5);
   }
@@ -30,21 +31,32 @@ export class LevelEditor extends Level {
       this.snap(this.cameras.main.worldView.centerX, Constants.Level.GRID_SIZE_X) + Constants.Level.GRID_SIZE_X / 2 + 2,
       this.snap(this.cameras.main.worldView.centerY, Constants.Level.GRID_SIZE_Y) + Constants.Level.GRID_SIZE_Y / 2 + 2
     );
-    console.log(`${gridPos.x}; ${gridPos.y}`);
 
     this.grid.setPosition(gridPos.x, gridPos.y);
-    console.log(`${this.grid.x}; ${this.grid.y}`);
 
-    if (this.input.manager.activePointer.leftButtonDown()) {
-      const placePosition = new Phaser.Math.Vector2(
-        Math.round(this.input.activePointer.worldX / Constants.Level.GRID_SIZE_X),
-        Math.round(this.input.activePointer.worldY / Constants.Level.GRID_SIZE_Y)
-      );
 
-      if (!this.mapGrid.getBlockAt(placePosition)) {
-        this.mapGrid.addBlock(placePosition, 'stone_bricks');
+    if (this.input.activePointer.x >= 0 && this.input.activePointer.x < Constants.Screen.SCREEN_W &&
+        this.input.activePointer.y >= 0 && this.input.activePointer.y < Constants.Screen.SCREEN_H) {
+
+      if (this.input.manager.activePointer.leftButtonDown()) {
+        const placePosition = new Phaser.Math.Vector2(
+          Math.round(this.input.activePointer.worldX / Constants.Level.GRID_SIZE_X),
+          Math.round(this.input.activePointer.worldY / Constants.Level.GRID_SIZE_Y)
+        );
+
+        if (!this.mapGrid.getBlockAt(placePosition)) {
+          this.mapGrid.addBlock(placePosition, 'stone_bricks');
+        }
+      } else if (this.input.manager.activePointer.rightButtonDown()) {
+        const placePosition = new Phaser.Math.Vector2(
+          Math.round(this.input.activePointer.worldX / Constants.Level.GRID_SIZE_X),
+          Math.round(this.input.activePointer.worldY / Constants.Level.GRID_SIZE_Y)
+        );
+
+        if (!this.mapGrid.getBlockAt(placePosition, -1)) {
+          this.mapGrid.addBlock(placePosition, 'stone_floor', -1);
+        }
       }
-
     }
   }
 
