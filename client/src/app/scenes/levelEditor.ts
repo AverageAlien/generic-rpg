@@ -34,6 +34,7 @@ export class LevelEditor extends Level {
 
     this.grid.setPosition(gridPos.x, gridPos.y);
 
+    this.input.activePointer.updateWorldPoint(this.cameras.main);
 
     if (this.input.activePointer.x >= 0 && this.input.activePointer.x < Constants.Screen.SCREEN_W &&
         this.input.activePointer.y >= 0 && this.input.activePointer.y < Constants.Screen.SCREEN_H) {

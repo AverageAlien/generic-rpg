@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Level } from '../scenes/levelScene';
 import { LevelSerialization } from '../models/levelSerialization.model';
+import * as msgpack from 'msgpack-lite';
+import * as base65536 from 'base65536';
 
 @Injectable({
   providedIn: 'root'
@@ -20,13 +22,21 @@ export class LevelLoaderService {
       objLevel.layers.push(objLayer);
     }
 
+    // const json = JSON.stringify(objLevel);
+    // const based = base65536.encode(msgpack.encode(objLevel));
+
+    // console.log(json);
+    // console.log(based);
+    // console.log([...json].length);
+    // console.log([...based].length);
+
     return JSON.stringify(objLevel);
   }
 
   public importlevel(levelJson: string, level: Level): void {
-    level.mapGrid.clearGrid();
-
     const objLevel: LevelSerialization.Level = JSON.parse(levelJson);
+
+    level.mapGrid.clearGrid();
 
     for (const layer of objLevel.layers) {
       for (const block of layer.blocks) {

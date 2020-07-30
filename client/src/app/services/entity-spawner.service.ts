@@ -52,8 +52,8 @@ export class EntitySpawnerService {
     gameObject = this.levelScene.add.rectangle(
       position.x * Constants.Level.GRID_SIZE_X,
       position.y * Constants.Level.GRID_SIZE_Y,
-      20,
-      20,
+      16,
+      24,
       color
     ) as any;
     gameObject.setDepth(10);

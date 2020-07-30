@@ -1,19 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import Phaser from 'phaser';
-import { InputService } from 'src/app/services/input.service';
 import { Level } from 'src/app/scenes/levelScene';
-import { EntitySpawnerService } from 'src/app/services/entity-spawner.service';
-import { LevelEditor } from 'src/app/scenes/levelEditor';
+import { InputService } from 'src/app/services/input.service';
 import { LevelLoaderService } from 'src/app/services/level-loader.service';
 import { Constants } from 'src/app/core/constants';
-import { ActivatedRoute, Router } from '@angular/router';
+import { LevelEditor } from 'src/app/scenes/levelEditor';
 
 @Component({
-  selector: 'app-game-canvas',
-  templateUrl: './game-canvas.component.html',
-  styleUrls: ['./game-canvas.component.scss']
+  selector: 'app-level-editor',
+  templateUrl: './level-editor.component.html',
+  styleUrls: ['./level-editor.component.scss']
 })
-export class GameCanvasComponent implements OnInit {
+export class LevelEditorComponent implements OnInit {
   phaserGame: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
   level: Level;
@@ -22,7 +19,7 @@ export class GameCanvasComponent implements OnInit {
     private inputService: InputService,
     private levelLoader: LevelLoaderService
   ) {
-    this.level = new Level(inputService, levelLoader);
+    this.level = new LevelEditor(inputService, levelLoader);
 
     this.config = {
       type: Phaser.AUTO,

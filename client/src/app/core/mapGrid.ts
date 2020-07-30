@@ -68,6 +68,10 @@ export class MapGrid {
   }
 
   public clearGrid() {
+    for (const block of this.map.values()) {
+      block.gameObject.destroy();
+    }
+
     this.map.clear();
   }
 
