@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, NgZone } from '@angular/core';
 import { Level } from 'src/app/scenes/levelScene';
 import { InputService } from 'src/app/services/input.service';
 import { LevelLoaderService } from 'src/app/services/level-loader.service';
@@ -17,7 +17,8 @@ export class LevelEditorComponent implements OnInit {
 
   constructor(
     private inputService: InputService,
-    private levelLoader: LevelLoaderService
+    private levelLoader: LevelLoaderService,
+    private ngZone: NgZone
   ) {
     this.level = new LevelEditor(inputService, levelLoader);
 
@@ -35,7 +36,9 @@ export class LevelEditorComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.phaserGame = new Phaser.Game(this.config);
+    this.ngZone.runOutsideAngular(() => {
+      this.phaserGame = new Phaser.Game(this.config);
+    });
   }
 
   onExportLevel() {

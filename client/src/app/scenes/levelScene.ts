@@ -42,8 +42,8 @@ export class Level extends Scene {
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
-      Constants.Screen.SCREEN_W + 100,
-      Constants.Screen.SCREEN_H + 100,
+      this.sys.game.canvas.width + 100,
+      this.sys.game.canvas.height + 100,
       'grass01'
     );
 

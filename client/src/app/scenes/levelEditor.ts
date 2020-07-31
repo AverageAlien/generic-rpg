@@ -7,6 +7,7 @@ import { MapGrid } from '../core/mapGrid';
 
 export class LevelEditor extends Level {
   private grid: GameObjects.Grid;
+  private cursorActive = true;
 
   create() {
     this.entitySpawner = new EntitySpawnerService();
@@ -19,9 +20,27 @@ export class LevelEditor extends Level {
 
     this.player = this.entitySpawner.spawnPlayer('Editor', Phaser.Math.Vector2.ZERO, 60);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
-    this.input.mouse.disableContextMenu();
 
     this.grid = this.add.grid(0, 0, 900, 708, 32, 32, 0x000000, 0, 0xffffff, 0.5);
+
+    this.input.mouse.disableContextMenu();
+    this.input.on('gameout', () => {
+      this.cursorActive = false;
+      // console.log('gameOUT');
+    });
+    this.input.on('gameover', () => {
+      this.cursorActive = true;
+      // console.log('gameOVER');
+    });
+
+    console.log(this.sys.game.canvas.width, this.sys.game.canvas.height);
+
+    // window.addEventListener('resize', () => {
+    //   const mainCam = this.cameras.main;
+    //   this.cameras.add(0, 0, 800, 608, true);
+
+    //   this.cameras.remove(mainCam);
+    // });
   }
 
   update() {
@@ -34,24 +53,28 @@ export class LevelEditor extends Level {
 
     this.grid.setPosition(gridPos.x, gridPos.y);
 
-    this.input.activePointer.updateWorldPoint(this.cameras.main);
+    // this.input.activePointer.updateWorldPoint(this.cameras.main);
 
-    if (this.input.activePointer.x >= 0 && this.input.activePointer.x < Constants.Screen.SCREEN_W &&
-        this.input.activePointer.y >= 0 && this.input.activePointer.y < Constants.Screen.SCREEN_H) {
+    if (this.cursorActive) {
+
+      const worldPoint = this.input.activePointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
 
       if (this.input.manager.activePointer.leftButtonDown()) {
         const placePosition = new Phaser.Math.Vector2(
-          Math.round(this.input.activePointer.worldX / Constants.Level.GRID_SIZE_X),
-          Math.round(this.input.activePointer.worldY / Constants.Level.GRID_SIZE_Y)
+          Math.round(worldPoint.x / Constants.Level.GRID_SIZE_X),
+          Math.round(worldPoint.y / Constants.Level.GRID_SIZE_Y)
         );
+
+
+        console.log(`${this.input.manager.activePointer.x}; ${this.input.manager.activePointer.y}`);
 
         if (!this.mapGrid.getBlockAt(placePosition)) {
           this.mapGrid.addBlock(placePosition, 'stone_bricks');
         }
       } else if (this.input.manager.activePointer.rightButtonDown()) {
         const placePosition = new Phaser.Math.Vector2(
-          Math.round(this.input.activePointer.worldX / Constants.Level.GRID_SIZE_X),
-          Math.round(this.input.activePointer.worldY / Constants.Level.GRID_SIZE_Y)
+          Math.round(worldPoint.x / Constants.Level.GRID_SIZE_X),
+          Math.round(worldPoint.y / Constants.Level.GRID_SIZE_Y)
         );
 
         if (!this.mapGrid.getBlockAt(placePosition, -1)) {
