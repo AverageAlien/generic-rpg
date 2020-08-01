@@ -7,6 +7,8 @@ export class Constants {
   static Level = class {
     static readonly GRID_SIZE_X = 32;
     static readonly GRID_SIZE_Y = 32;
+    static readonly CHUNK_W = 32; // in tiles
+    static readonly CHUNK_H = 32; // in tiles
   };
 
   static Character = class {

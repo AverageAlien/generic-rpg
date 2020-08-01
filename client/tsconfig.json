@@ -17,6 +17,7 @@
     ],
     "lib": [
       "es2018",
+      "ES2019",
       "dom",
       "ScriptHost"
     ]

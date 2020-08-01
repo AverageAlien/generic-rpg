@@ -16,7 +16,7 @@ export class LevelEditor extends Level {
     this.blockPlacer = new BlockPlacer();
     this.blockPlacer.init(this);
 
-    this.mapGrid = new MapGrid(this.blockPlacer);
+    this.mapGrid = new MapGrid(this, 'tileset');
 
     this.player = this.entitySpawner.spawnPlayer('Editor', Phaser.Math.Vector2.ZERO, 60);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
@@ -26,11 +26,9 @@ export class LevelEditor extends Level {
     this.input.mouse.disableContextMenu();
     this.input.on('gameout', () => {
       this.cursorActive = false;
-      // console.log('gameOUT');
     });
     this.input.on('gameover', () => {
       this.cursorActive = true;
-      // console.log('gameOVER');
     });
 
     console.log(this.sys.game.canvas.width, this.sys.game.canvas.height);

@@ -3,6 +3,7 @@ import { Level } from '../scenes/levelScene';
 import { LevelSerialization } from '../models/levelSerialization.model';
 import * as msgpack from 'msgpack-lite';
 import * as base65536 from 'base65536';
+import { MapGrid } from '../core/mapGrid';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,7 @@ export class LevelLoaderService {
     for (const layer of level.mapGrid.getUsedLayers()) {
       const objLayer: LevelSerialization.Layer = {
         layerId: layer,
-        blocks: level.mapGrid.getAllOfLayerSerialized(layer)
+        blocks: level.mapGrid.getAllOfLayer(layer)
       };
 
       objLevel.layers.push(objLayer);
@@ -36,12 +37,14 @@ export class LevelLoaderService {
   public importlevel(levelJson: string, level: Level): void {
     const objLevel: LevelSerialization.Level = JSON.parse(levelJson);
 
-    level.mapGrid.clearGrid();
+    // level.mapGrid.clearGrid();
 
     for (const layer of objLevel.layers) {
       for (const block of layer.blocks) {
         level.mapGrid.addBlock(new Phaser.Math.Vector2(block.x, block.y), block.name, layer.layerId);
       }
     }
+
+    console.log(level.mapGrid);
   }
 }

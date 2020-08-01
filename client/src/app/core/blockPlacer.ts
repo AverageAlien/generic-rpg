@@ -1,6 +1,6 @@
 import { Level } from '../scenes/levelScene';
 import { Constants } from './constants';
-import { BlockType, Blocks, BlockInfo } from './blocks';
+import { BlockType, Blocks, BlockInfo, BlockIds } from './blocks';
 import { StaticBlock } from '../gameplay/statics/baseStatic';
 
 export class BlockPlacer {
@@ -12,6 +12,8 @@ export class BlockPlacer {
 
   public addBlock(pos: Phaser.Math.Vector2, block: string | BlockInfo): StaticBlock {
     const { blockName, blockData } = this.resolveBlockInfo(block);
+
+    console.log(BlockIds.indexOf(blockName));
 
     const gameObject = this.createStaticSprite(pos, blockData.texture, blockData.type === BlockType.Foreground);
     gameObject.setDepth(blockData.type === BlockType.Foreground ? 0 : -10);

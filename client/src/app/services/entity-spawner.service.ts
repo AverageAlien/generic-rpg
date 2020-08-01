@@ -21,7 +21,9 @@ export class EntitySpawnerService {
   }
 
   public spawnPlayer(playerName: string, position: Phaser.Math.Vector2, speed: number): CharacterEntity {
-    const gameObject = this.createRectGameObject(position, 0xff0000);
+    const gameObject = this.createSpriteGameObject(position, 'humanoid');
+
+    gameObject.body.setSize(20, 20).setOffset(0, 6);
 
     const entity = new CharacterEntity(playerName, gameObject, 100, 1, speed);
     entity.controller = new PlayerController(this.inputKeys);
@@ -43,6 +45,35 @@ export class EntitySpawnerService {
     return entity;
   }
 
+  private createSpriteGameObject(
+    position: Phaser.Math.Vector2,
+    sprite: string
+  ): Phaser.GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body } {
+    let gameObject: Phaser.GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body };
+
+    gameObject = this.levelScene.add.sprite(
+      position.x * Constants.Level.GRID_SIZE_X,
+      position.y * Constants.Level.GRID_SIZE_Y,
+      sprite
+    ) as any;
+    gameObject.setDepth(10);
+    this.levelScene.physics.add.existing(gameObject);
+    this.levelScene.physics.add.collider(
+      gameObject,
+      this.levelScene.mapGrid.getAll().map(s => s.gameObject)
+    );
+
+    gameObject.body.checkCollision.up = true;
+    gameObject.body.checkCollision.down = true;
+    gameObject.body.checkCollision.left = true;
+    gameObject.body.checkCollision.right = true;
+
+    gameObject.body.useDamping = true;
+    gameObject.body.setDrag(0.85, 0.85);
+
+    return gameObject;
+  }
+
   private createRectGameObject(
     position: Phaser.Math.Vector2,
     color: number
@@ -52,8 +83,8 @@ export class EntitySpawnerService {
     gameObject = this.levelScene.add.rectangle(
       position.x * Constants.Level.GRID_SIZE_X,
       position.y * Constants.Level.GRID_SIZE_Y,
-      16,
-      24,
+      20,
+      20,
       color
     ) as any;
     gameObject.setDepth(10);
