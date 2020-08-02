@@ -7,6 +7,7 @@ import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { AssetService } from '../services/asset.service';
 import { MapGrid } from '../core/mapGrid';
 import { LevelLoaderService } from '../services/level-loader.service';
+import PF, { DiagonalMovement } from 'pathfinding';
 
 export class Level extends Scene {
   public mapGrid: MapGrid;
@@ -48,6 +49,23 @@ export class Level extends Scene {
     this.backgroundImage.setDepth(-50);
 
     this.debugText = this.add.text(10, 10, 'Coords:').setScrollFactor(0).setDepth(100);
+
+    // pathfind testing
+    // const matrix = [
+    //   [0, 1, 0, 0, 0],
+    //   [0, 0, 1, 0, 0],
+    //   [1, 0, 0, 0, 0],
+    // ];
+    // const grid = new PF.Grid(matrix);
+
+    // const finder = new PF.AStarFinder({
+    //   diagonalMovement: DiagonalMovement.IfAtMostOneObstacle,
+    //   weight: 1,
+    //   heuristic: PF.Heuristic.euclidean
+    // });
+
+    // const path = finder.findPath(0, 0, 2, 0, grid);
+    // console.log(PF.Util.compressPath(path));
   }
 
   preload() {

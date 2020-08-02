@@ -13,7 +13,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
 
   constructor(
     public name: string,
-    public gameObject: GameObjects.GameObject & { body: Phaser.Physics.Arcade.Body },
+    public gameObject: GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body },
     public maxHealth: number,
     public level: number,
     public speed: number) {
@@ -39,7 +39,10 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     const maxSpeedMult = Constants.Character.MAX_SPEED_MULT;
     const movement = this.controller.movement.scale(this.speed * maxSpeedMult * 10);
     if (this.gameObject.body.velocity.lengthSq() > (this.speed * this.speed * maxSpeedMult * maxSpeedMult)) {
-      const clampedVelocity = this.gameObject.body.velocity.normalize().scale(this.speed * maxSpeedMult);
+      this.gameObject.body.velocity.normalize().scale(this.speed * maxSpeedMult);
+    }
+    if (movement.x !== 0) {
+      this.gameObject.setFlipX(movement.x > 0);
     }
     this.gameObject.body.setAcceleration(movement.x, movement.y);
   }

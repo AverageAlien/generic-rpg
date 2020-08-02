@@ -6,7 +6,7 @@ import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
-import { StalkerController } from '../gameplay/controllers/stalkerController';
+import { StupidStalkerController } from '../gameplay/controllers/stupidStalkerController';
 
 @Injectable({
   providedIn: 'root',
@@ -34,11 +34,11 @@ export class EntitySpawnerService {
   }
 
   public spawnStalker(position: Phaser.Math.Vector2, speed: number): CharacterEntity {
-    const gameObject = this.createRectGameObject(position, 0x0000ff);
+    const gameObject = this.createSpriteGameObject(position, 'humanoid');
 
     const entity = new CharacterEntity('Stalker', gameObject, 100, 1, speed);
     entity.faction = Faction.Baddies;
-    entity.controller = new StalkerController(entity, this.levelScene);
+    entity.controller = new StupidStalkerController(entity, this.levelScene);
 
     this.levelScene.entities.push(entity);
 
@@ -60,7 +60,7 @@ export class EntitySpawnerService {
     this.levelScene.physics.add.existing(gameObject);
     this.levelScene.physics.add.collider(
       gameObject,
-      this.levelScene.mapGrid.getAll().map(s => s.gameObject)
+      this.levelScene.mapGrid.getAllChunks()
     );
 
     gameObject.body.checkCollision.up = true;
@@ -91,7 +91,7 @@ export class EntitySpawnerService {
     this.levelScene.physics.add.existing(gameObject);
     this.levelScene.physics.add.collider(
       gameObject,
-      this.levelScene.mapGrid.getAll().map(s => s.gameObject)
+      this.levelScene.mapGrid.getAllChunks()
     );
 
     gameObject.body.checkCollision.up = true;

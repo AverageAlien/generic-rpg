@@ -4,7 +4,7 @@ import { CharacterEntity } from '../entities/characterEntity';
 import { FactionsAreFriendly } from 'src/app/core/factions';
 import { Entity } from '../entities/baseEntity';
 
-export class StalkerController implements Controller {
+export class StupidStalkerController implements Controller {
   private target: Entity = null;
 
   constructor(

@@ -1,13 +1,10 @@
 import { Tilemaps } from 'phaser';
-import { StaticBlock } from '../gameplay/statics/baseStatic';
-import { BlockPlacer } from './blockPlacer';
 import { BlockInfo, Blocks, BlockIds, BlockType } from './blocks';
 import { LevelSerialization } from '../models/levelSerialization.model';
 import { Constants } from './constants';
 import { Level } from '../scenes/levelScene';
 
 export class MapGrid {
-  private map = new Map<string, StaticBlock>();
   private tileMap: Tilemaps.Tilemap;
   private chunks: Tilemaps.DynamicTilemapLayer[][][] = [];
   private collidingBlocks: number[];
@@ -74,67 +71,64 @@ export class MapGrid {
   }
 
   public getAll(): LevelSerialization.Block[] {
-    const allBlocks: LevelSerialization.Block[] = [];
-
-    this.chunks.flatMap(x => {
-      return x.flatMap(y => {
-        return y.flatMap(chunk => {
-          const chunkBlocks: LevelSerialization.Block[] = [];
-
-          chunk.getTilesWithin();
-
-          return chunkBlocks;
-        });
-      });
-    });
-
-    this.chunks.forEach(x => {
-      x.forEach(y => {
-        y.forEach(chunk => {
-          allBlocks.push({
-
+    return this.chunks.flatMap(x =>
+      x.flatMap(y =>
+        y.flatMap(chunk =>
+          chunk.getTilesWithin().map(tile => {
+            return {
+              name: BlockIds[tile.index],
+              x: tile.x + chunk.x / Constants.Level.GRID_SIZE_X,
+              y: tile.y + chunk.y / Constants.Level.GRID_SIZE_Y
+            } as LevelSerialization.Block;
           })
-        });
-      });
-    });
-    return Array.from(this.map.values());
+        )
+      )
+    );
+  }
+
+  public getAllChunks(layer?: number): Tilemaps.DynamicTilemapLayer[] {
+    if (!layer) {
+      return this.chunks.flatMap(L =>
+        L.flatMap(row => row));
+    }
+    return this.chunks[layer].flatMap(row => row);
   }
 
   public getAllOfLayer(layer: number): LevelSerialization.Block[] {
-    return Array.from(this.map.entries())
-      .filter(e => this.strToVector3(e[0]).z === layer)
-      .map(e => {
-        return {
-          name: e[1].name,
-          x: this.strToVector3(e[0]).x,
-          y: this.strToVector3(e[0]).y
-        };
+    return this.chunks[layer].flatMap(row => {
+      return row.flatMap(chunk => {
+        return chunk.getTilesWithin().map(tile => {
+          return {
+            name: BlockIds[tile.index],
+            x: tile.x + chunk.x / Constants.Level.GRID_SIZE_X,
+            y: tile.y + chunk.y / Constants.Level.GRID_SIZE_Y
+          } as LevelSerialization.Block;
+        });
       });
+    });
   }
 
   public getUsedLayers(): number[] {
     const usedLayers = new Set<number>();
 
-    for (const key of this.map.keys()) {
-      usedLayers.add(this.strToArray(key)[2]);
+    for (const layer in this.chunks) {
+      if (this.chunks.hasOwnProperty(layer)) {
+        usedLayers.add(Number(layer));
+      }
     }
 
     return Array.from(usedLayers);
   }
 
   public removeBlockAt(pos: Phaser.Math.Vector2, layer = 0) {
-    const key = new Phaser.Math.Vector3(pos.x, pos.y, layer);
-    const target = this.map.get(this.numbersToStr(pos. x, pos.y, layer));
-    this.map.delete(this.numbersToStr(pos.x, pos.y, layer));
-    target.gameObject.destroy();
+    const { chunkPos, tilePos } = this.localizeChunk(pos);
+    const chunk = this.chunks[layer][chunkPos.x][chunkPos.y].removeTileAt(tilePos.x, tilePos.y);
   }
 
   public clearGrid() {
-    for (const block of this.map.values()) {
-      block.gameObject.destroy();
-    }
+    this.chunks.forEach(layer => layer.forEach(row => row.forEach(chunk => chunk.destroy())));
 
-    this.map.clear();
+    this.chunks = [];
   }
 
   private ensureChunkExists(chunkPos: Phaser.Math.Vector2, layer = 0): Tilemaps.DynamicTilemapLayer {
@@ -201,12 +195,5 @@ export class MapGrid {
     );
 
     return { chunkPos, tilePos };
-  }
-
-  private unlocalizeTile(tilePos: Phaser.Math.Vector2, chunkPos: Phaser.Math.Vector2): Phaser.Math.Vector2 {
-    const chunkTilePos = new Phaser.Math.Vector2(
-      Math.floor(chunkPos.x / Constants.Level.CHUNK_W),
-      Math.floor(chunkPos.y / Constants.Level.CHUNK_H)
-    );
   }
 }
