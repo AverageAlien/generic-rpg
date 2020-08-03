@@ -7,6 +7,7 @@ import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
 import { StupidStalkerController } from '../gameplay/controllers/stupidStalkerController';
+import { WalkerController } from '../gameplay/controllers/walkerController';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +39,7 @@ export class EntitySpawnerService {
 
     const entity = new CharacterEntity('Stalker', gameObject, 100, 1, speed);
     entity.faction = Faction.Baddies;
-    entity.controller = new StupidStalkerController(entity, this.levelScene);
+    entity.controller = new WalkerController(entity, this.levelScene);
 
     this.levelScene.entities.push(entity);
 

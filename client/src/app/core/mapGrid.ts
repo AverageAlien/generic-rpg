@@ -66,7 +66,13 @@ export class MapGrid {
   public getBlockAt(pos: Phaser.Math.Vector2, layer = 0): string {
     // TODO: rewrite this and the rest to return indices instead in order to optimize level exports
     const { chunkPos, tilePos } = this.localizeChunk(pos);
+    if (!this.chunks[layer] ||
+      !this.chunks[layer][chunkPos.x] ||
+      !this.chunks[layer][chunkPos.x][chunkPos.y]) {
+      return null;
+    }
     const tile = this.chunks[layer][chunkPos.x][chunkPos.y].getTileAt(tilePos.x, tilePos.y);
+    if (!tile) { return null; }
     return BlockIds[tile.index];
   }
 

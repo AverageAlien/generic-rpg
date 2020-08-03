@@ -15,6 +15,7 @@ export class Level extends Scene {
   public player: CharacterEntity;
 
   public debugText: GameObjects.Text;
+  public debugGraphics: GameObjects.Graphics;
 
   protected entitySpawner: EntitySpawnerService;
   protected blockPlacer: BlockPlacer;
@@ -34,10 +35,10 @@ export class Level extends Scene {
 
     this.mapGrid = new MapGrid(this, 'tileset');
 
-    this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(0, 0), 30);
+    this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(-17, -7), 30);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
 
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(30, 20), 25);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 11), 25);
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
@@ -49,6 +50,7 @@ export class Level extends Scene {
     this.backgroundImage.setDepth(-50);
 
     this.debugText = this.add.text(10, 10, 'Coords:').setScrollFactor(0).setDepth(100);
+    this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
 
     // pathfind testing
     // const matrix = [
