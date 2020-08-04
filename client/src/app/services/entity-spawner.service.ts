@@ -39,7 +39,7 @@ export class EntitySpawnerService {
 
     const entity = new CharacterEntity('Stalker', gameObject, 100, 1, speed);
     entity.faction = Faction.Baddies;
-    entity.controller = new WalkerController(entity, this.levelScene);
+    entity.controller = new WalkerController(entity, this.levelScene, 512);
 
     this.levelScene.entities.push(entity);
 

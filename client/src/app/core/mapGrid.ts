@@ -101,9 +101,9 @@ export class MapGrid {
   }
 
   public getAllOfLayer(layer: number): LevelSerialization.Block[] {
-    return this.chunks[layer].flatMap(row => {
-      return row.flatMap(chunk => {
-        return chunk.getTilesWithin().map(tile => {
+    return Object.values(this.chunks[layer]).flatMap(row => {
+      return Object.values(row).flatMap(chunk => {
+        return chunk.getTilesWithin(0, 0, undefined, undefined, { isNotEmpty: true }).map(tile => {
           return {
             name: BlockIds[tile.index],
             x: tile.x + chunk.x / Constants.Level.GRID_SIZE_X,

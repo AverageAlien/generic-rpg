@@ -9,15 +9,15 @@ import { GameObjects } from 'phaser';
 
 export class WalkerController implements Controller {
   private target: Entity = null;
-  private searchFrequency = 250; // ms
-  private searchIncrement = 16.67;
+  private readonly searchFrequency = 250; // ms
+  private readonly searchIncrement = 16.67;
   private timeSinceLastSearch = 0;
 
   private pathWaypoints: Phaser.Math.Vector2[] = null;
-  private currentWaypoint: number;
   private rushAtTarget = false;
+  private readonly unrushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X) * 2, 2);
 
-  private readonly waypointReachedDistance = Math.pow( // THIS IS SQUARED DISTANCE
+  private readonly waypointReachedDistanceSq = Math.pow(
     Math.min(Constants.Level.GRID_SIZE_X, Constants.Level.GRID_SIZE_Y) * 0.7,
   2);
 
@@ -62,6 +62,10 @@ export class WalkerController implements Controller {
   }
 
   private calculateMovement(targetPos: Phaser.Math.Vector2): Phaser.Math.Vector2 {
+    if (this.myself.gameObject.body.position.distanceSq(targetPos) > this.unrushDistanceSq) {
+      this.rushAtTarget = false;
+    }
+
     if (this.rushAtTarget) {
       return new Phaser.Math.Vector2(targetPos)
         .subtract(this.myself.gameObject.body.position)
@@ -85,7 +89,7 @@ export class WalkerController implements Controller {
       console.log('Destination reached!');
       this.rushAtTarget = true;
       return Phaser.Math.Vector2.ZERO;
-    } else if (this.pathWaypoints[0].distanceSq(this.myself.gameObject.body.position) < this.waypointReachedDistance) {
+    } else if (this.pathWaypoints[0].distanceSq(this.myself.gameObject.body.position) < this.waypointReachedDistanceSq) {
       this.pathWaypoints.shift();
       console.log('Waypoint reached');
 

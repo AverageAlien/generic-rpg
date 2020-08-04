@@ -38,7 +38,12 @@ export class Level extends Scene {
     this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(-17, -7), 30);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
 
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 11), 25);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 11), 20);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
+    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 11), 20);
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
@@ -51,23 +56,6 @@ export class Level extends Scene {
 
     this.debugText = this.add.text(10, 10, 'Coords:').setScrollFactor(0).setDepth(100);
     this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
-
-    // pathfind testing
-    // const matrix = [
-    //   [0, 1, 0, 0, 0],
-    //   [0, 0, 1, 0, 0],
-    //   [1, 0, 0, 0, 0],
-    // ];
-    // const grid = new PF.Grid(matrix);
-
-    // const finder = new PF.AStarFinder({
-    //   diagonalMovement: DiagonalMovement.IfAtMostOneObstacle,
-    //   weight: 1,
-    //   heuristic: PF.Heuristic.euclidean
-    // });
-
-    // const path = finder.findPath(0, 0, 2, 0, grid);
-    // console.log(PF.Util.compressPath(path));
   }
 
   preload() {
