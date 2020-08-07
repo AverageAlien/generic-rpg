@@ -15,4 +15,11 @@ export namespace LevelSerialization {
     y: number;
     name: string;
   }
+
+  export interface MinifiedLevel {
+    l: [ // layers
+      number, // layer id
+      [number, number, number][] // blocks - x, y, block id
+    ][]; // layers
+  }
 }

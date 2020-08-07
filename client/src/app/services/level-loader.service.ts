@@ -1,47 +1,33 @@
 import { Injectable } from '@angular/core';
 import { Level } from '../scenes/levelScene';
 import { LevelSerialization } from '../models/levelSerialization.model';
-import * as msgpack from 'msgpack-lite';
-import * as base65536 from 'base65536';
-import { MapGrid } from '../core/mapGrid';
+import { BlockIds } from '../core/blocks';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LevelLoaderService {
   public exportLevel(level: Level): string {
-    const objLevel: LevelSerialization.Level = {
-      layers: []
+    const minLevel: LevelSerialization.MinifiedLevel = {
+      l: []
     };
 
     for (const layer of level.mapGrid.getUsedLayers()) {
-      const objLayer: LevelSerialization.Layer = {
-        layerId: layer,
-        blocks: level.mapGrid.getAllOfLayer(layer)
-      };
-
-      objLevel.layers.push(objLayer);
+      minLevel.l.push([
+        layer,
+        level.mapGrid.getAllOfLayer(layer).map(b => [b.x, b.y, BlockIds.indexOf(b.name)])
+      ]);
     }
 
-    // const json = JSON.stringify(objLevel);
-    // const based = base65536.encode(msgpack.encode(objLevel));
-
-    // console.log(json);
-    // console.log(based);
-    // console.log([...json].length);
-    // console.log([...based].length);
-
-    return JSON.stringify(objLevel);
+    return JSON.stringify(minLevel);
   }
 
   public importlevel(levelJson: string, level: Level): void {
-    const objLevel: LevelSerialization.Level = JSON.parse(levelJson);
+    const minLevel: LevelSerialization.MinifiedLevel = JSON.parse(levelJson);
 
-    // level.mapGrid.clearGrid();
-
-    for (const layer of objLevel.layers) {
-      for (const block of layer.blocks) {
-        level.mapGrid.addBlock(new Phaser.Math.Vector2(block.x, block.y), block.name, layer.layerId);
+    for (const layer of minLevel.l) {
+      for (const block of layer[1]) {
+        level.mapGrid.addBlock(new Phaser.Math.Vector2(block[0], block[1]), BlockIds[block[2]], layer[0]);
       }
     }
 

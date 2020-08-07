@@ -7,7 +7,6 @@ import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { AssetService } from '../services/asset.service';
 import { MapGrid } from '../core/mapGrid';
 import { LevelLoaderService } from '../services/level-loader.service';
-import PF, { DiagonalMovement } from 'pathfinding';
 
 export class Level extends Scene {
   public mapGrid: MapGrid;
@@ -38,11 +37,11 @@ export class Level extends Scene {
     this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(-17, -7), 30);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
 
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 11), 20);
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
+    // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 11), 20);
+    // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
+    // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
+    // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
+    // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
     this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 11), 20);
 
     this.backgroundImage = this.add.tileSprite(

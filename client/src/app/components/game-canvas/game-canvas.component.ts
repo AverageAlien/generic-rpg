@@ -2,11 +2,8 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import Phaser from 'phaser';
 import { InputService } from 'src/app/services/input.service';
 import { Level } from 'src/app/scenes/levelScene';
-import { EntitySpawnerService } from 'src/app/services/entity-spawner.service';
-import { LevelEditor } from 'src/app/scenes/levelEditor';
 import { LevelLoaderService } from 'src/app/services/level-loader.service';
 import { Constants } from 'src/app/core/constants';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-game-canvas',

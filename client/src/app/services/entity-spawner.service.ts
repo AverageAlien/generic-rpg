@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Entity } from '../gameplay/entities/baseEntity';
 import { InputKeys } from '../models/inputKeys.model';
 import { Level } from '../scenes/levelScene';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
-import { StupidStalkerController } from '../gameplay/controllers/stupidStalkerController';
 import { WalkerController } from '../gameplay/controllers/walkerController';
 
 @Injectable({
