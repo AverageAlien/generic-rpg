@@ -6,6 +6,8 @@ import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
 import { WalkerController } from '../gameplay/controllers/walkerController';
+import { UI } from '../ui/healthBarSmall';
+
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +24,7 @@ export class EntitySpawnerService {
   public spawnPlayer(playerName: string, position: Phaser.Math.Vector2, speed: number): CharacterEntity {
     const gameObject = this.createSpriteGameObject(position, 'humanoid');
 
-    gameObject.body.setSize(20, 20).setOffset(0, 6);
+    gameObject.body.setSize(20, 20).setOffset(1, 7);
 
     const entity = new CharacterEntity(playerName, gameObject, 100, 1, speed);
     entity.controller = new PlayerController(this.inputKeys);
@@ -39,6 +41,24 @@ export class EntitySpawnerService {
     entity.faction = Faction.Baddies;
     entity.controller = new WalkerController(entity, this.levelScene, 512);
 
+    const healthBar = new UI.HealthBarSmall(this.levelScene, entity);
+
+    entity.destroyed.subscribe(() => {
+      const healthBarIndex = this.levelScene.levelUI.indexOf(healthBar);
+      const entityIndex = this.levelScene.entities.indexOf(entity);
+
+      healthBar.destroy();
+
+      if (healthBarIndex >= 0) {
+        this.levelScene.levelUI.splice(healthBarIndex, 1);
+      }
+
+      if (entityIndex >= 0) {
+        this.levelScene.entities.splice(entityIndex, 1);
+      }
+    });
+
+    this.levelScene.levelUI.push(healthBar);
     this.levelScene.entities.push(entity);
 
     return entity;
@@ -54,37 +74,6 @@ export class EntitySpawnerService {
       position.x * Constants.Level.GRID_SIZE_X,
       position.y * Constants.Level.GRID_SIZE_Y,
       sprite
-    ) as any;
-    gameObject.setDepth(10);
-    this.levelScene.physics.add.existing(gameObject);
-    this.levelScene.physics.add.collider(
-      gameObject,
-      this.levelScene.mapGrid.getAllChunks()
-    );
-
-    gameObject.body.checkCollision.up = true;
-    gameObject.body.checkCollision.down = true;
-    gameObject.body.checkCollision.left = true;
-    gameObject.body.checkCollision.right = true;
-
-    gameObject.body.useDamping = true;
-    gameObject.body.setDrag(0.85, 0.85);
-
-    return gameObject;
-  }
-
-  private createRectGameObject(
-    position: Phaser.Math.Vector2,
-    color: number
-  ): Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body } {
-    let gameObject: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
-
-    gameObject = this.levelScene.add.rectangle(
-      position.x * Constants.Level.GRID_SIZE_X,
-      position.y * Constants.Level.GRID_SIZE_Y,
-      20,
-      20,
-      color
     ) as any;
     gameObject.setDepth(10);
     this.levelScene.physics.add.existing(gameObject);

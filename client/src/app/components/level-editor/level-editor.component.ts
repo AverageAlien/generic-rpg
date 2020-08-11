@@ -31,6 +31,7 @@ export class LevelEditorComponent implements OnInit {
       physics: {
         default: 'arcade'
       },
+      disableContextMenu: true
     };
 
   }

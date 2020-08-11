@@ -48,7 +48,7 @@ export class StupidStalkerController implements Controller {
 
   private searchTarget(): Entity {
     const myNumber = this.levelScene.entities.indexOf(this.myself);
-    if (myNumber < 0) { throw Error('I am not on the entities list!'); }
+    if (myNumber < 0) { throw new Error('I am not on the entities list!'); }
 
     const target = this.levelScene.physics.closest(
       this.myself.gameObject.body.position,
@@ -65,7 +65,7 @@ export class StupidStalkerController implements Controller {
 
     const targetEntity = this.levelScene.entities.find(e => e.gameObject === target);
 
-    if (!targetEntity) { throw Error('Entity for closest GameObject not found!'); }
+    if (!targetEntity) { throw new Error('Entity for closest GameObject not found!'); }
 
     return targetEntity;
   }

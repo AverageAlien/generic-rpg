@@ -2,7 +2,6 @@ import { Scene, GameObjects, Tilemaps } from 'phaser';
 import { InputService } from '../services/input.service';
 import { Entity } from '../gameplay/entities/baseEntity';
 import { EntitySpawnerService } from '../services/entity-spawner.service';
-import { BlockPlacer } from '../core/blockPlacer';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { AssetService } from '../services/asset.service';
 import { MapGrid } from '../core/mapGrid';
@@ -11,13 +10,12 @@ import { LevelLoaderService } from '../services/level-loader.service';
 export class Level extends Scene {
   public mapGrid: MapGrid;
   public entities: Entity[] = [];
+  public levelUI: GameObjects.DOMElement[] = [];
   public player: CharacterEntity;
 
-  public debugText: GameObjects.Text;
   public debugGraphics: GameObjects.Graphics;
 
   protected entitySpawner: EntitySpawnerService;
-  protected blockPlacer: BlockPlacer;
 
   protected backgroundImage: GameObjects.TileSprite;
 
@@ -29,9 +27,6 @@ export class Level extends Scene {
     this.entitySpawner = new EntitySpawnerService();
     this.entitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
 
-    this.blockPlacer = new BlockPlacer();
-    this.blockPlacer.init(this);
-
     this.mapGrid = new MapGrid(this, 'tileset');
 
     this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(-17, -7), 30);
@@ -42,7 +37,7 @@ export class Level extends Scene {
     // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
     // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(5, 12), 20);
     // this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 12), 20);
-    this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 11), 20);
+    const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 11), 20);
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
@@ -53,7 +48,6 @@ export class Level extends Scene {
 
     this.backgroundImage.setDepth(-50);
 
-    this.debugText = this.add.text(10, 10, 'Coords:').setScrollFactor(0).setDepth(100);
     this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
   }
 
@@ -65,8 +59,7 @@ export class Level extends Scene {
 
   update() {
     this.entities.forEach(e => e.update());
-
-    this.debugText.setText(`Coords: ${Math.round(this.player.gameObject.body.x)}; ${Math.round(this.player.gameObject.body.y)}`);
+    this.levelUI.forEach(ui => ui.update());
 
     this.backgroundImage.setPosition(
       this.cameras.main.worldView.centerX,

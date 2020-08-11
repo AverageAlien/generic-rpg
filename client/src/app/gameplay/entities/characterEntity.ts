@@ -5,6 +5,7 @@ import { Controller } from '../controllers/baseController';
 import { Constants } from 'src/app/core/constants';
 import { Faction } from 'src/app/core/factions';
 
+
 export class CharacterEntity implements Entity, Controllable, Destroyable {
   public health: number;
   public controller: Controller;
@@ -28,11 +29,18 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     this.move();
   }
 
-  damage(): void {
-    throw new Error('Method not implemented.');
+  damage(dmg: number): void {
+    this.health -= dmg;
+
+    if (this.health <= 0) {
+      this.destroy();
+    }
   }
+
   destroy(): void {
-    throw new Error('Method not implemented.');
+    this.gameObject.destroy();
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 
   private move() {

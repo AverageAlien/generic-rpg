@@ -21,7 +21,7 @@ export interface Destroyable extends Entity {
   maxHealth: number;
   destroyed: Observable<void>;
 
-  damage(): void;
+  damage(dmg: number): void;
 
   destroy(): void;
 }

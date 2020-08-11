@@ -81,20 +81,15 @@ export class WalkerController implements Controller {
       if (!this.pathWaypoints) {
         debugger;
       }
-
-      // this.pathWaypoints.forEach(w => console.log(`Waypoint: ${w.x}; ${w.y}`));
     }
 
     if (this.pathWaypoints.length === 0) {
-      console.log('Destination reached!');
       this.rushAtTarget = true;
       return Phaser.Math.Vector2.ZERO;
     } else if (this.pathWaypoints[0].distanceSq(this.myself.gameObject.body.position) < this.waypointReachedDistanceSq) {
       this.pathWaypoints.shift();
-      console.log('Waypoint reached');
 
       if (this.pathWaypoints.length === 0) {
-        console.log('Destination reached after shift!');
         this.rushAtTarget = true;
         return Phaser.Math.Vector2.ZERO;
       }
@@ -181,7 +176,7 @@ export class WalkerController implements Controller {
 
   private searchTarget(): Entity {
     const myNumber = this.levelScene.entities.indexOf(this.myself);
-    if (myNumber < 0) { throw Error('I am not on the entities list!'); }
+    if (myNumber < 0) { throw new Error('I am not on the entities list!'); }
 
     const target = this.levelScene.physics.closest(
       this.myself.gameObject.body.position,
@@ -198,7 +193,7 @@ export class WalkerController implements Controller {
 
     const targetEntity = this.levelScene.entities.find(e => e.gameObject === target);
 
-    if (!targetEntity) { throw Error('Entity for closest GameObject not found!'); }
+    if (!targetEntity) { throw new Error('Entity for closest GameObject not found!'); }
 
     return targetEntity;
   }

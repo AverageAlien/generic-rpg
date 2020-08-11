@@ -31,6 +31,9 @@ export class GameCanvasComponent implements OnInit {
       physics: {
         default: 'arcade'
       },
+      dom: {
+        createContainer: true
+      }
     };
 
   }

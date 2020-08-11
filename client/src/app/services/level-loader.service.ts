@@ -30,7 +30,5 @@ export class LevelLoaderService {
         level.mapGrid.addBlock(new Phaser.Math.Vector2(block[0], block[1]), BlockIds[block[2]], layer[0]);
       }
     }
-
-    console.log(level.mapGrid);
   }
 }
