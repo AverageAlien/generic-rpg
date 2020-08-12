@@ -6,7 +6,7 @@ import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
 import { WalkerController } from '../gameplay/controllers/walkerController';
-import { UI } from '../ui/healthBarSmall';
+import { UI } from '../ui/ui';
 
 
 @Injectable({
@@ -28,6 +28,16 @@ export class EntitySpawnerService {
 
     const entity = new CharacterEntity(playerName, gameObject, 100, 1, speed);
     entity.controller = new PlayerController(this.inputKeys);
+
+    entity.destroyed.subscribe(() => {
+      const entityIndex = this.levelScene.entities.indexOf(entity);
+
+      if (entityIndex >= 0) {
+        this.levelScene.entities.splice(entityIndex, 1);
+      }
+
+      console.log(this.levelScene.player);
+    });
 
     this.levelScene.entities.push(entity);
 

@@ -9,6 +9,7 @@ import { GameObjects } from 'phaser';
 
 export class WalkerController implements Controller {
   private target: Entity = null;
+
   private readonly searchFrequency = 250; // ms
   private readonly searchIncrement = 16.67;
   private timeSinceLastSearch = 0;
@@ -33,7 +34,7 @@ export class WalkerController implements Controller {
 
   get movement(): Phaser.Math.Vector2 {
 
-    if (!this.target) {
+    if (!this.target || !this.target.gameObject || !this.target.gameObject.body) {
       const searched = this.searchTarget();
 
       if (!searched) {
