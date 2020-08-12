@@ -9,12 +9,13 @@ import { LevelLoaderService } from '../services/level-loader.service';
 import { UI } from '../ui/ui';
 import { interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 
 export class Level extends Scene {
   public mapGrid: MapGrid;
   public entities: Entity[] = [];
   public levelUI: GameObjects.DOMElement[] = [];
-  public player: CharacterEntity;
+  public player: HumanoidEntity;
 
   public debugGraphics: GameObjects.Graphics;
 
@@ -36,6 +37,16 @@ export class Level extends Scene {
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
 
     const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 11), 20);
+
+    this.player.equipArmor({
+      name: 'Leather vest',
+      description: 'yep',
+      level: 1,
+      mass: 5,
+      price: 600,
+      texture: 'leather_vest'
+    });
+
     // stalker.damage(20);
 
     // interval(100)
@@ -62,6 +73,8 @@ export class Level extends Scene {
     AssetService.loadBlockSprites(this.load);
 
     AssetService.loadEntitySprites(this.load);
+
+    AssetService.loadArmorSprites(this.load);
   }
 
   update() {

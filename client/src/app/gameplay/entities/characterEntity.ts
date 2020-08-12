@@ -10,7 +10,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
   public health: number;
   public controller: Controller;
   public faction: Faction = Faction.Player;
-  private destroyed$ = new Subject<void>();
+  protected destroyed$ = new Subject<void>();
 
   constructor(
     public name: string,
@@ -43,15 +43,19 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     this.destroyed$.complete();
   }
 
-  private move() {
+  protected move() {
     const maxSpeedMult = Constants.Character.MAX_SPEED_MULT;
     const movement = this.controller.movement.scale(this.speed * maxSpeedMult * 10);
     if (this.gameObject.body.velocity.lengthSq() > (this.speed * this.speed * maxSpeedMult * maxSpeedMult)) {
       this.gameObject.body.velocity.normalize().scale(this.speed * maxSpeedMult);
     }
     if (movement.x !== 0) {
-      this.gameObject.setFlipX(movement.x > 0);
+      this.lookRight(movement.x > 0);
     }
     this.gameObject.body.setAcceleration(movement.x, movement.y);
+  }
+
+  protected lookRight(condition: boolean) {
+    this.gameObject.setFlipX(condition);
   }
 }

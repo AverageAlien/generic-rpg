@@ -14,4 +14,9 @@ export class AssetService {
   public static loadEntitySprites(loader: Phaser.Loader.LoaderPlugin): void {
     loader.image('humanoid', 'assets/textures/entities/humanoid.png');
   }
+
+  public static loadArmorSprites(loader: Phaser.Loader.LoaderPlugin): void {
+    loader.image('leather_vest', 'assets/textures/items/armor/leather_vest.png');
+    loader.image('leather_vest_outline', 'assets/textures/items/armor/leather_vest_outline.png');
+  }
 }

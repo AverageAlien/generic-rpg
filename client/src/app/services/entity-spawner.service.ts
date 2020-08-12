@@ -7,6 +7,7 @@ import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
 import { WalkerController } from '../gameplay/controllers/walkerController';
 import { UI } from '../ui/ui';
+import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 
 
 @Injectable({
@@ -21,12 +22,23 @@ export class EntitySpawnerService {
     this.levelScene = levelScene;
   }
 
-  public spawnPlayer(playerName: string, position: Phaser.Math.Vector2, speed: number): CharacterEntity {
-    const gameObject = this.createSpriteGameObject(position, 'humanoid');
+  public spawnPlayer(playerName: string, position: Phaser.Math.Vector2, speed: number): HumanoidEntity {
+    const gameObject = this.createSpriteGameObject(position, 'humanoid').setDepth(4);
+    const armorSprite = this.levelScene.add.sprite(0, 0, null)
+      .setVisible(false)
+      .setDepth(gameObject.depth + 1);
 
     gameObject.body.setSize(20, 20).setOffset(1, 7);
 
-    const entity = new CharacterEntity(playerName, gameObject, 100, 1, speed);
+    const entity = new HumanoidEntity({
+      name: playerName,
+      gameObject,
+      armorSprite,
+      maxHealth: 100,
+      level: 1,
+      speed
+    });
+
     entity.controller = new PlayerController(this.inputKeys);
 
     entity.destroyed.subscribe(() => {
@@ -44,10 +56,21 @@ export class EntitySpawnerService {
     return entity;
   }
 
-  public spawnStalker(position: Phaser.Math.Vector2, speed: number): CharacterEntity {
-    const gameObject = this.createSpriteGameObject(position, 'humanoid');
+  public spawnStalker(position: Phaser.Math.Vector2, speed: number): HumanoidEntity {
+    const gameObject = this.createSpriteGameObject(position, 'humanoid').setDepth(3);
+    const armorSprite = this.levelScene.add.sprite(0, 0, null)
+      .setVisible(false)
+      .setDepth(gameObject.depth + 1);
 
-    const entity = new CharacterEntity('Stalker', gameObject, 100, 1, speed);
+    const entity = new HumanoidEntity({
+      name: 'Stalker',
+      gameObject,
+      armorSprite,
+      maxHealth: 100,
+      level: 1,
+      speed
+    });
+
     entity.faction = Faction.Baddies;
     entity.controller = new WalkerController(entity, this.levelScene, 512);
 
@@ -85,7 +108,6 @@ export class EntitySpawnerService {
       position.y * Constants.Level.GRID_SIZE_Y,
       sprite
     ) as any;
-    gameObject.setDepth(10);
     this.levelScene.physics.add.existing(gameObject);
     this.levelScene.physics.add.collider(
       gameObject,
