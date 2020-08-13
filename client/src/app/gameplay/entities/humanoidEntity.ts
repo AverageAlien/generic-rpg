@@ -1,21 +1,12 @@
-import { CharacterEntity } from './characterEntity';
+import { CharacterEntity, CharacterConfig } from './characterEntity';
 import { Armor } from '../items/armor';
-import { GameObjects } from 'phaser';
 
 export class HumanoidEntity extends CharacterEntity {
   private armor: Armor = null;
-  private armorSprite: GameObjects.Sprite;
   private weapon: string = null;
 
   constructor(cfg: HumanoidConfig) {
-    super(
-      cfg.name,
-      cfg.gameObject,
-      cfg.maxHealth || 100,
-      cfg.level || 1,
-      cfg.speed || 20
-    );
-    this.armorSprite = cfg.armorSprite;
+    super(cfg);
 
     this.equipArmor(cfg.armor);
     this.weapon = cfg.weapon;
@@ -25,37 +16,31 @@ export class HumanoidEntity extends CharacterEntity {
     this.armor = armor;
     console.log('equip called');
 
-    if (armor) {
-      this.armorSprite.setTexture(armor.texture);
-      console.log(armor.texture);
-    }
-
-    this.armorSprite.setVisible(!!armor);
+    this.refreshRenderSprite();
   }
 
   public update() {
     super.update();
-
-    this.armorSprite.setPosition(
-      this.gameObject.body.center.x,
-      this.gameObject.body.center.y - 0.5
-    );
   }
 
   protected lookRight(condition: boolean) {
     super.lookRight(condition);
+  }
 
-    this.armorSprite.setFlipX(condition);
+  protected refreshRenderSprite() {
+    super.refreshRenderSprite();
+
+    if (this.armor) {
+      this.gameObject.draw(
+        this.armor.texture,
+        this.gameObject.width / 2 - 9,
+        this.gameObject.height / 2 - 5
+      );
+    }
   }
 }
 
-interface HumanoidConfig {
-  name: string;
-  gameObject: Phaser.GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body };
-  armorSprite: Phaser.GameObjects.Sprite;
-  maxHealth?: number;
-  level?: number;
-  speed?: number;
+export interface HumanoidConfig extends CharacterConfig {
   armor?: Armor;
   weapon?: string;
 }

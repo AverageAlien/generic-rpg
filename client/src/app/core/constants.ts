@@ -12,6 +12,10 @@ class Level {
 
 class Character {
   static readonly MAX_SPEED_MULT = 5;
+  static readonly COLLIDER_W = 20;
+  static readonly COLLIDER_H = 20;
+  static readonly COLLIDER_OFFSET_X = 1;
+  static readonly COLLIDER_OFFSET_Y = 7;
 }
 
 export const Constants = {

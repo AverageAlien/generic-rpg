@@ -7,18 +7,30 @@ import { Faction } from 'src/app/core/factions';
 
 
 export class CharacterEntity implements Entity, Controllable, Destroyable {
-  public health: number;
-  public controller: Controller;
+  public entityName: string;
   public faction: Faction = Faction.Player;
+
+  public gameObject: GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body };
+  protected bodyTexture: string;
+
+  public maxHealth: number;
+  public health: number;
+  public level: number;
+  public speed: number;
+
+  public controller: Controller;
   protected destroyed$ = new Subject<void>();
 
-  constructor(
-    public name: string,
-    public gameObject: GameObjects.Sprite & { body: Phaser.Physics.Arcade.Body },
-    public maxHealth: number,
-    public level: number,
-    public speed: number) {
-    this.health = maxHealth;
+  constructor(cfg: CharacterConfig) {
+    this.entityName = cfg.name;
+    this.gameObject = cfg.gameObject;
+    this.bodyTexture = cfg.bodyTexture;
+    this.maxHealth = cfg.maxHealth || 100;
+    this.health = this.maxHealth;
+    this.level = cfg.level || 1;
+    this.speed = cfg.speed || 20;
+
+    this.refreshRenderSprite();
   }
 
   get destroyed(): Observable<void> {
@@ -58,4 +70,23 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
   protected lookRight(condition: boolean) {
     this.gameObject.setFlipX(condition);
   }
+
+  protected refreshRenderSprite() {
+    const bounds = this.gameObject.body.center;
+
+    this.gameObject.clear();
+    this.gameObject.draw(
+      this.bodyTexture,
+      0, 0
+    );
+  }
+}
+
+export interface CharacterConfig {
+  name: string;
+  gameObject: Phaser.GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body };
+  bodyTexture: string;
+  maxHealth?: number;
+  level?: number;
+  speed?: number;
 }

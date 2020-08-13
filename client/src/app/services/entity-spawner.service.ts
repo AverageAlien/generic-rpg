@@ -23,20 +23,25 @@ export class EntitySpawnerService {
   }
 
   public spawnPlayer(playerName: string, position: Phaser.Math.Vector2, speed: number): HumanoidEntity {
-    const gameObject = this.createSpriteGameObject(position, 'humanoid').setDepth(4);
-    const armorSprite = this.levelScene.add.sprite(0, 0, null)
-      .setVisible(false)
-      .setDepth(gameObject.depth + 1);
+    const gameObject = this.createRenderTexture(
+      position,
+      new Phaser.Math.Vector2(
+        this.levelScene.textures.getFrame('humanoid', 0).width,
+        this.levelScene.textures.getFrame('humanoid', 0).height
+      )
+    ).setDepth(4);
 
-    gameObject.body.setSize(20, 20).setOffset(1, 7);
+    gameObject.body
+      .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
+      .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
 
     const entity = new HumanoidEntity({
       name: playerName,
       gameObject,
-      armorSprite,
       maxHealth: 100,
       level: 1,
-      speed
+      speed,
+      bodyTexture: 'humanoid'
     });
 
     entity.controller = new PlayerController(this.inputKeys);
@@ -57,41 +62,55 @@ export class EntitySpawnerService {
   }
 
   public spawnStalker(position: Phaser.Math.Vector2, speed: number): HumanoidEntity {
-    const gameObject = this.createSpriteGameObject(position, 'humanoid').setDepth(3);
-    const armorSprite = this.levelScene.add.sprite(0, 0, null)
-      .setVisible(false)
-      .setDepth(gameObject.depth + 1);
+    const gameObject = this.createRenderTexture(
+      position,
+      new Phaser.Math.Vector2(
+        this.levelScene.textures.getFrame('humanoid', 0).width,
+        this.levelScene.textures.getFrame('humanoid', 0).height
+      )
+    ).setDepth(3);
+
+    gameObject.body
+      .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
+      .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
 
     const entity = new HumanoidEntity({
       name: 'Stalker',
       gameObject,
-      armorSprite,
       maxHealth: 100,
       level: 1,
-      speed
+      speed,
+      bodyTexture: 'humanoid'
     });
 
     entity.faction = Faction.Baddies;
     entity.controller = new WalkerController(entity, this.levelScene, 512);
 
     const healthBar = new UI.HealthBarSmall(this.levelScene, entity);
+    const nameLabel = new UI.EntityHeader(this.levelScene, entity);
 
     entity.destroyed.subscribe(() => {
-      const healthBarIndex = this.levelScene.levelUI.indexOf(healthBar);
-      const entityIndex = this.levelScene.entities.indexOf(entity);
-
       healthBar.destroy();
+      nameLabel.destroy();
 
+      const healthBarIndex = this.levelScene.levelUI.indexOf(healthBar);
       if (healthBarIndex >= 0) {
         this.levelScene.levelUI.splice(healthBarIndex, 1);
       }
 
+      const labelIndex = this.levelScene.levelUI.indexOf(nameLabel);
+      if (labelIndex >= 0) {
+        this.levelScene.levelUI.splice(labelIndex, 1);
+      }
+
+      const entityIndex = this.levelScene.entities.indexOf(entity);
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
     });
 
     this.levelScene.levelUI.push(healthBar);
+    this.levelScene.levelUI.push(nameLabel);
     this.levelScene.entities.push(entity);
 
     return entity;
@@ -108,6 +127,29 @@ export class EntitySpawnerService {
       position.y * Constants.Level.GRID_SIZE_Y,
       sprite
     ) as any;
+
+    return this.setupPhysics(gameObject);
+  }
+
+  private createRenderTexture(
+    position: Phaser.Math.Vector2,
+    size: Phaser.Math.Vector2
+  ): Phaser.GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body } {
+    let gameObject: Phaser.GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body };
+
+    gameObject = this.levelScene.add.renderTexture(
+      position.x * Constants.Level.GRID_SIZE_X,
+      position.y * Constants.Level.GRID_SIZE_Y,
+      size.x,
+      size.y
+    ) as any;
+
+    return this.setupPhysics(gameObject);
+  }
+
+  private setupPhysics<T extends Phaser.GameObjects.GameObject>(
+    gameObject: T & { body: Phaser.Physics.Arcade.Body }
+  ): T & { body: Phaser.Physics.Arcade.Body } {
     this.levelScene.physics.add.existing(gameObject);
     this.levelScene.physics.add.collider(
       gameObject,

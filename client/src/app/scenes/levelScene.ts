@@ -7,9 +7,10 @@ import { AssetService } from '../services/asset.service';
 import { MapGrid } from '../core/mapGrid';
 import { LevelLoaderService } from '../services/level-loader.service';
 import { UI } from '../ui/ui';
-import { interval } from 'rxjs';
+import { interval, timer } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
+import { Armor } from '../gameplay/items/armor';
 
 export class Level extends Scene {
   public mapGrid: MapGrid;
@@ -38,14 +39,18 @@ export class Level extends Scene {
 
     const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(6, 11), 20);
 
-    this.player.equipArmor({
+    timer(10000)
+      .subscribe(() => {
+        stalker.equipArmor(new Armor({
+          name: 'Leather vest',
+          texture: 'leather_vest'
+        }));
+      });
+
+    this.player.equipArmor(new Armor({
       name: 'Leather vest',
-      description: 'yep',
-      level: 1,
-      mass: 5,
-      price: 600,
       texture: 'leather_vest'
-    });
+    }));
 
     // stalker.damage(20);
 
@@ -67,6 +72,15 @@ export class Level extends Scene {
     this.events.on('postupdate', this.postupdate.bind(this));
 
     this.levelUI.push(new UI.HealthBarPlayer(this));
+
+    const renderSprite = this.add.renderTexture(-500, -200).setDepth(5);
+    renderSprite.draw('humanoid', 0, 0);
+
+    timer(5000)
+      .subscribe(() => { renderSprite.draw('leather_vest'); });
+    timer(10000)
+      .subscribe(() => { renderSprite.clear();
+      renderSprite.draw('humanoid'); });
   }
 
   preload() {

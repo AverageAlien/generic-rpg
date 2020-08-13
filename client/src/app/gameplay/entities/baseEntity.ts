@@ -4,7 +4,7 @@ import { GameObjects } from 'phaser';
 import { Faction } from 'src/app/core/factions';
 
 export interface Entity {
-  name: string;
+  entityName: string;
   faction: Faction;
   gameObject: GameObjects.GameObject & { body: Phaser.Physics.Arcade.Body };
 
