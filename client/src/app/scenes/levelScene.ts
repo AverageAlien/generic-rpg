@@ -45,18 +45,14 @@ export class Level extends Scene {
           name: 'Leather vest',
           texture: 'leather_vest'
         }));
+        stalker.damage(20);
+        this.player.damage(20);
       });
 
     this.player.equipArmor(new Armor({
       name: 'Leather vest',
       texture: 'leather_vest'
     }));
-
-    // stalker.damage(20);
-
-    // interval(100)
-    //   .pipe(takeUntil(this.player.destroyed))
-    //   .subscribe(() => { this.player.damage(1); });
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
@@ -72,15 +68,6 @@ export class Level extends Scene {
     this.events.on('postupdate', this.postupdate.bind(this));
 
     this.levelUI.push(new UI.HealthBarPlayer(this));
-
-    const renderSprite = this.add.renderTexture(-500, -200).setDepth(5);
-    renderSprite.draw('humanoid', 0, 0);
-
-    timer(5000)
-      .subscribe(() => { renderSprite.draw('leather_vest'); });
-    timer(10000)
-      .subscribe(() => { renderSprite.clear();
-      renderSprite.draw('humanoid'); });
   }
 
   preload() {

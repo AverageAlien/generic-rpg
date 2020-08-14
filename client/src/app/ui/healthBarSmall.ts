@@ -26,6 +26,9 @@ export class HealthBarSmall extends Phaser.GameObjects.DOMElement {
     );
     this.setHTML(HealthBarSmall.elementHTML);
 
+    this.updateSize();
+    this.setDepth(target.gameObject.depth + 1);
+
     scene.add.existing(this);
   }
 

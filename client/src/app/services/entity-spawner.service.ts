@@ -29,7 +29,7 @@ export class EntitySpawnerService {
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    ).setDepth(4);
+    ).setDepth(6);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
@@ -87,7 +87,7 @@ export class EntitySpawnerService {
     entity.controller = new WalkerController(entity, this.levelScene, 512);
 
     const healthBar = new UI.HealthBarSmall(this.levelScene, entity);
-    const nameLabel = new UI.EntityHeader(this.levelScene, entity);
+    const nameLabel = new UI.EntityHeader(this.levelScene, entity, false);
 
     entity.destroyed.subscribe(() => {
       healthBar.destroy();
