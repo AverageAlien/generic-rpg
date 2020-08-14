@@ -1211,29 +1211,18 @@ class Level extends phaser__WEBPACK_IMPORTED_MODULE_0__["Scene"] {
                 name: 'Leather vest',
                 texture: 'leather_vest'
             }));
+            stalker.damage(20);
+            this.player.damage(20);
         });
         this.player.equipArmor(new _gameplay_items_armor__WEBPACK_IMPORTED_MODULE_6__["Armor"]({
             name: 'Leather vest',
             texture: 'leather_vest'
         }));
-        // stalker.damage(20);
-        // interval(100)
-        //   .pipe(takeUntil(this.player.destroyed))
-        //   .subscribe(() => { this.player.damage(1); });
         this.backgroundImage = this.add.tileSprite(0, 0, this.sys.game.canvas.width + 100, this.sys.game.canvas.height + 100, 'grass01');
         this.backgroundImage.setDepth(-50);
         this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
         this.events.on('postupdate', this.postupdate.bind(this));
         this.levelUI.push(new _ui_ui__WEBPACK_IMPORTED_MODULE_4__["UI"].HealthBarPlayer(this));
-        const renderSprite = this.add.renderTexture(-500, -200).setDepth(5);
-        renderSprite.draw('humanoid', 0, 0);
-        Object(rxjs__WEBPACK_IMPORTED_MODULE_5__["timer"])(5000)
-            .subscribe(() => { renderSprite.draw('leather_vest'); });
-        Object(rxjs__WEBPACK_IMPORTED_MODULE_5__["timer"])(10000)
-            .subscribe(() => {
-            renderSprite.clear();
-            renderSprite.draw('humanoid');
-        });
     }
     preload() {
         _services_asset_service__WEBPACK_IMPORTED_MODULE_2__["AssetService"].loadBlockSprites(this.load);
@@ -1324,7 +1313,7 @@ class EntitySpawnerService {
         this.levelScene = levelScene;
     }
     spawnPlayer(playerName, position, speed) {
-        const gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(4);
+        const gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(6);
         gameObject.body
             .setSize(_core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_W, _core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_H)
             .setOffset(_core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_OFFSET_X, _core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_OFFSET_Y);
@@ -1363,7 +1352,7 @@ class EntitySpawnerService {
         entity.faction = _core_factions__WEBPACK_IMPORTED_MODULE_3__["Faction"].Baddies;
         entity.controller = new _gameplay_controllers_walkerController__WEBPACK_IMPORTED_MODULE_4__["WalkerController"](entity, this.levelScene, 512);
         const healthBar = new _ui_ui__WEBPACK_IMPORTED_MODULE_5__["UI"].HealthBarSmall(this.levelScene, entity);
-        const nameLabel = new _ui_ui__WEBPACK_IMPORTED_MODULE_5__["UI"].EntityHeader(this.levelScene, entity);
+        const nameLabel = new _ui_ui__WEBPACK_IMPORTED_MODULE_5__["UI"].EntityHeader(this.levelScene, entity, false);
         entity.destroyed.subscribe(() => {
             healthBar.destroy();
             nameLabel.destroy();
@@ -1521,35 +1510,52 @@ LevelLoaderService.ɵprov = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefi
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EntityHeader", function() { return EntityHeader; });
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
+
+
 class EntityHeader extends Phaser.GameObjects.DOMElement {
-    constructor(scene, target) {
+    constructor(scene, target, alwaysVisible = true) {
         super(scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
         this.target = target;
+        this.alwaysVisible = alwaysVisible;
         this.setHTML(EntityHeader.elementHTML);
         const nameLabel = this.getChildByID('name');
         const levelLabel = this.getChildByID('level');
         nameLabel.innerText = target.entityName;
         levelLabel.innerText = target.level.toString();
+        this.updateSize();
+        this.setDepth(target.gameObject.depth + 1);
         scene.add.existing(this);
+        if (!alwaysVisible) {
+            this.setVisible(false);
+            target.gameObject.setInteractive();
+            Object(rxjs__WEBPACK_IMPORTED_MODULE_0__["fromEvent"])(target.gameObject, 'pointerover')
+                .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(target.destroyed))
+                .subscribe(() => {
+                this.setVisible(true);
+            });
+            Object(rxjs__WEBPACK_IMPORTED_MODULE_0__["fromEvent"])(target.gameObject, 'pointerout')
+                .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(target.destroyed))
+                .subscribe(() => {
+                this.setVisible(false);
+            });
+        }
     }
     update(time, delta) {
         super.update(time, delta);
         const bounds = this.target.gameObject.getTopCenter();
-        this.setPosition(bounds.x, bounds.y + 4);
+        this.setPosition(bounds.x, bounds.y - 12);
     }
 }
 EntityHeader.elementHTML = `
     <div style='
-      display: flex;
-      flex-flow: row nowrap;
       color: white;
       font-size: 14px;
       user-select: none;
+      width: fit-content;
     '>
-      [
-      <span id='level'></span>
-      ] -
-      <span id='name'></span>
+      [<span id='level'></span>] <span id='name'></span>
     </div>
   `;
 
@@ -1647,6 +1653,8 @@ class HealthBarSmall extends Phaser.GameObjects.DOMElement {
         super(scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
         this.target = target;
         this.setHTML(HealthBarSmall.elementHTML);
+        this.updateSize();
+        this.setDepth(target.gameObject.depth + 1);
         scene.add.existing(this);
     }
     update(time, delta) {

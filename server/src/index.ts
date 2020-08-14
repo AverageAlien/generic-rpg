@@ -1,16 +1,31 @@
 import * as express from 'express';
+import * as http from 'http';
+import * as io from 'socket.io';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const server = express();
+const app = express();
+const httpServer = new http.Server(app);
+const ioServer = io(httpServer, {
+  path: '/game-ws'
+});
 
 const clientRoot = path.join(__dirname, 'client');
 
-server.get('/test', (req, res) => {
+app.get('/test', (req, res) => {
   res.send('hello world!');
 });
 
-server.get('*', (req, res) => {
+ioServer.on('connection', socket => {
+  console.log(`${socket.client.id} connected.`);
+  
+  socket.on('joinRoom', (roomId: string) => {
+    socket.leaveAll();
+    socket.join(roomId);
+  });
+});
+
+app.get('*', (req, res) => {
   fs.stat(clientRoot + req.path, (err) => {
     if (err) {
       res.sendFile('index.html', { root: clientRoot });
@@ -20,4 +35,4 @@ server.get('*', (req, res) => {
   });
 });
 
-server.listen(42069);
+httpServer.listen(42069);

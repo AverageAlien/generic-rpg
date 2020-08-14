@@ -2095,6 +2095,8 @@
         _createClass(Level, [{
           key: "create",
           value: function create() {
+            var _this9 = this;
+
             this.entitySpawner = new _services_entity_spawner_service__WEBPACK_IMPORTED_MODULE_1__["EntitySpawnerService"]();
             this.entitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
             this.mapGrid = new _core_mapGrid__WEBPACK_IMPORTED_MODULE_3__["MapGrid"](this, 'tileset');
@@ -2106,29 +2108,19 @@
                 name: 'Leather vest',
                 texture: 'leather_vest'
               }));
+              stalker.damage(20);
+
+              _this9.player.damage(20);
             });
             this.player.equipArmor(new _gameplay_items_armor__WEBPACK_IMPORTED_MODULE_6__["Armor"]({
               name: 'Leather vest',
               texture: 'leather_vest'
-            })); // stalker.damage(20);
-            // interval(100)
-            //   .pipe(takeUntil(this.player.destroyed))
-            //   .subscribe(() => { this.player.damage(1); });
-
+            }));
             this.backgroundImage = this.add.tileSprite(0, 0, this.sys.game.canvas.width + 100, this.sys.game.canvas.height + 100, 'grass01');
             this.backgroundImage.setDepth(-50);
             this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
             this.events.on('postupdate', this.postupdate.bind(this));
             this.levelUI.push(new _ui_ui__WEBPACK_IMPORTED_MODULE_4__["UI"].HealthBarPlayer(this));
-            var renderSprite = this.add.renderTexture(-500, -200).setDepth(5);
-            renderSprite.draw('humanoid', 0, 0);
-            Object(rxjs__WEBPACK_IMPORTED_MODULE_5__["timer"])(5000).subscribe(function () {
-              renderSprite.draw('leather_vest');
-            });
-            Object(rxjs__WEBPACK_IMPORTED_MODULE_5__["timer"])(10000).subscribe(function () {
-              renderSprite.clear();
-              renderSprite.draw('humanoid');
-            });
           }
         }, {
           key: "preload",
@@ -2317,9 +2309,9 @@
         }, {
           key: "spawnPlayer",
           value: function spawnPlayer(playerName, position, speed) {
-            var _this9 = this;
+            var _this10 = this;
 
-            var gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(4);
+            var gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(6);
             gameObject.body.setSize(_core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_W, _core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_H).setOffset(_core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_OFFSET_X, _core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_OFFSET_Y);
             var entity = new _gameplay_entities_humanoidEntity__WEBPACK_IMPORTED_MODULE_6__["HumanoidEntity"]({
               name: playerName,
@@ -2331,13 +2323,13 @@
             });
             entity.controller = new _gameplay_controllers_playerController__WEBPACK_IMPORTED_MODULE_1__["PlayerController"](this.inputKeys);
             entity.destroyed.subscribe(function () {
-              var entityIndex = _this9.levelScene.entities.indexOf(entity);
+              var entityIndex = _this10.levelScene.entities.indexOf(entity);
 
               if (entityIndex >= 0) {
-                _this9.levelScene.entities.splice(entityIndex, 1);
+                _this10.levelScene.entities.splice(entityIndex, 1);
               }
 
-              console.log(_this9.levelScene.player);
+              console.log(_this10.levelScene.player);
             });
             this.levelScene.entities.push(entity);
             return entity;
@@ -2345,7 +2337,7 @@
         }, {
           key: "spawnStalker",
           value: function spawnStalker(position, speed) {
-            var _this10 = this;
+            var _this11 = this;
 
             var gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(3);
             gameObject.body.setSize(_core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_W, _core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_H).setOffset(_core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_OFFSET_X, _core_constants__WEBPACK_IMPORTED_MODULE_2__["Constants"].Character.COLLIDER_OFFSET_Y);
@@ -2360,27 +2352,27 @@
             entity.faction = _core_factions__WEBPACK_IMPORTED_MODULE_3__["Faction"].Baddies;
             entity.controller = new _gameplay_controllers_walkerController__WEBPACK_IMPORTED_MODULE_4__["WalkerController"](entity, this.levelScene, 512);
             var healthBar = new _ui_ui__WEBPACK_IMPORTED_MODULE_5__["UI"].HealthBarSmall(this.levelScene, entity);
-            var nameLabel = new _ui_ui__WEBPACK_IMPORTED_MODULE_5__["UI"].EntityHeader(this.levelScene, entity);
+            var nameLabel = new _ui_ui__WEBPACK_IMPORTED_MODULE_5__["UI"].EntityHeader(this.levelScene, entity, false);
             entity.destroyed.subscribe(function () {
               healthBar.destroy();
               nameLabel.destroy();
 
-              var healthBarIndex = _this10.levelScene.levelUI.indexOf(healthBar);
+              var healthBarIndex = _this11.levelScene.levelUI.indexOf(healthBar);
 
               if (healthBarIndex >= 0) {
-                _this10.levelScene.levelUI.splice(healthBarIndex, 1);
+                _this11.levelScene.levelUI.splice(healthBarIndex, 1);
               }
 
-              var labelIndex = _this10.levelScene.levelUI.indexOf(nameLabel);
+              var labelIndex = _this11.levelScene.levelUI.indexOf(nameLabel);
 
               if (labelIndex >= 0) {
-                _this10.levelScene.levelUI.splice(labelIndex, 1);
+                _this11.levelScene.levelUI.splice(labelIndex, 1);
               }
 
-              var entityIndex = _this10.levelScene.entities.indexOf(entity);
+              var entityIndex = _this11.levelScene.entities.indexOf(entity);
 
               if (entityIndex >= 0) {
-                _this10.levelScene.entities.splice(entityIndex, 1);
+                _this11.levelScene.entities.splice(entityIndex, 1);
               }
             });
             this.levelScene.levelUI.push(healthBar);
@@ -2660,6 +2652,18 @@
       __webpack_require__.d(__webpack_exports__, "EntityHeader", function () {
         return EntityHeader;
       });
+      /* harmony import */
+
+
+      var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(
+      /*! rxjs */
+      "./node_modules/rxjs/_esm2015/index.js");
+      /* harmony import */
+
+
+      var rxjs_operators__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(
+      /*! rxjs/operators */
+      "./node_modules/rxjs/_esm2015/operators/index.js");
 
       var EntityHeader = /*#__PURE__*/function (_Phaser$GameObjects$D) {
         _inherits(EntityHeader, _Phaser$GameObjects$D);
@@ -2667,23 +2671,44 @@
         var _super5 = _createSuper(EntityHeader);
 
         function EntityHeader(scene, target) {
-          var _this11;
+          var _this12;
+
+          var alwaysVisible = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
           _classCallCheck(this, EntityHeader);
 
-          _this11 = _super5.call(this, scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
-          _this11.target = target;
+          _this12 = _super5.call(this, scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
+          _this12.target = target;
+          _this12.alwaysVisible = alwaysVisible;
 
-          _this11.setHTML(EntityHeader.elementHTML);
+          _this12.setHTML(EntityHeader.elementHTML);
 
-          var nameLabel = _this11.getChildByID('name');
+          var nameLabel = _this12.getChildByID('name');
 
-          var levelLabel = _this11.getChildByID('level');
+          var levelLabel = _this12.getChildByID('level');
 
           nameLabel.innerText = target.entityName;
           levelLabel.innerText = target.level.toString();
-          scene.add.existing(_assertThisInitialized(_this11));
-          return _this11;
+
+          _this12.updateSize();
+
+          _this12.setDepth(target.gameObject.depth + 1);
+
+          scene.add.existing(_assertThisInitialized(_this12));
+
+          if (!alwaysVisible) {
+            _this12.setVisible(false);
+
+            target.gameObject.setInteractive();
+            Object(rxjs__WEBPACK_IMPORTED_MODULE_0__["fromEvent"])(target.gameObject, 'pointerover').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(target.destroyed)).subscribe(function () {
+              _this12.setVisible(true);
+            });
+            Object(rxjs__WEBPACK_IMPORTED_MODULE_0__["fromEvent"])(target.gameObject, 'pointerout').pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["takeUntil"])(target.destroyed)).subscribe(function () {
+              _this12.setVisible(false);
+            });
+          }
+
+          return _this12;
         }
 
         _createClass(EntityHeader, [{
@@ -2692,14 +2717,14 @@
             _get(_getPrototypeOf(EntityHeader.prototype), "update", this).call(this, time, delta);
 
             var bounds = this.target.gameObject.getTopCenter();
-            this.setPosition(bounds.x, bounds.y + 4);
+            this.setPosition(bounds.x, bounds.y - 12);
           }
         }]);
 
         return EntityHeader;
       }(Phaser.GameObjects.DOMElement);
 
-      EntityHeader.elementHTML = "\n    <div style='\n      display: flex;\n      flex-flow: row nowrap;\n      color: white;\n      font-size: 14px;\n      user-select: none;\n    '>\n      [\n      <span id='level'></span>\n      ] -\n      <span id='name'></span>\n    </div>\n  ";
+      EntityHeader.elementHTML = "\n    <div style='\n      color: white;\n      font-size: 14px;\n      user-select: none;\n      width: fit-content;\n    '>\n      [<span id='level'></span>] <span id='name'></span>\n    </div>\n  ";
       /***/
     },
 
@@ -2729,19 +2754,19 @@
         var _super6 = _createSuper(HealthBarPlayer);
 
         function HealthBarPlayer(levelScene) {
-          var _this12;
+          var _this13;
 
           _classCallCheck(this, HealthBarPlayer);
 
-          _this12 = _super6.call(this, levelScene, 70, 14, 'div');
-          _this12.levelScene = levelScene;
+          _this13 = _super6.call(this, levelScene, 70, 14, 'div');
+          _this13.levelScene = levelScene;
 
-          _this12.setHTML(HealthBarPlayer.elementHTML);
+          _this13.setHTML(HealthBarPlayer.elementHTML);
 
-          _this12.setScrollFactor(0);
+          _this13.setScrollFactor(0);
 
-          levelScene.add.existing(_assertThisInitialized(_this12));
-          return _this12;
+          levelScene.add.existing(_assertThisInitialized(_this13));
+          return _this13;
         }
 
         _createClass(HealthBarPlayer, [{
@@ -2788,17 +2813,21 @@
         var _super7 = _createSuper(HealthBarSmall);
 
         function HealthBarSmall(scene, target) {
-          var _this13;
+          var _this14;
 
           _classCallCheck(this, HealthBarSmall);
 
-          _this13 = _super7.call(this, scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
-          _this13.target = target;
+          _this14 = _super7.call(this, scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
+          _this14.target = target;
 
-          _this13.setHTML(HealthBarSmall.elementHTML);
+          _this14.setHTML(HealthBarSmall.elementHTML);
 
-          scene.add.existing(_assertThisInitialized(_this13));
-          return _this13;
+          _this14.updateSize();
+
+          _this14.setDepth(target.gameObject.depth + 1);
+
+          scene.add.existing(_assertThisInitialized(_this14));
+          return _this14;
         }
 
         _createClass(HealthBarSmall, [{

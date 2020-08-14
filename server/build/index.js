@@ -1,14 +1,24 @@
 "use strict";
 exports.__esModule = true;
 var express = require("express");
+var http = require("http");
+var io = require("socket.io");
 var fs = require("fs");
 var path = require("path");
-var server = express();
+var app = express();
+var httpServer = new http.Server(app);
+var ioServer = io(httpServer, {
+    path: '/ws-test'
+});
 var clientRoot = path.join(__dirname, 'client');
-server.get('/test', function (req, res) {
+app.get('/test', function (req, res) {
     res.send('hello world!');
 });
-server.get('*', function (req, res) {
+ioServer.on('connection', function (socket) {
+    console.log(socket.client.id + " connected.");
+    console.log(ioServer.origins());
+});
+app.get('*', function (req, res) {
     fs.stat(clientRoot + req.path, function (err) {
         if (err) {
             res.sendFile('index.html', { root: clientRoot });
@@ -18,4 +28,4 @@ server.get('*', function (req, res) {
         }
     });
 });
-server.listen(42069);
+httpServer.listen(42069);
