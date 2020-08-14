@@ -8,7 +8,7 @@ export class EntityHeader extends Phaser.GameObjects.DOMElement {
       flex-flow: row nowrap;
       color: white;
       font-size: 14px;
-      -webkit-text-stroke: black 1px;
+      user-select: none;
     '>
       [
       <span id='level'></span>
