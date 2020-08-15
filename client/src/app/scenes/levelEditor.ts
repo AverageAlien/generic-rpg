@@ -25,6 +25,9 @@ export class LevelEditor extends Level {
     this.input.on('gameover', () => {
       this.cursorActive = true;
     });
+    window.addEventListener('resize', () => {
+      this.game.scale.updateBounds();
+    });
   }
 
   update() {
