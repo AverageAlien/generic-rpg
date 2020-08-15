@@ -1,7 +1,5 @@
-import { Injectable } from '@angular/core';
 import { InputKeys } from '../models/inputKeys.model';
 import { Level } from '../scenes/levelScene';
-import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
@@ -10,9 +8,6 @@ import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 
 
-@Injectable({
-  providedIn: 'root',
-})
 export class EntitySpawnerService {
   private inputKeys: InputKeys;
   private levelScene: Level;

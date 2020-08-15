@@ -7,7 +7,7 @@ import { BlockIds } from '../core/blocks';
   providedIn: 'root'
 })
 export class LevelLoaderService {
-  public exportLevel(level: Level): string {
+  public static exportLevel(level: Level): string {
     const minLevel: LevelSerialization.MinifiedLevel = {
       l: []
     };
@@ -22,7 +22,7 @@ export class LevelLoaderService {
     return JSON.stringify(minLevel);
   }
 
-  public importlevel(levelJson: string, level: Level): void {
+  public static importlevel(levelJson: string, level: Level): void {
     const minLevel: LevelSerialization.MinifiedLevel = JSON.parse(levelJson);
 
     for (const layer of minLevel.l) {

@@ -1,8 +1,3 @@
-import { Injectable } from '@angular/core';
-
-@Injectable({
-  providedIn: 'root'
-})
 export class AssetService {
   public static loadBlockSprites(loader: Phaser.Loader.LoaderPlugin): void {
     loader.image('grass01', 'assets/textures/blocks/grass01.png');

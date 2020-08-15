@@ -2,9 +2,9 @@ import { Component, OnInit, NgZone } from '@angular/core';
 import Phaser from 'phaser';
 import { Socket } from 'ngx-socket-io';
 
-import { InputService } from 'src/app/services/input.service';
+import { InputService } from 'src/app/gameServices/input.service';
 import { Level } from 'src/app/scenes/levelScene';
-import { LevelLoaderService } from 'src/app/services/level-loader.service';
+import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
 
 @Component({
@@ -18,11 +18,9 @@ export class GameCanvasComponent implements OnInit {
   level: Level;
 
   constructor(
-    private inputService: InputService,
-    private levelLoader: LevelLoaderService,
     private ngZone: NgZone
   ) {
-    this.level = new Level(inputService, levelLoader);
+    this.level = new Level(new InputService());
 
     this.config = {
       type: Phaser.AUTO,
@@ -47,7 +45,7 @@ export class GameCanvasComponent implements OnInit {
   }
 
   onExportLevel() {
-    console.log(this.levelLoader.exportLevel(this.level));
+    console.log(LevelLoaderService.exportLevel(this.level));
   }
 
   onImportLevel() {
@@ -55,6 +53,6 @@ export class GameCanvasComponent implements OnInit {
 
     if (!levelJson) { return; }
 
-    this.levelLoader.importlevel(levelJson, this.level);
+    LevelLoaderService.importlevel(levelJson, this.level);
   }
 }

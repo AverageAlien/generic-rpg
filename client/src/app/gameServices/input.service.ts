@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { InputKeys } from '../models/inputKeys.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+
 export class InputService {
   private inputs = {
     up: 'W',

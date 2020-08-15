@@ -1,7 +1,7 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import { Level } from 'src/app/scenes/levelScene';
-import { InputService } from 'src/app/services/input.service';
-import { LevelLoaderService } from 'src/app/services/level-loader.service';
+import { InputService } from 'src/app/gameServices/input.service';
+import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
 import { LevelEditor } from 'src/app/scenes/levelEditor';
 
@@ -16,11 +16,9 @@ export class LevelEditorComponent implements OnInit {
   level: Level;
 
   constructor(
-    private inputService: InputService,
-    private levelLoader: LevelLoaderService,
     private ngZone: NgZone
   ) {
-    this.level = new LevelEditor(inputService, levelLoader);
+    this.level = new LevelEditor(new InputService());
 
     this.config = {
       type: Phaser.AUTO,
@@ -43,7 +41,7 @@ export class LevelEditorComponent implements OnInit {
   }
 
   onExportLevel() {
-    console.log(this.levelLoader.exportLevel(this.level));
+    console.log(LevelLoaderService.exportLevel(this.level));
   }
 
   onImportLevel() {
@@ -51,6 +49,6 @@ export class LevelEditorComponent implements OnInit {
 
     if (!levelJson) { return; }
 
-    this.levelLoader.importlevel(levelJson, this.level);
+    LevelLoaderService.importlevel(levelJson, this.level);
   }
 }
