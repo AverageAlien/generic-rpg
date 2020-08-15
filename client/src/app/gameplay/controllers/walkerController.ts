@@ -1,11 +1,11 @@
 import { Controller } from './baseController';
-import { Level } from 'src/app/scenes/levelScene';
 import { CharacterEntity } from '../entities/characterEntity';
 import { FactionsAreFriendly } from 'src/app/core/factions';
 import { Entity } from '../entities/baseEntity';
 import PF, { DiagonalMovement } from 'pathfinding';
 import { Constants } from 'src/app/core/constants';
 import { GameObjects } from 'phaser';
+import { LevelScene } from 'src/app/core/levelScene';
 
 export class WalkerController implements Controller {
   private target: Entity = null;
@@ -26,7 +26,7 @@ export class WalkerController implements Controller {
 
   constructor(
     private myself: CharacterEntity,
-    private levelScene: Level,
+    private levelScene: LevelScene,
     public aggroRadius: number = 256,
     public unaggroRadius: number = aggroRadius * Math.SQRT2,
     public minRange: number = 64
@@ -78,10 +78,6 @@ export class WalkerController implements Controller {
     if (!this.pathWaypoints || this.timeSinceLastSearch >= this.searchFrequency) {
       this.pathWaypoints = this.buildPathToTarget(targetPos);
       this.timeSinceLastSearch = 0;
-
-      if (!this.pathWaypoints) {
-        debugger;
-      }
     }
 
     if (this.pathWaypoints.length === 0) {
@@ -156,12 +152,12 @@ export class WalkerController implements Controller {
         grid
       );
     } catch {
-      debugger;
+      throw new Error('Findpath error.');
     }
 
-    if (this._DEBUG) {
-      this._drawDebug(this.levelScene.debugGraphics, matrix, path, myPos, targetPos, gridLowerCorner);
-    }
+    // if (this._DEBUG && (this as any).debugGraphics instanceof GameObjects.Graphics) {
+    //   this._drawDebug(this.levelScene.debugGraphics, matrix, path, myPos, targetPos, gridLowerCorner);
+    // }
 
     if (!path) {
       return null;

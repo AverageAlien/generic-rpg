@@ -1,4 +1,4 @@
-import { Level } from '../scenes/levelScene';
+import { ClientLevel } from '../scenes/clientLevel';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
 
 export class HealthBarSmall extends Phaser.GameObjects.DOMElement {
@@ -17,7 +17,7 @@ export class HealthBarSmall extends Phaser.GameObjects.DOMElement {
     </div>
   `;
 
-  constructor(scene: Level, public target: CharacterEntity) {
+  constructor(scene: ClientLevel, public target: CharacterEntity) {
     super(
       scene,
       target.gameObject.body.position.x,

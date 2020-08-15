@@ -1,45 +1,43 @@
-import { InputKeys } from '../models/inputKeys.model';
-import { ClientLevel } from '../scenes/clientLevel';
-import { PlayerController } from '../gameplay/controllers/playerController';
-import { Constants } from '../core/constants';
-import { Faction } from '../core/factions';
-import { WalkerController } from '../gameplay/controllers/walkerController';
-import { UI } from '../ui/ui';
-import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
+import { v4 as UUID } from 'uuid';
+import { EntitySpawnerService } from 'src/gameData/gameServices/entity-spawner.service';
+import { NetworkLevel } from 'src/gameData/scenes/networkLevel';
+import { InputKeys } from 'src/gameData/models/inputKeys.model';
+import { HumanoidEntity } from 'src/gameData/gameplay/entities/humanoidEntity';
+import { PlayerController } from 'src/gameData/gameplay/controllers/playerController';
+import { WalkerController } from 'src/gameData/gameplay/controllers/walkerController';
+import { UI } from 'src/gameData/ui/ui';
+import { GameClient } from 'src/models/gameClient';
+import { Constants } from 'src/core/constants';
+import { Faction } from 'src/core/factions';
+import { ClientController } from 'src/serverCore/clientController';
 
+export class NetworkEntitySpawner {
+  constructor(private levelScene: NetworkLevel) {}
 
-export class EntitySpawnerService {
-  private inputKeys: InputKeys;
-  private levelScene: ClientLevel;
-
-  public init(inputKeys: InputKeys, levelScene: ClientLevel) {
-    this.inputKeys = inputKeys;
-    this.levelScene = levelScene;
-  }
-
-  public spawnPlayer(playerName: string, position: Phaser.Math.Vector2, speed: number): HumanoidEntity {
+  public spawnPlayer(gameClient: GameClient, position: Phaser.Math.Vector2): HumanoidEntity {
     const gameObject = this.createRenderTexture(
       position,
       new Phaser.Math.Vector2(
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    ).setDepth(6);
+    );
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
       .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
 
     const entity = new HumanoidEntity({
-      name: playerName,
+      name: gameClient.nickname,
       gameObject,
       maxHealth: 100,
       level: 1,
-      speed,
+      speed: 30,
       bodyTexture: 'humanoid'
     });
 
-    entity.controller = new PlayerController(this.inputKeys);
+    entity.networkId = UUID();
+    entity.controller = new ClientController(gameClient.socket);
 
     entity.destroyed.subscribe(() => {
       const entityIndex = this.levelScene.entities.indexOf(entity);
@@ -47,8 +45,6 @@ export class EntitySpawnerService {
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
-
-      console.log(this.levelScene.player);
     });
 
     this.levelScene.entities.push(entity);
@@ -63,7 +59,7 @@ export class EntitySpawnerService {
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    ).setDepth(3);
+    );
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
@@ -78,34 +74,17 @@ export class EntitySpawnerService {
       bodyTexture: 'humanoid'
     });
 
+    entity.networkId = UUID();
     entity.faction = Faction.Baddies;
     entity.controller = new WalkerController(entity, this.levelScene, 512);
 
-    const healthBar = new UI.HealthBarSmall(this.levelScene, entity);
-    const nameLabel = new UI.EntityHeader(this.levelScene, entity, false);
-
     entity.destroyed.subscribe(() => {
-      healthBar.destroy();
-      nameLabel.destroy();
-
-      const healthBarIndex = this.levelScene.levelUI.indexOf(healthBar);
-      if (healthBarIndex >= 0) {
-        this.levelScene.levelUI.splice(healthBarIndex, 1);
-      }
-
-      const labelIndex = this.levelScene.levelUI.indexOf(nameLabel);
-      if (labelIndex >= 0) {
-        this.levelScene.levelUI.splice(labelIndex, 1);
-      }
-
       const entityIndex = this.levelScene.entities.indexOf(entity);
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
     });
 
-    this.levelScene.levelUI.push(healthBar);
-    this.levelScene.levelUI.push(nameLabel);
     this.levelScene.entities.push(entity);
 
     return entity;

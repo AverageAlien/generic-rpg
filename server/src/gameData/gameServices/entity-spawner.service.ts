@@ -1,5 +1,5 @@
 import { InputKeys } from '../models/inputKeys.model';
-import { Level } from '../scenes/levelScene';
+import { ClientLevel } from '../scenes/clientLevel';
 import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
@@ -10,9 +10,9 @@ import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 
 export class EntitySpawnerService {
   private inputKeys: InputKeys;
-  private levelScene: Level;
+  private levelScene: ClientLevel;
 
-  public init(inputKeys: InputKeys, levelScene: Level) {
+  public init(inputKeys: InputKeys, levelScene: ClientLevel) {
     this.inputKeys = inputKeys;
     this.levelScene = levelScene;
   }

@@ -1,0 +1,1 @@
+export { PacketSpawnPlayer as SpawnPlayer} from './spawnPlayer';

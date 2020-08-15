@@ -1,5 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
-import { Level } from 'src/app/scenes/levelScene';
+import { ClientLevel } from 'src/app/scenes/clientLevel';
 import { InputService } from 'src/app/gameServices/input.service';
 import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
@@ -13,7 +13,7 @@ import { LevelEditor } from 'src/app/scenes/levelEditor';
 export class LevelEditorComponent implements OnInit {
   phaserGame: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
-  level: Level;
+  level: ClientLevel;
 
   constructor(
     private ngZone: NgZone

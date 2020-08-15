@@ -1,15 +1,15 @@
 import { Controller } from './baseController';
-import { Level } from 'src/app/scenes/levelScene';
 import { CharacterEntity } from '../entities/characterEntity';
 import { FactionsAreFriendly } from 'src/app/core/factions';
 import { Entity } from '../entities/baseEntity';
+import { LevelScene } from 'src/app/core/levelScene';
 
 export class StupidStalkerController implements Controller {
   private target: Entity = null;
 
   constructor(
     private myself: CharacterEntity,
-    private levelScene: Level,
+    private levelScene: LevelScene,
     public aggroRadius: number = 256,
     public unaggroRadius: number = aggroRadius,
     public minRange: number = 64

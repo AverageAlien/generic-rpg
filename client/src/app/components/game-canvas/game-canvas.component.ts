@@ -3,7 +3,7 @@ import Phaser from 'phaser';
 import { Socket } from 'ngx-socket-io';
 
 import { InputService } from 'src/app/gameServices/input.service';
-import { Level } from 'src/app/scenes/levelScene';
+import { ClientLevel } from 'src/app/scenes/clientLevel';
 import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
 
@@ -15,12 +15,12 @@ import { Constants } from 'src/app/core/constants';
 export class GameCanvasComponent implements OnInit {
   phaserGame: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
-  level: Level;
+  level: ClientLevel;
 
   constructor(
     private ngZone: NgZone
   ) {
-    this.level = new Level(new InputService());
+    this.level = new ClientLevel(new InputService());
 
     this.config = {
       type: Phaser.AUTO,

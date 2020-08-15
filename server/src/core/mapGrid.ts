@@ -1,15 +1,15 @@
 import { Tilemaps } from 'phaser';
 import { BlockInfo, Blocks, BlockIds, BlockType } from './blocks';
-import { LevelSerialization } from '../models/levelSerialization.model';
 import { Constants } from './constants';
-import { Level } from '../scenes/levelScene';
+import { LevelScene } from './levelScene';
+import { LevelSerialization } from 'src/gameData/models/levelSerialization.model';
 
 export class MapGrid {
   private tileMap: Tilemaps.Tilemap;
   private chunks: Tilemaps.DynamicTilemapLayer[][][] = [];
   private collidingBlocks: number[];
 
-  constructor(private levelScene: Level, private tileSet: string) {
+  constructor(private levelScene: LevelScene, private tileSet: string) {
     this.tileMap = levelScene.make.tilemap({
       width: Constants.Level.CHUNK_W,
       height: Constants.Level.CHUNK_H,

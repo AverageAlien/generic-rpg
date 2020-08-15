@@ -1,10 +1,10 @@
-import { Level } from './levelScene';
+import { ClientLevel } from './clientLevel';
 import { GameObjects } from 'phaser';
 import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
 import { Constants } from '../core/constants';
 import { MapGrid } from '../core/mapGrid';
 
-export class LevelEditor extends Level {
+export class LevelEditor extends ClientLevel {
   private grid: GameObjects.Grid;
   private cursorActive = true;
 

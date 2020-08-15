@@ -18,7 +18,7 @@ app.get('/test', (req, res) => {
 
 ioServer.on('connection', socket => {
   console.log(`${socket.client.id} connected.`);
-  
+
   socket.on('joinRoom', (roomId: string) => {
     socket.leaveAll();
     socket.join(roomId);

@@ -1,4 +1,4 @@
-import { Level } from '../scenes/levelScene';
+import { ClientLevel } from '../scenes/clientLevel';
 
 export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
   private static readonly elementHTML = `
@@ -48,7 +48,7 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     </div>
   `;
 
-  constructor(private levelScene: Level) {
+  constructor(private levelScene: ClientLevel) {
     super(
       levelScene,
       70,

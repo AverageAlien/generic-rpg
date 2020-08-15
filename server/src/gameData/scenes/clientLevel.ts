@@ -1,19 +1,16 @@
-import { Scene, GameObjects, Tilemaps } from 'phaser';
+import { Scene, GameObjects } from 'phaser';
 import { InputService } from '../gameServices/input.service';
 import { Entity } from '../gameplay/entities/baseEntity';
 import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
-import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { AssetService } from '../gameServices/asset.service';
 import { MapGrid } from '../core/mapGrid';
-import { LevelLoaderService } from '../gameServices/level-loader.service';
 import { UI } from '../ui/ui';
-import { interval, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
-import { Armor } from '../gameplay/items/armor';
+import { LevelScene } from '../core/levelScene';
 
-export class Level extends Scene {
+export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
+  public levelName = 'Default level';
   public entities: Entity[] = [];
   public levelUI: GameObjects.DOMElement[] = [];
   public player: HumanoidEntity;

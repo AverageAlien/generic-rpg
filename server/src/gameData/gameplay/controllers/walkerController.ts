@@ -1,11 +1,12 @@
 import { Controller } from './baseController';
-import { Level } from 'src/app/scenes/levelScene';
+import { ClientLevel } from 'src/app/scenes/clientLevel';
 import { CharacterEntity } from '../entities/characterEntity';
 import { FactionsAreFriendly } from 'src/app/core/factions';
 import { Entity } from '../entities/baseEntity';
 import PF, { DiagonalMovement } from 'pathfinding';
 import { Constants } from 'src/app/core/constants';
 import { GameObjects } from 'phaser';
+import { LevelScene } from 'src/app/core/levelScene';
 
 export class WalkerController implements Controller {
   private target: Entity = null;
@@ -26,7 +27,7 @@ export class WalkerController implements Controller {
 
   constructor(
     private myself: CharacterEntity,
-    private levelScene: Level,
+    private levelScene: LevelScene,
     public aggroRadius: number = 256,
     public unaggroRadius: number = aggroRadius * Math.SQRT2,
     public minRange: number = 64
@@ -159,7 +160,7 @@ export class WalkerController implements Controller {
       debugger;
     }
 
-    if (this._DEBUG) {
+    if (this._DEBUG && this.levelScene instanceof ClientLevel) {
       this._drawDebug(this.levelScene.debugGraphics, matrix, path, myPos, targetPos, gridLowerCorner);
     }
 

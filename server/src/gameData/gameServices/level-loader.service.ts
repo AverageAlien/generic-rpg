@@ -1,13 +1,9 @@
-import { Injectable } from '@angular/core';
-import { Level } from '../scenes/levelScene';
 import { LevelSerialization } from '../models/levelSerialization.model';
-import { BlockIds } from '../core/blocks';
+import { LevelScene } from 'src/core/levelScene';
+import { BlockIds } from 'src/core/blocks';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class LevelLoaderService {
-  public static exportLevel(level: Level): string {
+  public static exportLevel(level: LevelScene): string {
     const minLevel: LevelSerialization.MinifiedLevel = {
       l: []
     };
@@ -22,7 +18,7 @@ export class LevelLoaderService {
     return JSON.stringify(minLevel);
   }
 
-  public static importlevel(levelJson: string, level: Level): void {
+  public static importlevel(levelJson: string, level: LevelScene): void {
     const minLevel: LevelSerialization.MinifiedLevel = JSON.parse(levelJson);
 
     for (const layer of minLevel.l) {

@@ -1,5 +1,5 @@
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
-import { Level } from '../scenes/levelScene';
+import { ClientLevel } from '../scenes/clientLevel';
 import { fromEvent } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -15,7 +15,7 @@ export class EntityHeader extends Phaser.GameObjects.DOMElement {
     </div>
   `;
 
-  constructor(scene: Level, public target: CharacterEntity, public alwaysVisible = true) {
+  constructor(scene: ClientLevel, public target: CharacterEntity, public alwaysVisible = true) {
     super(
       scene,
       target.gameObject.body.position.x,
