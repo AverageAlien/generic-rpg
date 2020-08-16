@@ -1,69 +1,65 @@
-"use strict";
-exports.__esModule = true;
-var Phaser = require("phaser");
-var networkLevel_1 = require("../gameData/scenes/networkLevel");
-var constants_1 = require("../core/constants");
-var rxjs_1 = require("rxjs");
-var clientPackets_1 = require("../networkPackets/fromClient/clientPackets");
-var room_1 = require("../models/room");
-var defaultRoom = 'test01';
-var RoomService = /** @class */ (function () {
-    function RoomService(server) {
-        var _this = this;
+import * as Phaser from 'phaser';
+import { NetworkLevel } from '../gameData/scenes/networkLevel';
+import { Constants } from '../core/constants';
+import { fromEvent } from 'rxjs';
+import { ClientPackets } from '../networkPackets/fromClient/clientPackets';
+import { Room } from '../models/room';
+const defaultRoom = 'test01';
+export class RoomService {
+    constructor(server) {
         this.server = server;
         this.rooms = [];
-        server.on('connection', function (socket) {
-            console.log(socket.client.id + " connected.");
-            var oldRoomName;
-            rxjs_1.fromEvent(socket, clientPackets_1.ClientPackets.CLIENT_INIT)
-                .subscribe(function (packet) {
+        server.on('connection', socket => {
+            console.log(`${socket.client.id} connected.`);
+            let oldRoomName;
+            fromEvent(socket, ClientPackets.CLIENT_INIT)
+                .subscribe(packet => {
                 socket.leaveAll();
                 socket.join('test_01');
-                _this.playerJoinRoom(socket, packet.username, 'test_01', oldRoomName);
+                this.playerJoinRoom(socket, packet.username, 'test_01', oldRoomName);
                 oldRoomName = 'test_01';
             });
         });
     }
-    RoomService.prototype.playerJoinRoom = function (socket, playerName, roomName, oldRoomName) {
+    playerJoinRoom(socket, playerName, roomName, oldRoomName) {
         if (oldRoomName) {
-            var oldRoom = this.rooms.find(function (r) { return r.roomName === oldRoomName; });
+            const oldRoom = this.rooms.find(r => r.roomName === oldRoomName);
             if (oldRoom) {
-                var oldPlayer = oldRoom.location.clients.findIndex(function (gc) { return gc.socket === socket; });
+                const oldPlayer = oldRoom.location.clients.findIndex(gc => gc.socket === socket);
                 if (oldPlayer >= 0) {
                     oldRoom.location.clients.splice(oldPlayer, 1);
                 }
             }
         }
-        var targetRoom = this.rooms.find(function (r) { return r.roomName === roomName; });
+        let targetRoom = this.rooms.find(r => r.roomName === roomName);
         if (!targetRoom) {
             targetRoom = this.createRoom(roomName);
         }
         targetRoom.location.addPlayer({
             nickname: playerName,
-            socket: socket
+            socket
         });
-    };
-    RoomService.prototype.createRoom = function (roomName) {
-        var room = new room_1.Room();
+    }
+    createRoom(roomName) {
+        const room = new Room();
         room.roomName = roomName;
-        room.location = new networkLevel_1.NetworkLevel(this.server, roomName);
-        var gameConfig = {
+        room.location = new NetworkLevel(this.server, roomName);
+        const gameConfig = {
             type: Phaser.HEADLESS,
-            height: constants_1.Constants.Screen.SCREEN_H,
-            width: constants_1.Constants.Screen.SCREEN_W,
+            height: Constants.Screen.SCREEN_H,
+            width: Constants.Screen.SCREEN_W,
             scene: [room.location],
             parent: 'gameContainer',
             physics: {
-                "default": 'arcade'
+                default: 'arcade',
             },
             dom: {
-                createContainer: true
-            }
+                createContainer: true,
+            },
         };
         room.game = new Phaser.Game(gameConfig);
         this.rooms.push(room);
         return room;
-    };
-    return RoomService;
-}());
-exports.RoomService = RoomService;
+    }
+}
+//# sourceMappingURL=roomService.js.map

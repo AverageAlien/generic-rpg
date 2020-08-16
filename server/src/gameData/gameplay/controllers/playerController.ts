@@ -1,5 +1,5 @@
 import { Controller } from './baseController';
-import { InputKeys } from 'src/gameData/models/inputKeys.model';
+import { InputKeys } from '../../../gameData/models/inputKeys.model';
 
 export class PlayerController implements Controller {
   constructor(private inputKeys: InputKeys) {}

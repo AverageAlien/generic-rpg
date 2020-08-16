@@ -1,7 +1,7 @@
 import * as io from 'socket.io';
 import { Controller } from './baseController';
-import { ClientPackets } from 'src/networkPackets/fromClient/clientPackets';
-import { PacketMoveInput } from 'src/networkPackets/fromClient/moveInput';
+import { ClientPackets } from '../../../networkPackets/fromClient/clientPackets';
+import { PacketMoveInput } from '../../../networkPackets/fromClient/moveInput';
 import { Subject } from 'rxjs';
 import { Controllable } from '../entities/baseEntity';
 

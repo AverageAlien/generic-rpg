@@ -4,8 +4,8 @@ import { PlayerController } from '../gameplay/controllers/playerController';
 import { WalkerController } from '../gameplay/controllers/walkerController';
 import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
-import { Constants } from 'src/core/constants';
-import { Faction } from 'src/core/factions';
+import { Constants } from '../../core/constants';
+import { Faction } from '../../core/factions';
 
 
 export class EntitySpawnerService {

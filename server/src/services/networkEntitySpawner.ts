@@ -1,15 +1,11 @@
 import { v4 as UUID } from 'uuid';
-import { EntitySpawnerService } from 'src/gameData/gameServices/entity-spawner.service';
-import { NetworkLevel } from 'src/gameData/scenes/networkLevel';
-import { InputKeys } from 'src/gameData/models/inputKeys.model';
-import { HumanoidEntity } from 'src/gameData/gameplay/entities/humanoidEntity';
-import { PlayerController } from 'src/gameData/gameplay/controllers/playerController';
-import { WalkerController } from 'src/gameData/gameplay/controllers/walkerController';
-import { UI } from 'src/gameData/ui/ui';
-import { GameClient } from 'src/models/gameClient';
-import { Constants } from 'src/core/constants';
-import { Faction } from 'src/core/factions';
-import { ClientController } from 'src/gameData/gameplay/controllers/clientController';
+import { NetworkLevel } from '../gameData/scenes/networkLevel';
+import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
+import { WalkerController } from '../gameData/gameplay/controllers/walkerController';
+import { GameClient } from '../models/gameClient';
+import { Constants } from '../core/constants';
+import { Faction } from '../core/factions';
+import { ClientController } from '../gameData/gameplay/controllers/clientController';
 import { NetworkControllerService } from './networkControllerService';
 
 export class NetworkEntitySpawner {

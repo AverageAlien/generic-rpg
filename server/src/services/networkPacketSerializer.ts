@@ -1,16 +1,16 @@
-import { Entity } from 'src/gameData/gameplay/entities/baseEntity';
-import { ServerPackets } from 'src/networkPackets/fromServer/serverPackets';
+import { Entity } from '../gameData/gameplay/entities/baseEntity';
+import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
 import {
   PacketSpawnEntity,
   PacketSpawnEntityHumanoid,
   PacketSpawnEntityCharacter,
-} from 'src/networkPackets/fromServer/spawnEntity';
-import { HumanoidEntity } from 'src/gameData/gameplay/entities/humanoidEntity';
-import { CharacterEntity } from 'src/gameData/gameplay/entities/characterEntity';
-import { LevelScene } from 'src/core/levelScene';
-import { PacketInitLevel } from 'src/networkPackets/fromServer/initLevel';
-import { LevelLoaderService } from 'src/gameData/gameServices/level-loader.service';
-import { PacketSpawnPlayer } from 'src/networkPackets/fromServer/spawnPlayer';
+} from '../networkPackets/fromServer/spawnEntity';
+import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
+import { CharacterEntity } from '../gameData/gameplay/entities/characterEntity';
+import { LevelScene } from '../core/levelScene';
+import { PacketInitLevel } from '../networkPackets/fromServer/initLevel';
+import { LevelLoaderService } from '../gameData/gameServices/level-loader.service';
+import { PacketSpawnPlayer } from '../networkPackets/fromServer/spawnPlayer';
 
 export class NetworkPacketSerializer {
   static spawnEntity(ent: Entity): [ServerPackets, PacketSpawnEntity] {

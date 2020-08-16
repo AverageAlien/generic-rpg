@@ -1,6 +1,6 @@
 import { LevelSerialization } from '../models/levelSerialization.model';
-import { LevelScene } from 'src/core/levelScene';
-import { BlockIds } from 'src/core/blocks';
+import { LevelScene } from '../../core/levelScene';
+import { BlockIds } from '../../core/blocks';
 
 export class LevelLoaderService {
   public static exportLevel(level: LevelScene): string {

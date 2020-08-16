@@ -1,8 +1,8 @@
 import { ClientLevel } from './clientLevel';
 import { GameObjects } from 'phaser';
 import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
-import { MapGrid } from 'src/core/mapGrid';
-import { Constants } from 'src/core/constants';
+import { MapGrid } from '../../core/mapGrid';
+import { Constants } from '../../core/constants';
 
 export class LevelEditor extends ClientLevel {
   private grid: GameObjects.Grid;

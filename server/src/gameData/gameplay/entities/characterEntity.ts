@@ -2,8 +2,8 @@ import { Entity, Controllable, Destroyable } from './baseEntity';
 import { GameObjects } from 'phaser';
 import { Subject, Observable } from 'rxjs';
 import { Controller } from '../controllers/baseController';
-import { Constants } from 'src/app/core/constants';
-import { Faction } from 'src/app/core/factions';
+import { Constants } from '../../../core/constants';
+import { Faction } from '../../../core/factions';
 
 
 export class CharacterEntity implements Entity, Controllable, Destroyable {

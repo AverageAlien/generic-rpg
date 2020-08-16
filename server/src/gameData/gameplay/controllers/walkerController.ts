@@ -1,12 +1,12 @@
 import { Controller } from './baseController';
-import { ClientLevel } from 'src/app/scenes/clientLevel';
 import { CharacterEntity } from '../entities/characterEntity';
-import { FactionsAreFriendly } from 'src/app/core/factions';
 import { Entity } from '../entities/baseEntity';
 import PF, { DiagonalMovement } from 'pathfinding';
-import { Constants } from 'src/app/core/constants';
 import { GameObjects } from 'phaser';
-import { LevelScene } from 'src/app/core/levelScene';
+import { Constants } from '../../../core/constants';
+import { LevelScene } from '../../../core/levelScene';
+import { ClientLevel } from '../../../gameData/scenes/clientLevel';
+import { FactionsAreFriendly } from '../../../core/factions';
 
 export class WalkerController implements Controller {
   private target: Entity = null;

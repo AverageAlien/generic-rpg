@@ -1,4 +1,4 @@
-import { LocationInfo } from 'src/models/locationInfo';
+import { LocationInfo } from '../models/locationInfo';
 
 export const LocationList = new Map<string, LocationInfo>([
     ['test01', {locationName: 'Test area 01', levelData: `

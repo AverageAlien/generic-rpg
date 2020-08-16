@@ -1,5 +1,5 @@
-import { Faction } from 'src/core/factions';
-import { Armor } from 'src/gameData/gameplay/items/armor';
+import { Faction } from '../../core/factions';
+import { Armor } from '../../gameData/gameplay/items/armor';
 
 export interface PacketSpawnEntity {
     entityName: string;

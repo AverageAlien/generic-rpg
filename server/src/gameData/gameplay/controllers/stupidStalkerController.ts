@@ -1,8 +1,8 @@
 import { Controller } from './baseController';
 import { CharacterEntity } from '../entities/characterEntity';
 import { Entity } from '../entities/baseEntity';
-import { LevelScene } from 'src/core/levelScene';
-import { FactionsAreFriendly } from 'src/core/factions';
+import { LevelScene } from '../../../core/levelScene';
+import { FactionsAreFriendly } from '../../../core/factions';
 
 export class StupidStalkerController implements Controller {
   private target: Entity = null;

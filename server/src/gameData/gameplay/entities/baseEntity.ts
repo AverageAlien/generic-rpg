@@ -1,7 +1,7 @@
 import { Controller } from '../controllers/baseController';
 import { Observable } from 'rxjs';
 import { GameObjects } from 'phaser';
-import { Faction } from 'src/core/factions';
+import { Faction } from '../../../core/factions';
 
 export interface Entity {
   entityName: string;

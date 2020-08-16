@@ -2,7 +2,7 @@ import { Tilemaps } from 'phaser';
 import { BlockInfo, Blocks, BlockIds, BlockType } from './blocks';
 import { Constants } from './constants';
 import { LevelScene } from './levelScene';
-import { LevelSerialization } from 'src/gameData/models/levelSerialization.model';
+import { LevelSerialization } from '../gameData/models/levelSerialization.model';
 
 export class MapGrid {
   private tileMap: Tilemaps.Tilemap;

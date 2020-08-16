@@ -1,23 +1,21 @@
-"use strict";
-exports.__esModule = true;
-var express = require("express");
-var http = require("http");
-var io = require("socket.io");
-var fs = require("fs");
-var path = require("path");
-var roomService_1 = require("./services/roomService");
-var app = express();
-var httpServer = new http.Server(app);
-var ioServer = io(httpServer, {
+import * as express from 'express';
+import * as http from 'http';
+import * as io from 'socket.io';
+import * as fs from 'fs';
+import * as path from 'path';
+import { RoomService } from './services/roomService';
+const app = express();
+const httpServer = new http.Server(app);
+const ioServer = io(httpServer, {
     path: '/game-ws'
 });
-var roomService = new roomService_1.RoomService(ioServer);
-var clientRoot = path.join(__dirname, 'client');
-app.get('/test', function (req, res) {
+const roomService = new RoomService(ioServer);
+const clientRoot = path.join(__dirname, 'client');
+app.get('/test', (req, res) => {
     res.send('hello world!');
 });
-app.get('*', function (req, res) {
-    fs.stat(clientRoot + req.path, function (err) {
+app.get('*', (req, res) => {
+    fs.stat(clientRoot + req.path, (err) => {
         if (err) {
             res.sendFile('index.html', { root: clientRoot });
         }
@@ -27,3 +25,4 @@ app.get('*', function (req, res) {
     });
 });
 httpServer.listen(42069);
+//# sourceMappingURL=index.js.map

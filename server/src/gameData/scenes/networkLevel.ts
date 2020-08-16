@@ -2,14 +2,14 @@ import * as io from 'socket.io';
 import { Scene } from 'phaser';
 import { Entity } from '../gameplay/entities/baseEntity';
 import { AssetService } from '../gameServices/asset.service';
-import { NetworkEntitySpawner } from 'src/services/networkEntitySpawner';
-import { GameClient } from 'src/models/gameClient';
-import { LevelScene } from 'src/core/levelScene';
-import { MapGrid } from 'src/core/mapGrid';
-import { ServerPackets } from 'src/networkPackets/fromServer/serverPackets';
-import { PacketInitLevel } from 'src/networkPackets/fromServer/initLevel';
-import { LevelLoaderService } from '../gameServices/level-loader.service';
-import { NetworkPacketSerializer } from 'src/services/networkPacketSerializer';
+import { NetworkEntitySpawner } from '../../services/networkEntitySpawner';
+import { GameClient } from '../../models/gameClient';
+import { LevelScene } from '../../core/levelScene';
+import { MapGrid } from '../../core/mapGrid';
+import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
+import { PacketInitLevel } from '../../networkPackets/fromServer/initLevel';
+import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
+import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
