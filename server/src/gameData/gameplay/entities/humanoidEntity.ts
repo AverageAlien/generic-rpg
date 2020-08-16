@@ -2,7 +2,7 @@ import { CharacterEntity, CharacterConfig } from './characterEntity';
 import { Armor } from '../items/armor';
 
 export class HumanoidEntity extends CharacterEntity {
-  private armor: Armor = null;
+  public armor: Armor = null;
   private weapon: string = null;
 
   constructor(cfg: HumanoidConfig) {

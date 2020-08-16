@@ -39,7 +39,7 @@ export class EntitySpawnerService {
       bodyTexture: 'humanoid'
     });
 
-    entity.controller = new PlayerController(this.inputKeys);
+    entity.controller = new PlayerController(this.inputKeys, null);
 
     entity.destroyed.subscribe(() => {
       const entityIndex = this.levelScene.entities.indexOf(entity);

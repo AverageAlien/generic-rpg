@@ -3,26 +3,19 @@ import * as http from 'http';
 import * as io from 'socket.io';
 import * as fs from 'fs';
 import * as path from 'path';
+import { RoomService } from './services/roomService';
 
 const app = express();
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws'
 });
+const roomService = new RoomService(ioServer);
 
 const clientRoot = path.join(__dirname, 'client');
 
 app.get('/test', (req, res) => {
   res.send('hello world!');
-});
-
-ioServer.on('connection', socket => {
-  console.log(`${socket.client.id} connected.`);
-
-  socket.on('joinRoom', (roomId: string) => {
-    socket.leaveAll();
-    socket.join(roomId);
-  });
 });
 
 app.get('*', (req, res) => {

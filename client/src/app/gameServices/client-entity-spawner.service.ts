@@ -1,52 +1,59 @@
-import { v4 as UUID } from 'uuid';
-import { EntitySpawnerService } from 'src/gameData/gameServices/entity-spawner.service';
-import { NetworkLevel } from 'src/gameData/scenes/networkLevel';
-import { InputKeys } from 'src/gameData/models/inputKeys.model';
-import { HumanoidEntity } from 'src/gameData/gameplay/entities/humanoidEntity';
-import { PlayerController } from 'src/gameData/gameplay/controllers/playerController';
-import { WalkerController } from 'src/gameData/gameplay/controllers/walkerController';
-import { UI } from 'src/gameData/ui/ui';
-import { GameClient } from 'src/models/gameClient';
-import { Constants } from 'src/core/constants';
-import { Faction } from 'src/core/factions';
-import { ClientController } from 'src/gameData/gameplay/controllers/clientController';
-import { NetworkControllerService } from './networkControllerService';
+import { InputKeys } from '../models/inputKeys.model';
+import { ClientLevel } from '../scenes/clientLevel';
+import { PlayerController } from '../gameplay/controllers/playerController';
+import { Constants } from '../core/constants';
+import { Faction } from '../core/factions';
+import { WalkerController } from '../gameplay/controllers/walkerController';
+import { UI } from '../ui/ui';
+import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
+import { NetworkingService } from '../services/networking.service';
+import { PacketSpawnPlayer } from '../networking/networkPackets/fromServer/spawnPlayer';
+import { PacketSpawnEntityHumanoid } from '../networking/networkPackets/fromServer/spawnEntity';
+import { NetworkController } from '../gameplay/controllers/networkController';
 
-export class NetworkEntitySpawner {
-  constructor(private levelScene: NetworkLevel) {}
 
-  public spawnPlayer(gameClient: GameClient, position: Phaser.Math.Vector2): HumanoidEntity {
+export class ClientEntitySpawnerService {
+  constructor(
+    private inputKeys: InputKeys,
+    private levelScene: ClientLevel,
+    private networkingService: NetworkingService
+  ) {
+    networkingService.spawnPlayer.subscribe(packet => {
+      this.spawnPlayer(packet);
+    });
+  }
+
+  public spawnPlayer(packet: PacketSpawnPlayer) {
     const gameObject = this.createRenderTexture(
-      position,
+      packet.position,
       new Phaser.Math.Vector2(
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    );
+    ).setDepth(6);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
       .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
 
     const entity = new HumanoidEntity({
-      name: gameClient.nickname,
+      name: packet.entityName,
       gameObject,
-      maxHealth: 100,
-      level: 1,
-      speed: 30,
-      bodyTexture: 'humanoid'
+      maxHealth: packet.maxHealth,
+      level: packet.level,
+      speed: packet.speed,
+      bodyTexture: 'humanoid',
+      armor: packet.armor
     });
 
-    entity.networkId = UUID();
-    entity.controller = new ClientController(gameClient.socket, entity);
-    NetworkControllerService.addPlayerInputListeners(entity.controller as ClientController, this.levelScene);
+    entity.networkId = packet.networkId;
+    entity.faction = packet.faction;
+    entity.health = packet.health;
+
+    entity.controller = new PlayerController(this.inputKeys, this.networkingService);
 
     entity.destroyed.subscribe(() => {
-      const entityIndex = this.levelScene.entities.indexOf(entity);
-
-      if (entityIndex >= 0) {
-        this.levelScene.entities.splice(entityIndex, 1);
-      }
+      // TODO
     });
 
     this.levelScene.entities.push(entity);
@@ -54,39 +61,60 @@ export class NetworkEntitySpawner {
     return entity;
   }
 
-  public spawnStalker(position: Phaser.Math.Vector2, speed: number): HumanoidEntity {
+  public spawnEntityHumanoid(packet: PacketSpawnEntityHumanoid): HumanoidEntity {
     const gameObject = this.createRenderTexture(
-      position,
+      packet.position,
       new Phaser.Math.Vector2(
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    );
+    ).setDepth(3);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
       .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
 
     const entity = new HumanoidEntity({
-      name: 'Stalker',
+      name: packet.entityName,
       gameObject,
-      maxHealth: 100,
-      level: 1,
-      speed,
-      bodyTexture: 'humanoid'
+      maxHealth: packet.health,
+      level: packet.level,
+      speed: packet.speed,
+      bodyTexture: 'humanoid',
+      armor: packet.armor
     });
 
-    entity.networkId = UUID();
-    entity.faction = Faction.Baddies;
-    entity.controller = new WalkerController(entity, this.levelScene, 512);
+    entity.faction = packet.faction;
+    entity.health = packet.health;
+    entity.networkId = packet.networkId;
+    entity.controller = new NetworkController(entity, this.networkingService);
+
+    const healthBar = new UI.HealthBarSmall(this.levelScene, entity);
+    const nameLabel = new UI.EntityHeader(this.levelScene, entity, true);
 
     entity.destroyed.subscribe(() => {
+      // TODO
+      healthBar.destroy();
+      nameLabel.destroy();
+
+      const healthBarIndex = this.levelScene.levelUI.indexOf(healthBar);
+      if (healthBarIndex >= 0) {
+        this.levelScene.levelUI.splice(healthBarIndex, 1);
+      }
+
+      const labelIndex = this.levelScene.levelUI.indexOf(nameLabel);
+      if (labelIndex >= 0) {
+        this.levelScene.levelUI.splice(labelIndex, 1);
+      }
+
       const entityIndex = this.levelScene.entities.indexOf(entity);
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
     });
 
+    this.levelScene.levelUI.push(healthBar);
+    this.levelScene.levelUI.push(nameLabel);
     this.levelScene.entities.push(entity);
 
     return entity;

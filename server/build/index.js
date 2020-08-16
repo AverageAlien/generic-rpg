@@ -5,18 +5,16 @@ var http = require("http");
 var io = require("socket.io");
 var fs = require("fs");
 var path = require("path");
+var roomService_1 = require("./services/roomService");
 var app = express();
 var httpServer = new http.Server(app);
 var ioServer = io(httpServer, {
-    path: '/ws-test'
+    path: '/game-ws'
 });
+var roomService = new roomService_1.RoomService(ioServer);
 var clientRoot = path.join(__dirname, 'client');
 app.get('/test', function (req, res) {
     res.send('hello world!');
-});
-ioServer.on('connection', function (socket) {
-    console.log(socket.client.id + " connected.");
-    console.log(ioServer.origins());
 });
 app.get('*', function (req, res) {
     fs.stat(clientRoot + req.path, function (err) {

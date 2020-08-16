@@ -6,7 +6,10 @@ import { NetworkEntitySpawner } from 'src/services/networkEntitySpawner';
 import { GameClient } from 'src/models/gameClient';
 import { LevelScene } from 'src/core/levelScene';
 import { MapGrid } from 'src/core/mapGrid';
-import { PacketSpawnPlayer } from 'src/networkPackets/fromServer/spawnPlayer';
+import { ServerPackets } from 'src/networkPackets/fromServer/serverPackets';
+import { PacketInitLevel } from 'src/networkPackets/fromServer/initLevel';
+import { LevelLoaderService } from '../gameServices/level-loader.service';
+import { NetworkPacketSerializer } from 'src/services/networkPacketSerializer';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -16,7 +19,7 @@ export class NetworkLevel extends Scene implements LevelScene {
 
   protected entitySpawner: NetworkEntitySpawner;
 
-  constructor(private server: io.Server) {
+  constructor(private server: io.Server, private roomName) {
     super({ key: 'networklevel' });
   }
 
@@ -39,20 +42,29 @@ export class NetworkLevel extends Scene implements LevelScene {
   addPlayer(player: GameClient) {
     const existingPlayers = [...this.clients];
 
+    player.socket.emit(ServerPackets.INIT_LEVEL, {
+      locationName: this.levelName,
+      levelData: LevelLoaderService.exportLevel(this)
+    } as PacketInitLevel);
+
     this.clients.push(player);
+
+    this.entities.forEach(e => {
+      player.socket.emit(...NetworkPacketSerializer.spawnEntity(e));
+    });
 
     const spawnedEntity = this.entitySpawner.spawnPlayer(player, new Phaser.Math.Vector2(0, 0));
 
+    console.log('Existing players:');
+    console.log(existingPlayers);
     existingPlayers.forEach(p => {
-      p.socket.emit('spawnPlayer', {
-        playerName: spawnedEntity.entityName,
-        networkId: spawnedEntity.networkId,
-        maxHealth: spawnedEntity.maxHealth,
-        health: spawnedEntity.health,
-        level: spawnedEntity.level,
-        speed: spawnedEntity.speed,
-        position: spawnedEntity.gameObject.body.position
-      } as PacketSpawnPlayer)
-    })
+      p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
+    });
+
+    player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
+  }
+
+  broadcastPacket(packetType: ServerPackets, packet: any) {
+    this.server.to(this.roomName).emit(packetType, packet);
   }
 }

@@ -7,6 +7,7 @@ import { MapGrid } from '../core/mapGrid';
 import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 import { LevelScene } from '../core/levelScene';
+import { NetworkingService } from '../services/networking.service';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -21,7 +22,7 @@ export class ClientLevel extends Scene implements LevelScene {
 
   protected backgroundImage: GameObjects.TileSprite;
 
-  constructor(protected inputService: InputService) {
+  constructor(protected inputService: InputService, protected networkingService: NetworkingService) {
     super({ key: 'level' });
   }
 
@@ -48,6 +49,8 @@ export class ClientLevel extends Scene implements LevelScene {
     this.events.on('postupdate', this.postupdate.bind(this));
 
     this.levelUI.push(new UI.HealthBarPlayer(this));
+
+    this.networkingService.loadLevel(this);
   }
 
   preload() {

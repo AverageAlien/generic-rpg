@@ -3,10 +3,10 @@ import { InputService } from '../gameServices/input.service';
 import { Entity } from '../gameplay/entities/baseEntity';
 import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
 import { AssetService } from '../gameServices/asset.service';
-import { MapGrid } from '../core/mapGrid';
 import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
-import { LevelScene } from '../core/levelScene';
+import { LevelScene } from 'src/core/levelScene';
+import { MapGrid } from 'src/core/mapGrid';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;

@@ -1,11 +1,11 @@
 import { InputKeys } from '../models/inputKeys.model';
 import { ClientLevel } from '../scenes/clientLevel';
 import { PlayerController } from '../gameplay/controllers/playerController';
-import { Constants } from '../core/constants';
-import { Faction } from '../core/factions';
 import { WalkerController } from '../gameplay/controllers/walkerController';
 import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
+import { Constants } from 'src/core/constants';
+import { Faction } from 'src/core/factions';
 
 
 export class EntitySpawnerService {

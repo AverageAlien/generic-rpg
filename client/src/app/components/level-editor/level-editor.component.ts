@@ -4,6 +4,7 @@ import { InputService } from 'src/app/gameServices/input.service';
 import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
 import { LevelEditor } from 'src/app/scenes/levelEditor';
+import { NetworkingService } from 'src/app/services/networking.service';
 
 @Component({
   selector: 'app-level-editor',
@@ -18,7 +19,7 @@ export class LevelEditorComponent implements OnInit {
   constructor(
     private ngZone: NgZone
   ) {
-    this.level = new LevelEditor(new InputService());
+    this.level = new LevelEditor(new InputService(), new NetworkingService(null));
 
     this.config = {
       type: Phaser.AUTO,
