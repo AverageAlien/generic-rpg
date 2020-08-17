@@ -21,11 +21,15 @@ export class ClientEntitySpawnerService {
     networkingService.spawnPlayer.subscribe(packet => {
       this.spawnPlayer(packet);
     });
+
+    networkingService.spawnEntityHumanoid.subscribe(packet => {
+      this.spawnEntityHumanoid(packet);
+    });
   }
 
   public spawnPlayer(packet: PacketSpawnPlayer) {
     const gameObject = this.createRenderTexture(
-      packet.position,
+      new Phaser.Math.Vector2(packet.positionX, packet.positionY),
       new Phaser.Math.Vector2(
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
@@ -52,6 +56,18 @@ export class ClientEntitySpawnerService {
 
     entity.controller = new PlayerController(this.inputKeys, this.networkingService);
 
+    (entity.controller as PlayerController).movementChanged.subscribe(vector => {
+      this.networkingService.sendMovement(vector);
+    });
+
+    this.networkingService.syncSnapshot.subscribe(syncPacket => {
+      const myEntity = syncPacket.entities.find(e => e.networkId === entity.networkId);
+      if (!myEntity) { return; }
+
+      entity.gameObject.setPosition(myEntity.positionX, myEntity.positionY);
+      entity.gameObject.body.setVelocity(myEntity.velocityX, myEntity.velocityY);
+    });
+
     entity.destroyed.subscribe(() => {
       // TODO
     });
@@ -65,8 +81,9 @@ export class ClientEntitySpawnerService {
   }
 
   public spawnEntityHumanoid(packet: PacketSpawnEntityHumanoid): HumanoidEntity {
+    console.log(`spawning humanoid at ${packet.positionX}; ${packet.positionY}`);
     const gameObject = this.createRenderTexture(
-      packet.position,
+      new Phaser.Math.Vector2(packet.positionX, packet.positionY),
       new Phaser.Math.Vector2(
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
@@ -96,6 +113,7 @@ export class ClientEntitySpawnerService {
     const nameLabel = new UI.EntityHeader(this.levelScene, entity, true);
 
     entity.destroyed.subscribe(() => {
+      console.log('whoops destroyed');
       // TODO
       healthBar.destroy();
       nameLabel.destroy();

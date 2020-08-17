@@ -1,6 +1,9 @@
-import { fromEvent } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-export class EntityHeader extends Phaser.GameObjects.DOMElement {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EntityHeader = void 0;
+const rxjs_1 = require("rxjs");
+const operators_1 = require("rxjs/operators");
+class EntityHeader extends Phaser.GameObjects.DOMElement {
     constructor(scene, target, alwaysVisible = true) {
         super(scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
         this.target = target;
@@ -16,13 +19,13 @@ export class EntityHeader extends Phaser.GameObjects.DOMElement {
         if (!alwaysVisible) {
             this.setVisible(false);
             target.gameObject.setInteractive();
-            fromEvent(target.gameObject, 'pointerover')
-                .pipe(takeUntil(target.destroyed))
+            rxjs_1.fromEvent(target.gameObject, 'pointerover')
+                .pipe(operators_1.takeUntil(target.destroyed))
                 .subscribe(() => {
                 this.setVisible(true);
             });
-            fromEvent(target.gameObject, 'pointerout')
-                .pipe(takeUntil(target.destroyed))
+            rxjs_1.fromEvent(target.gameObject, 'pointerout')
+                .pipe(operators_1.takeUntil(target.destroyed))
                 .subscribe(() => {
                 this.setVisible(false);
             });
@@ -34,6 +37,7 @@ export class EntityHeader extends Phaser.GameObjects.DOMElement {
         this.setPosition(bounds.x, bounds.y - 12);
     }
 }
+exports.EntityHeader = EntityHeader;
 EntityHeader.elementHTML = `
     <div style='
       color: white;
@@ -44,4 +48,3 @@ EntityHeader.elementHTML = `
       [<span id='level'></span>] <span id='name'></span>
     </div>
   `;
-//# sourceMappingURL=entityHeader.js.map

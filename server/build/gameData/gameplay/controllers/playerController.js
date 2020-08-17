@@ -1,4 +1,7 @@
-export class PlayerController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PlayerController = void 0;
+class PlayerController {
     constructor(inputKeys) {
         this.inputKeys = inputKeys;
     }
@@ -9,4 +12,4 @@ export class PlayerController {
         return null;
     }
 }
-//# sourceMappingURL=playerController.js.map
+exports.PlayerController = PlayerController;

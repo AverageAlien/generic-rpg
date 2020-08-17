@@ -1,18 +1,19 @@
-import { ClientPackets } from '../../../networkPackets/fromClient/clientPackets';
-import { Subject } from 'rxjs';
-export class ClientController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ClientController = void 0;
+const clientPackets_1 = require("../../../networkPackets/fromClient/clientPackets");
+const rxjs_1 = require("rxjs");
+class ClientController {
     constructor(socket, controlledEntity) {
         this.socket = socket;
         this.controlledEntity = controlledEntity;
-        this.currentMovement = Phaser.Math.Vector2.ZERO;
-        this.movementChanged$ = new Subject();
-        socket.on(ClientPackets.MOVE_INPUT, (p) => {
-            this.currentMovement = p.moveVector.normalize();
-            this.movementChanged$.next(this.currentMovement);
+        this.movementChanged$ = new rxjs_1.BehaviorSubject(Phaser.Math.Vector2.ZERO);
+        socket.on(clientPackets_1.ClientPackets.MOVE_INPUT, (p) => {
+            this.movementChanged$.next(new Phaser.Math.Vector2(p.moveX, p.moveY).normalize());
         });
     }
     get movement() {
-        return this.currentMovement;
+        return new Phaser.Math.Vector2(this.movementChanged$.value);
     }
     get movementChanged() {
         return this.movementChanged$.asObservable();
@@ -21,4 +22,4 @@ export class ClientController {
         return null;
     }
 }
-//# sourceMappingURL=clientController.js.map
+exports.ClientController = ClientController;

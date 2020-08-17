@@ -1,4 +1,5 @@
 export interface PacketPlayerInputMove {
-    moveVector: Phaser.Math.Vector2;
+    moveX: number;
+    moveY: number;
     networkId: string;
 }

@@ -1,5 +1,8 @@
-import { FactionsAreFriendly } from '../../../core/factions';
-export class StupidStalkerController {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StupidStalkerController = void 0;
+const factions_1 = require("../../../core/factions");
+class StupidStalkerController {
     constructor(myself, levelScene, aggroRadius = 256, unaggroRadius = aggroRadius, minRange = 64) {
         this.myself = myself;
         this.levelScene = levelScene;
@@ -39,7 +42,7 @@ export class StupidStalkerController {
             throw new Error('I am not on the entities list!');
         }
         const target = this.levelScene.physics.closest(this.myself.gameObject.body.position, this.levelScene.entities
-            .filter((e, i) => !FactionsAreFriendly(this.myself.faction, e.faction) &&
+            .filter((e, i) => !factions_1.FactionsAreFriendly(this.myself.faction, e.faction) &&
             e.gameObject.body.position.distanceSq(this.myself.gameObject.body.position) < this.aggroRadius * this.aggroRadius &&
             (myNumber !== i))
             .map(e => e.gameObject));
@@ -53,4 +56,4 @@ export class StupidStalkerController {
         return targetEntity;
     }
 }
-//# sourceMappingURL=stupidStalkerController.js.map
+exports.StupidStalkerController = StupidStalkerController;

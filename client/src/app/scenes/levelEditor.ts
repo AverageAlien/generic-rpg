@@ -7,14 +7,15 @@ import { MapGrid } from '../core/mapGrid';
 export class LevelEditor extends ClientLevel {
   private grid: GameObjects.Grid;
   private cursorActive = true;
+  public localEntitySpawner: EntitySpawnerService;
 
   create() {
-    this.entitySpawner = new EntitySpawnerService();
-    this.entitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
+    this.localEntitySpawner = new EntitySpawnerService();
+    this.localEntitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
 
     this.mapGrid = new MapGrid(this, 'tileset');
 
-    this.player = this.entitySpawner.spawnPlayer('Editor', Phaser.Math.Vector2.ZERO, 60);
+    this.player = this.localEntitySpawner.spawnPlayer('Editor', Phaser.Math.Vector2.ZERO, 60);
     this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
 
     this.grid = this.add.grid(0, 0, 900, 708, 32, 32, 0x000000, 0, 0xffffff, 0.5);

@@ -9,7 +9,8 @@ export class NetworkControllerService {
     controller.movementChanged.subscribe((moveVector) => {
       const networkId = controller.controlledEntity.networkId;
       levelScene.broadcastPacket(ServerPackets.PLAYER_INPUT_MOVE, {
-        moveVector,
+        moveX: moveVector.x,
+        moveY: moveVector.y,
         networkId,
       } as PacketPlayerInputMove);
     });

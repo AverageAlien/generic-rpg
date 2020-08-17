@@ -1,37 +1,29 @@
-import { Blocks, BlockIds, BlockType } from './blocks';
-import { Constants } from './constants';
-export class MapGrid {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MapGrid = void 0;
+const blocks_1 = require("./blocks");
+const constants_1 = require("./constants");
+class MapGrid {
     constructor(levelScene, tileSet) {
         this.levelScene = levelScene;
         this.tileSet = tileSet;
         this.chunks = [];
         this.tileMap = levelScene.make.tilemap({
-            width: Constants.Level.CHUNK_W,
-            height: Constants.Level.CHUNK_H,
-            tileWidth: Constants.Level.GRID_SIZE_X,
-            tileHeight: Constants.Level.GRID_SIZE_Y
+            width: constants_1.Constants.Level.CHUNK_W,
+            height: constants_1.Constants.Level.CHUNK_H,
+            tileWidth: constants_1.Constants.Level.GRID_SIZE_X,
+            tileHeight: constants_1.Constants.Level.GRID_SIZE_Y
         });
-        this.tileMap.addTilesetImage(tileSet, tileSet, Constants.Level.GRID_SIZE_X, Constants.Level.GRID_SIZE_Y, 1, 2);
-        this.collidingBlocks = Array.from(Blocks.entries())
-            .filter(e => e[1].type === BlockType.Foreground)
-            .map(e => BlockIds.indexOf(e[0]));
+        this.tileMap.addTilesetImage(tileSet, tileSet, constants_1.Constants.Level.GRID_SIZE_X, constants_1.Constants.Level.GRID_SIZE_Y, 1, 2);
+        this.collidingBlocks = Array.from(blocks_1.Blocks.entries())
+            .filter(e => e[1].type === blocks_1.BlockType.Foreground)
+            .map(e => blocks_1.BlockIds.indexOf(e[0]));
     }
     addBlock(pos, block, layer = 0) {
         const { blockName, blockData } = this.resolveBlockInfo(block);
         const { chunkPos, tilePos } = this.localizeChunk(pos);
-        // const chunkPos = new Phaser.Math.Vector2(
-        //   Math.floor(pos.x / Constants.Level.CHUNK_W),
-        //   Math.floor(pos.y / Constants.Level.CHUNK_H)
-        // );
         const chunk = this.ensureChunkExists(chunkPos, layer);
-        // const tilePosInChunk = new Phaser.Math.Vector2(pos)
-        //   .subtract(new Phaser.Math.Vector2(chunkPos)
-        //     .multiply(new Phaser.Math.Vector2(
-        //       Constants.Level.CHUNK_W,
-        //       Constants.Level.CHUNK_H
-        //     ))
-        //   );
-        chunk.putTileAt(BlockIds.indexOf(blockName), tilePos.x, tilePos.y);
+        chunk.putTileAt(blocks_1.BlockIds.indexOf(blockName), tilePos.x, tilePos.y);
     }
     fillArea(pos, size, block, layer = 0) {
         const lowerCorner = new Phaser.Math.Vector2(pos).add(size);
@@ -53,14 +45,14 @@ export class MapGrid {
         if (!tile) {
             return null;
         }
-        return BlockIds[tile.index];
+        return blocks_1.BlockIds[tile.index];
     }
     getAll() {
         return this.chunks.flatMap(x => x.flatMap(y => y.flatMap(chunk => chunk.getTilesWithin().map(tile => {
             return {
-                name: BlockIds[tile.index],
-                x: tile.x + chunk.x / Constants.Level.GRID_SIZE_X,
-                y: tile.y + chunk.y / Constants.Level.GRID_SIZE_Y
+                name: blocks_1.BlockIds[tile.index],
+                x: tile.x + chunk.x / constants_1.Constants.Level.GRID_SIZE_X,
+                y: tile.y + chunk.y / constants_1.Constants.Level.GRID_SIZE_Y
             };
         }))));
     }
@@ -75,9 +67,9 @@ export class MapGrid {
             return Object.values(row).flatMap(chunk => {
                 return chunk.getTilesWithin(0, 0, undefined, undefined, { isNotEmpty: true }).map(tile => {
                     return {
-                        name: BlockIds[tile.index],
-                        x: tile.x + chunk.x / Constants.Level.GRID_SIZE_X,
-                        y: tile.y + chunk.y / Constants.Level.GRID_SIZE_Y
+                        name: blocks_1.BlockIds[tile.index],
+                        x: tile.x + chunk.x / constants_1.Constants.Level.GRID_SIZE_X,
+                        y: tile.y + chunk.y / constants_1.Constants.Level.GRID_SIZE_Y
                     };
                 });
             });
@@ -113,7 +105,7 @@ export class MapGrid {
         return this.chunks[layer][chunkPos.x][chunkPos.y];
     }
     createChunk(chunkPos, layer = 0) {
-        const chunk = this.tileMap.createBlankDynamicLayer(`chunk_${layer}_${chunkPos.x}_${chunkPos.y}`, this.tileSet, chunkPos.x * Constants.Level.GRID_SIZE_X * Constants.Level.CHUNK_W, chunkPos.y * Constants.Level.GRID_SIZE_Y * Constants.Level.CHUNK_H);
+        const chunk = this.tileMap.createBlankDynamicLayer(`chunk_${layer}_${chunkPos.x}_${chunkPos.y}`, this.tileSet, chunkPos.x * constants_1.Constants.Level.GRID_SIZE_X * constants_1.Constants.Level.CHUNK_W, chunkPos.y * constants_1.Constants.Level.GRID_SIZE_Y * constants_1.Constants.Level.CHUNK_H);
         chunk.setCollision(this.collidingBlocks);
         chunk.setDepth(layer);
         this.levelScene.physics.add.collider(this.levelScene.entities.map(e => e.gameObject), chunk);
@@ -125,7 +117,7 @@ export class MapGrid {
         let blockData;
         if (typeof block === 'string') {
             blockName = block;
-            blockData = Blocks.get(blockName);
+            blockData = blocks_1.Blocks.get(blockName);
         }
         else {
             blockName = 'custom';
@@ -134,11 +126,11 @@ export class MapGrid {
         return { blockName, blockData };
     }
     localizeChunk(pos) {
-        const chunkPos = new Phaser.Math.Vector2(Math.floor(pos.x / Constants.Level.CHUNK_W), Math.floor(pos.y / Constants.Level.CHUNK_H));
+        const chunkPos = new Phaser.Math.Vector2(Math.floor(pos.x / constants_1.Constants.Level.CHUNK_W), Math.floor(pos.y / constants_1.Constants.Level.CHUNK_H));
         const tilePos = new Phaser.Math.Vector2(pos)
             .subtract(new Phaser.Math.Vector2(chunkPos)
-            .multiply(new Phaser.Math.Vector2(Constants.Level.CHUNK_W, Constants.Level.CHUNK_H)));
+            .multiply(new Phaser.Math.Vector2(constants_1.Constants.Level.CHUNK_W, constants_1.Constants.Level.CHUNK_H)));
         return { chunkPos, tilePos };
     }
 }
-//# sourceMappingURL=mapGrid.js.map
+exports.MapGrid = MapGrid;

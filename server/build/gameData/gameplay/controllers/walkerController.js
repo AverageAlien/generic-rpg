@@ -1,8 +1,30 @@
-import PF, { DiagonalMovement } from 'pathfinding';
-import { Constants } from '../../../core/constants';
-import { ClientLevel } from '../../../gameData/scenes/clientLevel';
-import { FactionsAreFriendly } from '../../../core/factions';
-export class WalkerController {
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WalkerController = void 0;
+const pathfinding_1 = __importStar(require("pathfinding"));
+const constants_1 = require("../../../core/constants");
+const clientLevel_1 = require("../../../gameData/scenes/clientLevel");
+const factions_1 = require("../../../core/factions");
+class WalkerController {
     constructor(myself, levelScene, aggroRadius = 256, unaggroRadius = aggroRadius * Math.SQRT2, minRange = 64) {
         this.myself = myself;
         this.levelScene = levelScene;
@@ -15,8 +37,8 @@ export class WalkerController {
         this.timeSinceLastSearch = 0;
         this.pathWaypoints = null;
         this.rushAtTarget = false;
-        this.unrushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X) * 2, 2);
-        this.waypointReachedDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_X, Constants.Level.GRID_SIZE_Y) * 0.7, 2);
+        this.unrushDistanceSq = Math.pow(Math.min(constants_1.Constants.Level.GRID_SIZE_Y, constants_1.Constants.Level.GRID_SIZE_X) * 2, 2);
+        this.waypointReachedDistanceSq = Math.pow(Math.min(constants_1.Constants.Level.GRID_SIZE_X, constants_1.Constants.Level.GRID_SIZE_Y) * 0.7, 2);
         this._DEBUG = false;
     }
     get movement() {
@@ -77,8 +99,8 @@ export class WalkerController {
     }
     buildPathToTarget(targetPos) {
         const myPos = this.myself.gameObject.body.position;
-        const gridLowerCorner = new Phaser.Math.Vector2(Math.floor((Math.min(myPos.x, targetPos.x) - this.aggroRadius) / Constants.Level.GRID_SIZE_X), Math.floor((Math.min(myPos.y, targetPos.y) - this.aggroRadius) / Constants.Level.GRID_SIZE_Y));
-        const gridUpperCorner = new Phaser.Math.Vector2(Math.ceil((Math.max(myPos.x, targetPos.x) + this.aggroRadius) / Constants.Level.GRID_SIZE_X), Math.ceil((Math.max(myPos.y, targetPos.y) + this.aggroRadius) / Constants.Level.GRID_SIZE_Y));
+        const gridLowerCorner = new Phaser.Math.Vector2(Math.floor((Math.min(myPos.x, targetPos.x) - this.aggroRadius) / constants_1.Constants.Level.GRID_SIZE_X), Math.floor((Math.min(myPos.y, targetPos.y) - this.aggroRadius) / constants_1.Constants.Level.GRID_SIZE_Y));
+        const gridUpperCorner = new Phaser.Math.Vector2(Math.ceil((Math.max(myPos.x, targetPos.x) + this.aggroRadius) / constants_1.Constants.Level.GRID_SIZE_X), Math.ceil((Math.max(myPos.y, targetPos.y) + this.aggroRadius) / constants_1.Constants.Level.GRID_SIZE_Y));
         const gridSize = new Phaser.Math.Vector2(gridUpperCorner).subtract(gridLowerCorner);
         const matrix = [];
         for (let i = 0; i <= gridSize.y; ++i) {
@@ -87,29 +109,29 @@ export class WalkerController {
                 matrix[i].push(this.levelScene.mapGrid.getBlockAt(new Phaser.Math.Vector2(j + gridLowerCorner.x, i + gridLowerCorner.y)) ? 1 : 0);
             }
         }
-        const grid = new PF.Grid(matrix);
-        const finder = new PF.AStarFinder({
-            diagonalMovement: DiagonalMovement.IfAtMostOneObstacle,
+        const grid = new pathfinding_1.default.Grid(matrix);
+        const finder = new pathfinding_1.default.AStarFinder({
+            diagonalMovement: pathfinding_1.DiagonalMovement.IfAtMostOneObstacle,
             weight: 1,
-            heuristic: PF.Heuristic.euclidean
+            heuristic: pathfinding_1.default.Heuristic.euclidean
         });
         let path;
-        const pathStart = new Phaser.Math.Vector2(Math.round(myPos.x / Constants.Level.GRID_SIZE_X) - gridLowerCorner.x, Math.round(myPos.y / Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y);
-        const pathFinish = new Phaser.Math.Vector2(Math.round(targetPos.x / Constants.Level.GRID_SIZE_X) - gridLowerCorner.x, Math.round(targetPos.y / Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y);
+        const pathStart = new Phaser.Math.Vector2(Math.round(myPos.x / constants_1.Constants.Level.GRID_SIZE_X) - gridLowerCorner.x, Math.round(myPos.y / constants_1.Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y);
+        const pathFinish = new Phaser.Math.Vector2(Math.round(targetPos.x / constants_1.Constants.Level.GRID_SIZE_X) - gridLowerCorner.x, Math.round(targetPos.y / constants_1.Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y);
         try {
             path = finder.findPath(pathStart.x, pathStart.y, pathFinish.x, pathFinish.y, grid);
         }
-        catch (_a) {
+        catch {
             debugger;
         }
-        if (this._DEBUG && this.levelScene instanceof ClientLevel) {
+        if (this._DEBUG && this.levelScene instanceof clientLevel_1.ClientLevel) {
             this._drawDebug(this.levelScene.debugGraphics, matrix, path, myPos, targetPos, gridLowerCorner);
         }
         if (!path) {
             return null;
         }
-        path = PF.Util.compressPath(path);
-        return path.map(point => new Phaser.Math.Vector2((point[0] + gridLowerCorner.x) * Constants.Level.GRID_SIZE_X, (point[1] + gridLowerCorner.y) * Constants.Level.GRID_SIZE_Y));
+        path = pathfinding_1.default.Util.compressPath(path);
+        return path.map(point => new Phaser.Math.Vector2((point[0] + gridLowerCorner.x) * constants_1.Constants.Level.GRID_SIZE_X, (point[1] + gridLowerCorner.y) * constants_1.Constants.Level.GRID_SIZE_Y));
     }
     searchTarget() {
         const myNumber = this.levelScene.entities.indexOf(this.myself);
@@ -117,7 +139,7 @@ export class WalkerController {
             throw new Error('I am not on the entities list!');
         }
         const target = this.levelScene.physics.closest(this.myself.gameObject.body.position, this.levelScene.entities
-            .filter((e, i) => !FactionsAreFriendly(this.myself.faction, e.faction) &&
+            .filter((e, i) => !factions_1.FactionsAreFriendly(this.myself.faction, e.faction) &&
             e.gameObject.body.position.distanceSq(this.myself.gameObject.body.position) < this.aggroRadius * this.aggroRadius &&
             (myNumber !== i))
             .map(e => e.gameObject));
@@ -135,8 +157,8 @@ export class WalkerController {
         path.forEach(p => {
             matrix[p[1]][p[0]] = 4;
         });
-        matrix[Math.round(myPos.y / Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y][Math.round(myPos.x / Constants.Level.GRID_SIZE_X) - gridLowerCorner.x] = 2;
-        matrix[Math.round(targetPos.y / Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y][Math.round(targetPos.x / Constants.Level.GRID_SIZE_X) - gridLowerCorner.x] = 3;
+        matrix[Math.round(myPos.y / constants_1.Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y][Math.round(myPos.x / constants_1.Constants.Level.GRID_SIZE_X) - gridLowerCorner.x] = 2;
+        matrix[Math.round(targetPos.y / constants_1.Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y][Math.round(targetPos.x / constants_1.Constants.Level.GRID_SIZE_X) - gridLowerCorner.x] = 3;
         matrix.forEach((row, i) => {
             row.forEach((cell, j) => {
                 let color;
@@ -158,9 +180,9 @@ export class WalkerController {
                         break;
                 }
                 gfx.fillStyle(color);
-                gfx.fillRect((j + gridLowerCorner.x) * Constants.Level.GRID_SIZE_X, (i + gridLowerCorner.y) * Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X, Constants.Level.GRID_SIZE_Y);
+                gfx.fillRect((j + gridLowerCorner.x) * constants_1.Constants.Level.GRID_SIZE_X, (i + gridLowerCorner.y) * constants_1.Constants.Level.GRID_SIZE_Y, constants_1.Constants.Level.GRID_SIZE_X, constants_1.Constants.Level.GRID_SIZE_Y);
             });
         });
     }
 }
-//# sourceMappingURL=walkerController.js.map
+exports.WalkerController = WalkerController;

@@ -1,3 +1,6 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Constants = void 0;
 class Screen {
 }
 Screen.SCREEN_W = 800;
@@ -15,9 +18,8 @@ Character.COLLIDER_W = 20;
 Character.COLLIDER_H = 20;
 Character.COLLIDER_OFFSET_X = 1;
 Character.COLLIDER_OFFSET_Y = 7;
-export const Constants = {
+exports.Constants = {
     Screen,
     Level,
     Character
 };
-//# sourceMappingURL=constants.js.map

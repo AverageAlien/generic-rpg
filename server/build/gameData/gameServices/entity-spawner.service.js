@@ -1,10 +1,13 @@
-import { PlayerController } from '../gameplay/controllers/playerController';
-import { WalkerController } from '../gameplay/controllers/walkerController';
-import { UI } from '../ui/ui';
-import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
-import { Constants } from '../../core/constants';
-import { Faction } from '../../core/factions';
-export class EntitySpawnerService {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EntitySpawnerService = void 0;
+const playerController_1 = require("../gameplay/controllers/playerController");
+const walkerController_1 = require("../gameplay/controllers/walkerController");
+const ui_1 = require("../ui/ui");
+const humanoidEntity_1 = require("../gameplay/entities/humanoidEntity");
+const constants_1 = require("../../core/constants");
+const factions_1 = require("../../core/factions");
+class EntitySpawnerService {
     init(inputKeys, levelScene) {
         this.inputKeys = inputKeys;
         this.levelScene = levelScene;
@@ -12,9 +15,9 @@ export class EntitySpawnerService {
     spawnPlayer(playerName, position, speed) {
         const gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(6);
         gameObject.body
-            .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
-            .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
-        const entity = new HumanoidEntity({
+            .setSize(constants_1.Constants.Character.COLLIDER_W, constants_1.Constants.Character.COLLIDER_H)
+            .setOffset(constants_1.Constants.Character.COLLIDER_OFFSET_X, constants_1.Constants.Character.COLLIDER_OFFSET_Y);
+        const entity = new humanoidEntity_1.HumanoidEntity({
             name: playerName,
             gameObject,
             maxHealth: 100,
@@ -22,13 +25,12 @@ export class EntitySpawnerService {
             speed,
             bodyTexture: 'humanoid'
         });
-        entity.controller = new PlayerController(this.inputKeys);
+        entity.controller = new playerController_1.PlayerController(this.inputKeys);
         entity.destroyed.subscribe(() => {
             const entityIndex = this.levelScene.entities.indexOf(entity);
             if (entityIndex >= 0) {
                 this.levelScene.entities.splice(entityIndex, 1);
             }
-            console.log(this.levelScene.player);
         });
         this.levelScene.entities.push(entity);
         return entity;
@@ -36,9 +38,9 @@ export class EntitySpawnerService {
     spawnStalker(position, speed) {
         const gameObject = this.createRenderTexture(position, new Phaser.Math.Vector2(this.levelScene.textures.getFrame('humanoid', 0).width, this.levelScene.textures.getFrame('humanoid', 0).height)).setDepth(3);
         gameObject.body
-            .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
-            .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
-        const entity = new HumanoidEntity({
+            .setSize(constants_1.Constants.Character.COLLIDER_W, constants_1.Constants.Character.COLLIDER_H)
+            .setOffset(constants_1.Constants.Character.COLLIDER_OFFSET_X, constants_1.Constants.Character.COLLIDER_OFFSET_Y);
+        const entity = new humanoidEntity_1.HumanoidEntity({
             name: 'Stalker',
             gameObject,
             maxHealth: 100,
@@ -46,10 +48,10 @@ export class EntitySpawnerService {
             speed,
             bodyTexture: 'humanoid'
         });
-        entity.faction = Faction.Baddies;
-        entity.controller = new WalkerController(entity, this.levelScene, 512);
-        const healthBar = new UI.HealthBarSmall(this.levelScene, entity);
-        const nameLabel = new UI.EntityHeader(this.levelScene, entity, false);
+        entity.faction = factions_1.Faction.Baddies;
+        entity.controller = new walkerController_1.WalkerController(entity, this.levelScene, 512);
+        const healthBar = new ui_1.UI.HealthBarSmall(this.levelScene, entity);
+        const nameLabel = new ui_1.UI.EntityHeader(this.levelScene, entity, false);
         entity.destroyed.subscribe(() => {
             healthBar.destroy();
             nameLabel.destroy();
@@ -73,12 +75,12 @@ export class EntitySpawnerService {
     }
     createSpriteGameObject(position, sprite) {
         let gameObject;
-        gameObject = this.levelScene.add.sprite(position.x * Constants.Level.GRID_SIZE_X, position.y * Constants.Level.GRID_SIZE_Y, sprite);
+        gameObject = this.levelScene.add.sprite(position.x * constants_1.Constants.Level.GRID_SIZE_X, position.y * constants_1.Constants.Level.GRID_SIZE_Y, sprite);
         return this.setupPhysics(gameObject);
     }
     createRenderTexture(position, size) {
         let gameObject;
-        gameObject = this.levelScene.add.renderTexture(position.x * Constants.Level.GRID_SIZE_X, position.y * Constants.Level.GRID_SIZE_Y, size.x, size.y);
+        gameObject = this.levelScene.add.renderTexture(position.x * constants_1.Constants.Level.GRID_SIZE_X, position.y * constants_1.Constants.Level.GRID_SIZE_Y, size.x, size.y);
         return this.setupPhysics(gameObject);
     }
     setupPhysics(gameObject) {
@@ -93,4 +95,4 @@ export class EntitySpawnerService {
         return gameObject;
     }
 }
-//# sourceMappingURL=entity-spawner.service.js.map
+exports.EntitySpawnerService = EntitySpawnerService;

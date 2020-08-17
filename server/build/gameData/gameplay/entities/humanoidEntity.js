@@ -1,5 +1,8 @@
-import { CharacterEntity } from './characterEntity';
-export class HumanoidEntity extends CharacterEntity {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HumanoidEntity = void 0;
+const characterEntity_1 = require("./characterEntity");
+class HumanoidEntity extends characterEntity_1.CharacterEntity {
     constructor(cfg) {
         super(cfg);
         this.armor = null;
@@ -9,7 +12,6 @@ export class HumanoidEntity extends CharacterEntity {
     }
     equipArmor(armor) {
         this.armor = armor;
-        console.log('equip called');
         this.refreshRenderSprite();
     }
     update() {
@@ -19,10 +21,11 @@ export class HumanoidEntity extends CharacterEntity {
         super.lookRight(condition);
     }
     refreshRenderSprite() {
+        return; // no drawing on server
         super.refreshRenderSprite();
         if (this.armor) {
             this.gameObject.draw(this.armor.texture, this.gameObject.width / 2 - 9, this.gameObject.height / 2 - 5);
         }
     }
 }
-//# sourceMappingURL=humanoidEntity.js.map
+exports.HumanoidEntity = HumanoidEntity;

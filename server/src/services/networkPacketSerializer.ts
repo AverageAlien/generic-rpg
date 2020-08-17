@@ -11,6 +11,8 @@ import { LevelScene } from '../core/levelScene';
 import { PacketInitLevel } from '../networkPackets/fromServer/initLevel';
 import { LevelLoaderService } from '../gameData/gameServices/level-loader.service';
 import { PacketSpawnPlayer } from '../networkPackets/fromServer/spawnPlayer';
+import { NetworkLevel } from '../gameData/scenes/networkLevel';
+import { PacketSyncSnapshot } from '../networkPackets/fromServer/syncSnapshot';
 
 export class NetworkPacketSerializer {
   static spawnEntity(ent: Entity): [ServerPackets, PacketSpawnEntity] {
@@ -19,7 +21,8 @@ export class NetworkPacketSerializer {
       entityName: ent.entityName,
       faction: ent.faction,
       networkId: ent.networkId,
-      position: ent.gameObject.body.position,
+      positionX: ent.gameObject.body.position.x,
+      positionY: ent.gameObject.body.position.y
     };
 
     if (ent instanceof CharacterEntity) {
@@ -45,13 +48,27 @@ export class NetworkPacketSerializer {
   }
 
   static spawnPlayer(ent: HumanoidEntity): [ServerPackets, PacketSpawnPlayer] {
-    return this.spawnEntity(ent) as [ServerPackets, PacketSpawnPlayer];
+    return [ServerPackets.SPAWN_PLAYER, this.spawnEntity(ent)[1] as PacketSpawnPlayer];
   }
 
-  static initLevel(levelScene: LevelScene): PacketInitLevel {
+  static initLevel(levelScene: NetworkLevel): PacketInitLevel {
     return {
       locationName: levelScene.levelName,
-      levelData: LevelLoaderService.exportLevel(levelScene),
+      levelData: levelScene.levelLoader.exportLevel(),
+    };
+  }
+
+  static syncSnapshot(levelScene: NetworkLevel): PacketSyncSnapshot {
+    return {
+      entities: levelScene.entities.map(e => {
+        return {
+          networkId: e.networkId,
+          positionX: (e.gameObject as any).x || e.gameObject.body.x,
+          positionY: (e.gameObject as any).y || e.gameObject.body.y,
+          velocityX: e.gameObject.body.velocity.x,
+          velocityY: e.gameObject.body.velocity.y
+        };
+      })
     };
   }
 }

@@ -1,4 +1,7 @@
-export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HealthBarPlayer = void 0;
+class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     constructor(levelScene) {
         super(levelScene, 70, 14, 'div');
         this.levelScene = levelScene;
@@ -14,6 +17,7 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
         label.innerText = `${plr.health}/${plr.maxHealth}`;
     }
 }
+exports.HealthBarPlayer = HealthBarPlayer;
 HealthBarPlayer.elementHTML = `
     <div style='
       background-color: #383838;
@@ -60,4 +64,3 @@ HealthBarPlayer.elementHTML = `
       </div>
     </div>
   `;
-//# sourceMappingURL=healthBarPlayer.js.map

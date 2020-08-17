@@ -94,10 +94,10 @@ export class MapGrid {
 
   public getAllChunks(layer?: number): Tilemaps.DynamicTilemapLayer[] {
     if (!layer) {
-      return this.chunks.flatMap(L =>
+      return Object.values(this.chunks).flatMap(L =>
         L.flatMap(row => row));
     }
-    return this.chunks[layer].flatMap(row => row);
+    return Object.values(this.chunks[layer]).flatMap(row => row);
   }
 
   public getAllOfLayer(layer: number): LevelSerialization.Block[] {

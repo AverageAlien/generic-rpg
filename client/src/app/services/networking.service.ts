@@ -11,6 +11,8 @@ import { PacketClientInit } from '../networking/networkPackets/fromClient/client
 import { PacketSpawnEntityCharacter, PacketSpawnEntityHumanoid } from '../networking/networkPackets/fromServer/spawnEntity';
 import { PacketSpawnPlayer } from '../networking/networkPackets/fromServer/spawnPlayer';
 import { PacketPlayerInputMove } from '../networking/networkPackets/fromServer/playerInputMove';
+import { PacketMoveInput } from '../networking/networkPackets/fromClient/moveInput';
+import { PacketSyncSnapshot } from '../networking/networkPackets/fromServer/syncSnapshot';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +24,7 @@ export class NetworkingService {
   private spawnEntityHumanoid$ = new Subject<PacketSpawnEntityHumanoid>();
   private spawnPlayer$ = new Subject<PacketSpawnPlayer>();
   private playerInputMove$ = new Subject<PacketPlayerInputMove>();
+  private syncSnapshot$ = new Subject<PacketSyncSnapshot>();
 
   public get spawnEntityCharacter() {
     return this.spawnEntityCharacter$.asObservable();
@@ -34,6 +37,9 @@ export class NetworkingService {
   }
   public get playerInputMove() {
     return this.playerInputMove$.asObservable();
+  }
+  public get syncSnapshot() {
+    return this.syncSnapshot$.asObservable();
   }
 
   constructor(private socket: Socket) { }
@@ -55,7 +61,10 @@ export class NetworkingService {
   }
 
   sendMovement(movementVector: Phaser.Math.Vector2) {
-    this.socket.emit(ClientPackets.MOVE_INPUT, movementVector);
+    this.socket.emit(ClientPackets.MOVE_INPUT, {
+      moveX: movementVector.x,
+      moveY: movementVector.y
+    } as PacketMoveInput);
     console.log(`>> ${ClientPackets.MOVE_INPUT}`);
   }
 
@@ -69,6 +78,7 @@ export class NetworkingService {
     this.socket.fromEvent<PacketSpawnEntityHumanoid>(ServerPackets.SPAWN_ENTITY_HUMANOID)
       .subscribe(packet => {
         console.log(`<< ${ServerPackets.SPAWN_ENTITY_HUMANOID}`);
+        console.log(packet);
         this.spawnEntityHumanoid$.next(packet);
       });
 
@@ -80,8 +90,14 @@ export class NetworkingService {
 
     this.socket.fromEvent<PacketPlayerInputMove>(ServerPackets.PLAYER_INPUT_MOVE)
       .subscribe(packet => {
-        console.log(`<< ${ServerPackets.PLAYER_INPUT_MOVE}`);
+        console.log(`<< ${ServerPackets.PLAYER_INPUT_MOVE}; ${packet.moveX}; ${packet.moveY}`);
         this.playerInputMove$.next(packet);
+      });
+
+    this.socket.fromEvent<PacketSyncSnapshot>(ServerPackets.SYNC_SNAPSHOT)
+      .subscribe(packet => {
+        console.log(`<< ${ServerPackets.SYNC_SNAPSHOT}`);
+        this.syncSnapshot$.next(packet);
       });
   }
 }

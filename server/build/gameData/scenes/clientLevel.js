@@ -1,9 +1,12 @@
-import { Scene } from 'phaser';
-import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
-import { AssetService } from '../gameServices/asset.service';
-import { UI } from '../ui/ui';
-import { MapGrid } from '../../core/mapGrid';
-export class ClientLevel extends Scene {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ClientLevel = void 0;
+const phaser_1 = require("phaser");
+const entity_spawner_service_1 = require("../gameServices/entity-spawner.service");
+const asset_service_1 = require("../gameServices/asset.service");
+const ui_1 = require("../ui/ui");
+const mapGrid_1 = require("../../core/mapGrid");
+class ClientLevel extends phaser_1.Scene {
     constructor(inputService) {
         super({ key: 'level' });
         this.inputService = inputService;
@@ -12,21 +15,21 @@ export class ClientLevel extends Scene {
         this.levelUI = [];
     }
     create() {
-        this.entitySpawner = new EntitySpawnerService();
+        this.entitySpawner = new entity_spawner_service_1.EntitySpawnerService();
         this.entitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
-        this.mapGrid = new MapGrid(this, 'tileset');
+        this.mapGrid = new mapGrid_1.MapGrid(this, 'tileset');
         this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(-17, -7), 30);
         this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
         this.backgroundImage = this.add.tileSprite(0, 0, this.sys.game.canvas.width + 100, this.sys.game.canvas.height + 100, 'grass01');
         this.backgroundImage.setDepth(-50);
         this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
         this.events.on('postupdate', this.postupdate.bind(this));
-        this.levelUI.push(new UI.HealthBarPlayer(this));
+        this.levelUI.push(new ui_1.UI.HealthBarPlayer(this));
     }
     preload() {
-        AssetService.loadBlockSprites(this.load);
-        AssetService.loadEntitySprites(this.load);
-        AssetService.loadArmorSprites(this.load);
+        asset_service_1.AssetService.loadBlockSprites(this.load);
+        asset_service_1.AssetService.loadEntitySprites(this.load);
+        asset_service_1.AssetService.loadArmorSprites(this.load);
     }
     update() {
         this.entities.forEach(e => e.update());
@@ -37,4 +40,4 @@ export class ClientLevel extends Scene {
         this.levelUI.forEach(ui => ui.update());
     }
 }
-//# sourceMappingURL=clientLevel.js.map
+exports.ClientLevel = ClientLevel;

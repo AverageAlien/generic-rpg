@@ -11,12 +11,14 @@ import { PacketInitLevel } from '../../networkPackets/fromServer/initLevel';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 import { LocationList } from '../../serverCore/locationList';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, interval } from 'rxjs';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
+  public levelLoader: LevelLoaderService;
+
   public levelName: string;
-  public entities: Entity[];
+  public entities: Entity[] = [];
   public clients: GameClient[] = [];
 
   protected entitySpawner: NetworkEntitySpawner;
@@ -34,13 +36,18 @@ export class NetworkLevel extends Scene implements LevelScene {
   create() {
     this.mapGrid = new MapGrid(this, 'tileset');
 
-    console.log(`loading ${this.roomName}`);
-    LevelLoaderService.importlevel(LocationList.get(this.roomName).levelData, this);
-    console.log(`loaded ${this.roomName}`);
+    this.levelLoader = new LevelLoaderService(this);
+
+    this.levelLoader.importlevel(LocationList.get(this.roomName).levelData);
 
     this.entitySpawner = new NetworkEntitySpawner(this);
 
     this.roomReady$.next(true);
+
+    interval(250)
+      .subscribe(() => {
+        this.server.to(this.roomName).emit(ServerPackets.SYNC_SNAPSHOT, NetworkPacketSerializer.syncSnapshot(this));
+      });
   }
 
   preload() {
@@ -50,36 +57,37 @@ export class NetworkLevel extends Scene implements LevelScene {
   }
 
   update() {
-    this.entities.forEach(e => e.update());
+    this.entities.forEach(e => {
+      e.update();
+      // console.log(`entity ${e.entityName} position: ${e.gameObject.body.position.x}; ${e.gameObject.body.position.y}`);
+    });
   }
 
   addPlayer(player: GameClient) {
     const existingPlayers = [...this.clients];
 
-    player.socket.emit(ServerPackets.INIT_LEVEL, {
-      locationName: this.levelName,
-      levelData: LevelLoaderService.exportLevel(this)
-    } as PacketInitLevel);
+    player.socket.emit(ServerPackets.INIT_LEVEL, NetworkPacketSerializer.initLevel(this));
     console.log(`>> ${ServerPackets.INIT_LEVEL}`);
 
     this.clients.push(player);
 
     this.entities.forEach(e => {
       player.socket.emit(...NetworkPacketSerializer.spawnEntity(e));
+      console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn all present entities for new player)`);
     });
-    console.log(`>> ${ServerPackets.SPAWN_ENTITY}`);
 
     const spawnedEntity = this.entitySpawner.spawnPlayer(player, new Phaser.Math.Vector2(0, 0));
+    console.log(`spawned entity pos: ${spawnedEntity.gameObject.body.x}; ${spawnedEntity.gameObject.body.y}`);
 
     console.log('Existing players:');
     console.log(existingPlayers);
     existingPlayers.forEach(p => {
       p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
+      console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
     });
-    console.log(`>> ${ServerPackets.SPAWN_ENTITY}`);
 
     player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
-    console.log(`>> ${ServerPackets.SPAWN_PLAYER}`);
+    console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
   }
 
   broadcastPacket(packetType: ServerPackets, packet: any) {

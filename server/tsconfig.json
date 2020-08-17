@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ESNext",
     "module": "commonjs",
     "lib": [
       "es6",
+      "ES2018",
       "ES2019",
-      "DOM"
+      "ES2020",
+      "DOM",
+      "ScriptHost",
     ],
     "allowJs": true,
     "outDir": "build",

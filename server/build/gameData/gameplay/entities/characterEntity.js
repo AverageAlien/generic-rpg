@@ -1,10 +1,13 @@
-import { Subject } from 'rxjs';
-import { Constants } from '../../../core/constants';
-import { Faction } from '../../../core/factions';
-export class CharacterEntity {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.CharacterEntity = void 0;
+const rxjs_1 = require("rxjs");
+const constants_1 = require("../../../core/constants");
+const factions_1 = require("../../../core/factions");
+class CharacterEntity {
     constructor(cfg) {
-        this.faction = Faction.Player;
-        this.destroyed$ = new Subject();
+        this.faction = factions_1.Faction.Player;
+        this.destroyed$ = new rxjs_1.Subject();
         this.entityName = cfg.name;
         this.gameObject = cfg.gameObject;
         this.bodyTexture = cfg.bodyTexture;
@@ -32,7 +35,7 @@ export class CharacterEntity {
         this.destroyed$.complete();
     }
     move() {
-        const maxSpeedMult = Constants.Character.MAX_SPEED_MULT;
+        const maxSpeedMult = constants_1.Constants.Character.MAX_SPEED_MULT;
         const movement = this.controller.movement.scale(this.speed * maxSpeedMult * 10);
         if (this.gameObject.body.velocity.lengthSq() > (this.speed * this.speed * maxSpeedMult * maxSpeedMult)) {
             this.gameObject.body.velocity.normalize().scale(this.speed * maxSpeedMult);
@@ -46,9 +49,10 @@ export class CharacterEntity {
         this.gameObject.setFlipX(condition);
     }
     refreshRenderSprite() {
+        return; // no drawing on server
         const bounds = this.gameObject.body.center;
         this.gameObject.clear();
         this.gameObject.draw(this.bodyTexture, 0, 0);
     }
 }
-//# sourceMappingURL=characterEntity.js.map
+exports.CharacterEntity = CharacterEntity;

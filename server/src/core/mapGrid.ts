@@ -32,20 +32,7 @@ export class MapGrid {
 
     const { chunkPos, tilePos } = this.localizeChunk(pos);
 
-    // const chunkPos = new Phaser.Math.Vector2(
-    //   Math.floor(pos.x / Constants.Level.CHUNK_W),
-    //   Math.floor(pos.y / Constants.Level.CHUNK_H)
-    // );
-
     const chunk = this.ensureChunkExists(chunkPos, layer);
-
-    // const tilePosInChunk = new Phaser.Math.Vector2(pos)
-    //   .subtract(new Phaser.Math.Vector2(chunkPos)
-    //     .multiply(new Phaser.Math.Vector2(
-    //       Constants.Level.CHUNK_W,
-    //       Constants.Level.CHUNK_H
-    //     ))
-    //   );
 
     chunk.putTileAt(
       BlockIds.indexOf(blockName),

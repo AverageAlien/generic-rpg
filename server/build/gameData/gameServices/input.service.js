@@ -1,4 +1,7 @@
-export class InputService {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.InputService = void 0;
+class InputService {
     constructor() {
         this.inputs = {
             up: 'W',
@@ -16,4 +19,4 @@ export class InputService {
         };
     }
 }
-//# sourceMappingURL=input.service.js.map
+exports.InputService = InputService;

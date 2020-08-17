@@ -1,4 +1,7 @@
-export class HealthBarSmall extends Phaser.GameObjects.DOMElement {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HealthBarSmall = void 0;
+class HealthBarSmall extends Phaser.GameObjects.DOMElement {
     constructor(scene, target) {
         super(scene, target.gameObject.body.position.x, target.gameObject.body.position.y, 'div');
         this.target = target;
@@ -16,6 +19,7 @@ export class HealthBarSmall extends Phaser.GameObjects.DOMElement {
         this.visible = this.target.health < this.target.maxHealth;
     }
 }
+exports.HealthBarSmall = HealthBarSmall;
 HealthBarSmall.elementHTML = `
     <div style='
       background-color: red;
@@ -30,4 +34,3 @@ HealthBarSmall.elementHTML = `
       </div>
     </div>
   `;
-//# sourceMappingURL=healthBarSmall.js.map

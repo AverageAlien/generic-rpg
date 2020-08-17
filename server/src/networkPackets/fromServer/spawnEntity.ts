@@ -5,7 +5,8 @@ export interface PacketSpawnEntity {
     entityName: string;
     networkId: string;
     faction: Faction;
-    position: Phaser.Math.Vector2;
+    positionX: number;
+    positionY: number;
 }
 
 export interface PacketSpawnEntityCharacter extends PacketSpawnEntity {

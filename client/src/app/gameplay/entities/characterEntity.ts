@@ -65,6 +65,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     if (movement.x !== 0) {
       this.lookRight(movement.x > 0);
     }
+
     this.gameObject.body.setAcceleration(movement.x, movement.y);
   }
 

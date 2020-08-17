@@ -1,4 +1,7 @@
-export class EquipmentItem {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EquipmentItem = void 0;
+class EquipmentItem {
     constructor(name, texture, description, price, mass, level) {
         this.name = name;
         this.texture = texture;
@@ -8,4 +11,4 @@ export class EquipmentItem {
         this.level = level;
     }
 }
-//# sourceMappingURL=equipmentItem.js.map
+exports.EquipmentItem = EquipmentItem;

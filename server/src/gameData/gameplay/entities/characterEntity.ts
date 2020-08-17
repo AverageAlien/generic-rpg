@@ -73,6 +73,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
   }
 
   protected refreshRenderSprite() {
+    return; // no drawing on server
     const bounds = this.gameObject.body.center;
 
     this.gameObject.clear();
