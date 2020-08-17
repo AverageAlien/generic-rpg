@@ -22,6 +22,7 @@ export class RoomService {
 
       fromEvent<PacketClientInit>(socket, ClientPackets.CLIENT_INIT)
         .subscribe(packet => {
+          console.log(`<< ${ClientPackets.CLIENT_INIT}`);
           socket.leaveAll();
 
           socket.join('test_01');

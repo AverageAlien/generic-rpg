@@ -41,6 +41,7 @@ export class NetworkingService {
   loadLevel(levelScene: ClientLevel) {
     this.socket.fromEvent<PacketInitLevel>(ServerPackets.INIT_LEVEL)
       .subscribe(packet => {
+        console.log(`<< ${ServerPackets.INIT_LEVEL}`);
         levelScene.levelName = packet.locationName;
         LevelLoaderService.importlevel(packet.levelData, levelScene);
       });
@@ -48,32 +49,38 @@ export class NetworkingService {
     this.socket.emit(ClientPackets.CLIENT_INIT, {
       username: this.chosenUsername
     } as PacketClientInit);
+    console.log(`>> ${ClientPackets.CLIENT_INIT}`);
 
     this.startListen();
   }
 
   sendMovement(movementVector: Phaser.Math.Vector2) {
     this.socket.emit(ClientPackets.MOVE_INPUT, movementVector);
+    console.log(`>> ${ClientPackets.MOVE_INPUT}`);
   }
 
   private startListen() {
     this.socket.fromEvent<PacketSpawnEntityCharacter>(ServerPackets.SPAWN_ENTITY_CHARACTER)
       .subscribe(packet => {
+        console.log(`<< ${ServerPackets.SPAWN_ENTITY_CHARACTER}`);
         this.spawnEntityCharacter$.next(packet);
       });
 
     this.socket.fromEvent<PacketSpawnEntityHumanoid>(ServerPackets.SPAWN_ENTITY_HUMANOID)
       .subscribe(packet => {
+        console.log(`<< ${ServerPackets.SPAWN_ENTITY_HUMANOID}`);
         this.spawnEntityHumanoid$.next(packet);
       });
 
     this.socket.fromEvent<PacketSpawnPlayer>(ServerPackets.SPAWN_PLAYER)
       .subscribe(packet => {
+        console.log(`<< ${ServerPackets.SPAWN_PLAYER}`);
         this.spawnPlayer$.next(packet);
       });
 
     this.socket.fromEvent<PacketPlayerInputMove>(ServerPackets.PLAYER_INPUT_MOVE)
       .subscribe(packet => {
+        console.log(`<< ${ServerPackets.PLAYER_INPUT_MOVE}`);
         this.playerInputMove$.next(packet);
       });
   }

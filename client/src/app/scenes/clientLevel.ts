@@ -8,6 +8,7 @@ import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 import { LevelScene } from '../core/levelScene';
 import { NetworkingService } from '../services/networking.service';
+import { ClientEntitySpawnerService } from '../gameServices/client-entity-spawner.service';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -18,7 +19,7 @@ export class ClientLevel extends Scene implements LevelScene {
 
   public debugGraphics: GameObjects.Graphics;
 
-  protected entitySpawner: EntitySpawnerService;
+  protected entitySpawner: ClientEntitySpawnerService;
 
   protected backgroundImage: GameObjects.TileSprite;
 
@@ -27,13 +28,13 @@ export class ClientLevel extends Scene implements LevelScene {
   }
 
   create() {
-    this.entitySpawner = new EntitySpawnerService();
-    this.entitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
+    this.entitySpawner = new ClientEntitySpawnerService(
+      this.inputService.getInputKeys(this.input.keyboard),
+      this,
+      this.networkingService
+    );
 
     this.mapGrid = new MapGrid(this, 'tileset');
-
-    this.player = this.entitySpawner.spawnPlayer('maxi', new Phaser.Math.Vector2(-17, -7), 30);
-    this.cameras.main.startFollow(this.player.gameObject, false, 0.1, 0.1);
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,

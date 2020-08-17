@@ -60,12 +60,14 @@ export class NetworkLevel extends Scene implements LevelScene {
       locationName: this.levelName,
       levelData: LevelLoaderService.exportLevel(this)
     } as PacketInitLevel);
+    console.log(`>> ${ServerPackets.INIT_LEVEL}`);
 
     this.clients.push(player);
 
     this.entities.forEach(e => {
       player.socket.emit(...NetworkPacketSerializer.spawnEntity(e));
     });
+    console.log(`>> ${ServerPackets.SPAWN_ENTITY}`);
 
     const spawnedEntity = this.entitySpawner.spawnPlayer(player, new Phaser.Math.Vector2(0, 0));
 
@@ -74,8 +76,10 @@ export class NetworkLevel extends Scene implements LevelScene {
     existingPlayers.forEach(p => {
       p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
     });
+    console.log(`>> ${ServerPackets.SPAWN_ENTITY}`);
 
     player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
+    console.log(`>> ${ServerPackets.SPAWN_PLAYER}`);
   }
 
   broadcastPacket(packetType: ServerPackets, packet: any) {
