@@ -1,4 +1,5 @@
 import * as io from 'socket.io';
+import '@geckos.io/phaser-on-nodejs';
 import * as Phaser from 'phaser';
 import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { Constants } from '../core/constants';
@@ -6,8 +7,10 @@ import { fromEvent } from 'rxjs';
 import { ClientPackets } from '../networkPackets/fromClient/clientPackets';
 import { PacketClientInit } from '../networkPackets/fromClient/clientInit';
 import { Room } from '../models/room';
+import { take, filter } from 'rxjs/operators';
 
 const defaultRoom = 'test01';
+global.phaserOnNodeFPS = 30;
 
 export class RoomService {
   private rooms: Room[] = [];
@@ -47,10 +50,17 @@ export class RoomService {
       targetRoom = this.createRoom(roomName);
     }
 
-    targetRoom.location.addPlayer({
-      nickname: playerName,
-      socket
-    });
+    targetRoom.location.roomReady.pipe(
+      filter(ready => ready),
+      take(1))
+      .subscribe(ready => {
+        console.log('room ready');
+
+        targetRoom.location.addPlayer({
+          nickname: playerName,
+          socket
+        });
+      });
   }
 
   private createRoom(roomName: string): Room {

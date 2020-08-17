@@ -1,6 +1,6 @@
-import * as express from 'express';
+import express from 'express';
 import * as http from 'http';
-import * as io from 'socket.io';
+import io from 'socket.io';
 import * as fs from 'fs';
 import * as path from 'path';
 import { RoomService } from './services/roomService';
@@ -10,6 +10,7 @@ const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws'
 });
+
 const roomService = new RoomService(ioServer);
 
 const clientRoot = path.join(__dirname, 'client');

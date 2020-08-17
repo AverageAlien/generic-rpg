@@ -39,7 +39,7 @@ export class NetworkingService {
   constructor(private socket: Socket) { }
 
   loadLevel(levelScene: ClientLevel) {
-    fromEvent<PacketInitLevel>(this.socket as any, ServerPackets.INIT_LEVEL)
+    this.socket.fromEvent<PacketInitLevel>(ServerPackets.INIT_LEVEL)
       .subscribe(packet => {
         levelScene.levelName = packet.locationName;
         LevelLoaderService.importlevel(packet.levelData, levelScene);
@@ -57,22 +57,22 @@ export class NetworkingService {
   }
 
   private startListen() {
-    fromEvent<PacketSpawnEntityCharacter>(this.socket as any, ServerPackets.SPAWN_ENTITY_CHARACTER)
+    this.socket.fromEvent<PacketSpawnEntityCharacter>(ServerPackets.SPAWN_ENTITY_CHARACTER)
       .subscribe(packet => {
         this.spawnEntityCharacter$.next(packet);
       });
 
-    fromEvent<PacketSpawnEntityHumanoid>(this.socket as any, ServerPackets.SPAWN_ENTITY_HUMANOID)
+    this.socket.fromEvent<PacketSpawnEntityHumanoid>(ServerPackets.SPAWN_ENTITY_HUMANOID)
       .subscribe(packet => {
         this.spawnEntityHumanoid$.next(packet);
       });
 
-    fromEvent<PacketSpawnPlayer>(this.socket as any, ServerPackets.SPAWN_PLAYER)
+    this.socket.fromEvent<PacketSpawnPlayer>(ServerPackets.SPAWN_PLAYER)
       .subscribe(packet => {
         this.spawnPlayer$.next(packet);
       });
 
-    fromEvent<PacketPlayerInputMove>(this.socket as any, ServerPackets.PLAYER_INPUT_MOVE)
+    this.socket.fromEvent<PacketPlayerInputMove>(ServerPackets.PLAYER_INPUT_MOVE)
       .subscribe(packet => {
         this.playerInputMove$.next(packet);
       });

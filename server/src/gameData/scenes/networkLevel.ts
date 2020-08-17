@@ -10,6 +10,8 @@ import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
 import { PacketInitLevel } from '../../networkPackets/fromServer/initLevel';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
+import { LocationList } from '../../serverCore/locationList';
+import { BehaviorSubject } from 'rxjs';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -19,14 +21,26 @@ export class NetworkLevel extends Scene implements LevelScene {
 
   protected entitySpawner: NetworkEntitySpawner;
 
-  constructor(private server: io.Server, private roomName) {
+  private roomReady$ = new BehaviorSubject<boolean>(false);
+
+  constructor(private server: io.Server, private roomName: string) {
     super({ key: 'networklevel' });
+  }
+
+  public get roomReady() {
+    return this.roomReady$.asObservable();
   }
 
   create() {
     this.mapGrid = new MapGrid(this, 'tileset');
 
+    console.log(`loading ${this.roomName}`);
+    LevelLoaderService.importlevel(LocationList.get(this.roomName).levelData, this);
+    console.log(`loaded ${this.roomName}`);
+
     this.entitySpawner = new NetworkEntitySpawner(this);
+
+    this.roomReady$.next(true);
   }
 
   preload() {

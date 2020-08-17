@@ -1,29 +1,19 @@
 {
-  "compileOnSave": false,
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./",
-    "outDir": "./build",
-    "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "module": "es2015",
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "es6",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "target": "es5",
+    "module": "commonjs",
     "lib": [
-      "es2018",
-      "es2019",
-      "dom",
-      "ScriptHost"
-    ]
-  },
-  "angularCompilerOptions": {
-    "fullTemplateTypeCheck": true,
-    "strictInjectionParameters": true
+      "es6",
+      "ES2019",
+      "DOM"
+    ],
+    "allowJs": true,
+    "outDir": "build",
+    "rootDir": "src",
+    "strict": true,
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": false
   }
 }

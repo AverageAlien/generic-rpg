@@ -19,7 +19,9 @@ export class LevelLoaderService {
   }
 
   public static importlevel(levelJson: string, level: LevelScene): void {
+    console.log('start import');
     const minLevel: LevelSerialization.MinifiedLevel = JSON.parse(levelJson);
+    console.log('parsed json');
 
     for (const layer of minLevel.l) {
       for (const block of layer[1]) {
