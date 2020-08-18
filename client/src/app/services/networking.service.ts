@@ -20,11 +20,11 @@ import { PacketSyncSnapshot } from '../networking/networkPackets/fromServer/sync
 export class NetworkingService {
   public chosenUsername: string;
 
+  private syncSnapshot: PacketSyncSnapshot;
   private spawnEntityCharacter$ = new Subject<PacketSpawnEntityCharacter>();
   private spawnEntityHumanoid$ = new Subject<PacketSpawnEntityHumanoid>();
   private spawnPlayer$ = new Subject<PacketSpawnPlayer>();
   private playerInputMove$ = new Subject<PacketPlayerInputMove>();
-  private syncSnapshot$ = new Subject<PacketSyncSnapshot>();
 
   public get spawnEntityCharacter() {
     return this.spawnEntityCharacter$.asObservable();
@@ -37,9 +37,6 @@ export class NetworkingService {
   }
   public get playerInputMove() {
     return this.playerInputMove$.asObservable();
-  }
-  public get syncSnapshot() {
-    return this.syncSnapshot$.asObservable();
   }
 
   constructor(private socket: Socket) { }
@@ -66,6 +63,22 @@ export class NetworkingService {
       moveY: movementVector.y
     } as PacketMoveInput);
     console.log(`>> ${ClientPackets.MOVE_INPUT}`);
+  }
+
+  synchronizeWithServer(levelScene: ClientLevel) {
+    if (!this.syncSnapshot) {
+      return;
+    }
+
+    this.syncSnapshot.entities.forEach(es => {
+      const entity = levelScene.entities.find(e => e.networkId === es.networkId);
+      if (!entity) { return; }
+
+      (entity.gameObject as any).setPosition(es.positionX, es.positionY);
+      entity.gameObject.body.setVelocity(es.velocityX, es.velocityY);
+    });
+
+    this.syncSnapshot = null;
   }
 
   private startListen() {
@@ -97,7 +110,7 @@ export class NetworkingService {
     this.socket.fromEvent<PacketSyncSnapshot>(ServerPackets.SYNC_SNAPSHOT)
       .subscribe(packet => {
         console.log(`<< ${ServerPackets.SYNC_SNAPSHOT}`);
-        this.syncSnapshot$.next(packet);
+        this.syncSnapshot = packet;
       });
   }
 }

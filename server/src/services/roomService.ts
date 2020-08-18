@@ -3,7 +3,7 @@ import '@geckos.io/phaser-on-nodejs';
 import * as Phaser from 'phaser';
 import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { Constants } from '../core/constants';
-import { fromEvent } from 'rxjs';
+import { fromEvent, timer } from 'rxjs';
 import { ClientPackets } from '../networkPackets/fromClient/clientPackets';
 import { PacketClientInit } from '../networkPackets/fromClient/clientInit';
 import { Room } from '../models/room';

@@ -51,7 +51,6 @@ export class MapGrid {
   }
 
   public getBlockAt(pos: Phaser.Math.Vector2, layer = 0): string {
-    // TODO: rewrite this and the rest to return indices instead in order to optimize level exports
     const { chunkPos, tilePos } = this.localizeChunk(pos);
     if (!this.chunks[layer] ||
       !this.chunks[layer][chunkPos.x] ||
@@ -81,10 +80,10 @@ export class MapGrid {
 
   public getAllChunks(layer?: number): Tilemaps.DynamicTilemapLayer[] {
     if (!layer) {
-      return this.chunks.flatMap(L =>
-        L.flatMap(row => row));
+      return Object.values(this.chunks).flatMap(L =>
+        Object.values(L).flatMap(row => Object.values(row)));
     }
-    return this.chunks[layer].flatMap(row => row);
+    return Object.values(this.chunks[layer]).flatMap(row => Object.values(row));
   }
 
   public getAllOfLayer(layer: number): LevelSerialization.Block[] {

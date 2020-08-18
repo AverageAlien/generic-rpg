@@ -7,11 +7,10 @@ import { GameClient } from '../../models/gameClient';
 import { LevelScene } from '../../core/levelScene';
 import { MapGrid } from '../../core/mapGrid';
 import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
-import { PacketInitLevel } from '../../networkPackets/fromServer/initLevel';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 import { LocationList } from '../../serverCore/locationList';
-import { BehaviorSubject, interval } from 'rxjs';
+import { BehaviorSubject, fromEvent } from 'rxjs';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -42,12 +41,9 @@ export class NetworkLevel extends Scene implements LevelScene {
 
     this.entitySpawner = new NetworkEntitySpawner(this);
 
-    this.roomReady$.next(true);
+    fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
 
-    interval(250)
-      .subscribe(() => {
-        this.server.to(this.roomName).emit(ServerPackets.SYNC_SNAPSHOT, NetworkPacketSerializer.syncSnapshot(this));
-      });
+    this.roomReady$.next(true);
   }
 
   preload() {
@@ -61,6 +57,10 @@ export class NetworkLevel extends Scene implements LevelScene {
       e.update();
       // console.log(`entity ${e.entityName} position: ${e.gameObject.body.position.x}; ${e.gameObject.body.position.y}`);
     });
+  }
+
+  postupdate() {
+    this.server.to(this.roomName).emit(ServerPackets.SYNC_SNAPSHOT, NetworkPacketSerializer.syncSnapshot(this));
   }
 
   addPlayer(player: GameClient) {

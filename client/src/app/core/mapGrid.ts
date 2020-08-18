@@ -32,20 +32,7 @@ export class MapGrid {
 
     const { chunkPos, tilePos } = this.localizeChunk(pos);
 
-    // const chunkPos = new Phaser.Math.Vector2(
-    //   Math.floor(pos.x / Constants.Level.CHUNK_W),
-    //   Math.floor(pos.y / Constants.Level.CHUNK_H)
-    // );
-
     const chunk = this.ensureChunkExists(chunkPos, layer);
-
-    // const tilePosInChunk = new Phaser.Math.Vector2(pos)
-    //   .subtract(new Phaser.Math.Vector2(chunkPos)
-    //     .multiply(new Phaser.Math.Vector2(
-    //       Constants.Level.CHUNK_W,
-    //       Constants.Level.CHUNK_H
-    //     ))
-    //   );
 
     chunk.putTileAt(
       BlockIds.indexOf(blockName),
@@ -64,7 +51,6 @@ export class MapGrid {
   }
 
   public getBlockAt(pos: Phaser.Math.Vector2, layer = 0): string {
-    // TODO: rewrite this and the rest to return indices instead in order to optimize level exports
     const { chunkPos, tilePos } = this.localizeChunk(pos);
     if (!this.chunks[layer] ||
       !this.chunks[layer][chunkPos.x] ||
@@ -95,9 +81,9 @@ export class MapGrid {
   public getAllChunks(layer?: number): Tilemaps.DynamicTilemapLayer[] {
     if (!layer) {
       return Object.values(this.chunks).flatMap(L =>
-        L.flatMap(row => row));
+        Object.values(L).flatMap(row => Object.values(row)));
     }
-    return Object.values(this.chunks[layer]).flatMap(row => row);
+    return Object.values(this.chunks[layer]).flatMap(row => Object.values(row));
   }
 
   public getAllOfLayer(layer: number): LevelSerialization.Block[] {

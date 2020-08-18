@@ -9,6 +9,7 @@ import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 import { LevelScene } from '../core/levelScene';
 import { NetworkingService } from '../services/networking.service';
 import { ClientEntitySpawnerService } from '../gameServices/client-entity-spawner.service';
+import { fromEvent } from 'rxjs';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -47,7 +48,8 @@ export class ClientLevel extends Scene implements LevelScene {
 
     this.debugGraphics = this.add.graphics().setDepth(2).setAlpha(0.75);
 
-    this.events.on('postupdate', this.postupdate.bind(this));
+    fromEvent(this.events, 'preupdate').subscribe(this.preupdate.bind(this));
+    fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
 
     this.levelUI.push(new UI.HealthBarPlayer(this));
 
@@ -73,6 +75,10 @@ export class ClientLevel extends Scene implements LevelScene {
       this.cameras.main.worldView.centerX,
       this.cameras.main.worldView.centerY
     );
+  }
+
+  preupdate() {
+    this.networkingService.synchronizeWithServer(this);
   }
 
   postupdate() {

@@ -60,17 +60,9 @@ export class ClientEntitySpawnerService {
       this.networkingService.sendMovement(vector);
     });
 
-    this.networkingService.syncSnapshot.subscribe(syncPacket => {
-      const myEntity = syncPacket.entities.find(e => e.networkId === entity.networkId);
-      if (!myEntity) { return; }
-
-      entity.gameObject.setPosition(myEntity.positionX, myEntity.positionY);
-      entity.gameObject.body.setVelocity(myEntity.velocityX, myEntity.velocityY);
-    });
-
-    entity.destroyed.subscribe(() => {
-      // TODO
-    });
+    // entity.destroyed.subscribe(() => {
+    //   // TODO
+    // });
 
     this.levelScene.entities.push(entity);
     this.levelScene.player = entity;
@@ -176,9 +168,11 @@ export class ClientEntitySpawnerService {
     gameObject: T & { body: Phaser.Physics.Arcade.Body }
   ): T & { body: Phaser.Physics.Arcade.Body } {
     this.levelScene.physics.add.existing(gameObject);
+    const allChunks = this.levelScene.mapGrid.getAllChunks();
+    console.log(allChunks);
     this.levelScene.physics.add.collider(
       gameObject,
-      this.levelScene.mapGrid.getAllChunks()
+      allChunks
     );
 
     gameObject.body.checkCollision.up = true;
