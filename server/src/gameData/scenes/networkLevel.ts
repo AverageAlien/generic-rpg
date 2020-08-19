@@ -1,4 +1,5 @@
 import * as io from 'socket.io';
+import { performance } from 'perf_hooks';
 import { Scene } from 'phaser';
 import { Entity } from '../gameplay/entities/baseEntity';
 import { AssetService } from '../gameServices/asset.service';
@@ -11,6 +12,8 @@ import { LevelLoaderService } from '../../gameData/gameServices/level-loader.ser
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 import { LocationList } from '../../serverCore/locationList';
 import { BehaviorSubject, fromEvent } from 'rxjs';
+import { ClientPackets } from '../../networkPackets/fromClient/clientPackets';
+import { take } from 'rxjs/operators';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -23,6 +26,9 @@ export class NetworkLevel extends Scene implements LevelScene {
   protected entitySpawner: NetworkEntitySpawner;
 
   private roomReady$ = new BehaviorSubject<boolean>(false);
+
+  private syncTick = 0;
+  private readonly syncThreshold = 5;
 
   constructor(private server: io.Server, private roomName: string) {
     super({ key: 'networklevel' });
@@ -55,12 +61,27 @@ export class NetworkLevel extends Scene implements LevelScene {
   update() {
     this.entities.forEach(e => {
       e.update();
-      // console.log(`entity ${e.entityName} position: ${e.gameObject.body.position.x}; ${e.gameObject.body.position.y}`);
     });
   }
 
   postupdate() {
-    this.server.to(this.roomName).emit(ServerPackets.SYNC_SNAPSHOT, NetworkPacketSerializer.syncSnapshot(this));
+    if (this.syncTick >= this.syncThreshold) {
+      const syncPacket = NetworkPacketSerializer.syncSnapshot(this);
+      const beforePing = performance.now();
+      this.clients.forEach(gc => {
+        fromEvent<void>(gc.socket, ClientPackets.PING)
+          .pipe(take(1))
+          .subscribe(() => {
+          gc.ping = (performance.now() - beforePing) * 0.5;
+          console.log(`PING: ${gc.ping}`);
+          gc.socket.emit(ServerPackets.PONG);
+        })
+      });
+      this.server.to(this.roomName).emit(ServerPackets.SYNC_SNAPSHOT, syncPacket);
+      this.syncTick = 0;
+    } else {
+      this.syncTick++;
+    }
   }
 
   addPlayer(player: GameClient) {
@@ -68,8 +89,6 @@ export class NetworkLevel extends Scene implements LevelScene {
 
     player.socket.emit(ServerPackets.INIT_LEVEL, NetworkPacketSerializer.initLevel(this));
     console.log(`>> ${ServerPackets.INIT_LEVEL}`);
-
-    this.clients.push(player);
 
     this.entities.forEach(e => {
       player.socket.emit(...NetworkPacketSerializer.spawnEntity(e));
@@ -88,6 +107,8 @@ export class NetworkLevel extends Scene implements LevelScene {
 
     player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
     console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
+
+    this.clients.push(player);
   }
 
   broadcastPacket(packetType: ServerPackets, packet: any) {

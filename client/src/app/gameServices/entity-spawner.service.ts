@@ -48,7 +48,7 @@ export class EntitySpawnerService {
         this.levelScene.entities.splice(entityIndex, 1);
       }
 
-      console.log(this.levelScene.player);
+      // console.log(this.levelScene.player);
     });
 
     this.levelScene.entities.push(entity);

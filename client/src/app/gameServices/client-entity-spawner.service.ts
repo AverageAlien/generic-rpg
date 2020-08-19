@@ -73,7 +73,7 @@ export class ClientEntitySpawnerService {
   }
 
   public spawnEntityHumanoid(packet: PacketSpawnEntityHumanoid): HumanoidEntity {
-    console.log(`spawning humanoid at ${packet.positionX}; ${packet.positionY}`);
+    // console.log(`spawning humanoid at ${packet.positionX}; ${packet.positionY}`);
     const gameObject = this.createRenderTexture(
       new Phaser.Math.Vector2(packet.positionX, packet.positionY),
       new Phaser.Math.Vector2(
@@ -169,7 +169,7 @@ export class ClientEntitySpawnerService {
   ): T & { body: Phaser.Physics.Arcade.Body } {
     this.levelScene.physics.add.existing(gameObject);
     const allChunks = this.levelScene.mapGrid.getAllChunks();
-    console.log(allChunks);
+    // console.log(allChunks);
     this.levelScene.physics.add.collider(
       gameObject,
       allChunks

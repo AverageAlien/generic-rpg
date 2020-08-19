@@ -1,6 +1,7 @@
 import * as io from 'socket.io';
 
 export interface GameClient {
-    nickname: string,
+    nickname: string;
     socket: io.Socket;
+    ping?: number;
 }

@@ -63,8 +63,8 @@ export class NetworkPacketSerializer {
       entities: levelScene.entities.map(e => {
         return {
           networkId: e.networkId,
-          positionX: (e.gameObject as any).x || e.gameObject.body.x,
-          positionY: (e.gameObject as any).y || e.gameObject.body.y,
+          positionX: (e.gameObject as unknown as Phaser.GameObjects.Components.Transform).x,
+          positionY: (e.gameObject as unknown as Phaser.GameObjects.Components.Transform).y,
           velocityX: e.gameObject.body.velocity.x,
           velocityY: e.gameObject.body.velocity.y
         };

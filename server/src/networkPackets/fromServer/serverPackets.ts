@@ -6,4 +6,5 @@ export enum ServerPackets {
   INIT_LEVEL = 'INIT_LEVEL',
   PLAYER_INPUT_MOVE = 'PLAYER_INPUT_MOVE',
   SYNC_SNAPSHOT = 'SYNC_SNAPSHOT',
+  PONG = 'PONG',
 }
