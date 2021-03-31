@@ -1,4 +1,4 @@
-import { Level } from '../scenes/levelScene';
+import { ClientLevel } from '../scenes/clientLevel';
 
 export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
   private static readonly elementHTML = `
@@ -48,7 +48,7 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     </div>
   `;
 
-  constructor(private levelScene: Level) {
+  constructor(private levelScene: ClientLevel) {
     super(
       levelScene,
       70,
@@ -65,9 +65,17 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     const plr = this.levelScene.player;
 
     const bar = this.getChildByID('full') as HTMLElement;
+    const label = this.getChildByID('label') as HTMLElement;
+
+    if (!plr) {
+      bar.style.width = `0%`;
+      label.innerText = `0/0`;
+
+      return;
+    }
+
     bar.style.width = `${Math.max(Math.min(100, plr.health / plr.maxHealth * 100), 0)}%`;
 
-    const label = this.getChildByID('label') as HTMLElement;
     label.innerText = `${plr.health}/${plr.maxHealth}`;
   }
 }

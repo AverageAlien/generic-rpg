@@ -102,3 +102,7 @@ dist
 
 # TernJS port file
 .tern-port
+server/.vscode/launch.json
+
+# Tsc build output
+server/build/

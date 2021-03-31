@@ -5,6 +5,10 @@ import { Faction } from 'src/app/core/factions';
 
 export interface Entity {
   entityName: string;
+  /**
+   * If equal to `null` or `undefined`, this is a local entity.
+   */
+  networkId: string;
   faction: Faction;
   gameObject: GameObjects.GameObject & { body: Phaser.Physics.Arcade.Body };
 

@@ -14,7 +14,7 @@ export class HumanoidEntity extends CharacterEntity {
 
   public equipArmor(armor: Armor) {
     this.armor = armor;
-    console.log('equip called');
+    // console.log('equip called');
 
     this.refreshRenderSprite();
   }

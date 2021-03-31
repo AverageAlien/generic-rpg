@@ -9,6 +9,7 @@ import { Faction } from 'src/app/core/factions';
 export class CharacterEntity implements Entity, Controllable, Destroyable {
   public entityName: string;
   public faction: Faction = Faction.Player;
+  public networkId: string;
 
   public gameObject: GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body };
   protected bodyTexture: string;
@@ -64,6 +65,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     if (movement.x !== 0) {
       this.lookRight(movement.x > 0);
     }
+
     this.gameObject.body.setAcceleration(movement.x, movement.y);
   }
 

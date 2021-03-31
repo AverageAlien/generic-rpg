@@ -1,16 +1,26 @@
-import * as express from 'express';
+import express from 'express';
+import * as http from 'http';
+import io from 'socket.io';
 import * as fs from 'fs';
 import * as path from 'path';
+import { RoomService } from './services/roomService';
 
-const server = express();
+const app = express();
+const httpServer = new http.Server(app);
+const ioServer = io(httpServer, {
+  path: '/game-ws',
+  pingInterval: 2000
+});
+
+const roomService = new RoomService(ioServer);
 
 const clientRoot = path.join(__dirname, 'client');
 
-server.get('/test', (req, res) => {
+app.get('/test', (req, res) => {
   res.send('hello world!');
 });
 
-server.get('*', (req, res) => {
+app.get('*', (req, res) => {
   fs.stat(clientRoot + req.path, (err) => {
     if (err) {
       res.sendFile('index.html', { root: clientRoot });
@@ -20,4 +30,4 @@ server.get('*', (req, res) => {
   });
 });
 
-server.listen(42069);
+httpServer.listen(42069);
