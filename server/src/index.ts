@@ -9,7 +9,8 @@ const app = express();
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws',
-  pingInterval: 2000
+  pingInterval: 2000,
+  origins: ['http://localhost:4200'],
 });
 
 const roomService = new RoomService(ioServer);
