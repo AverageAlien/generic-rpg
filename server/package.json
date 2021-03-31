@@ -26,6 +26,7 @@
   "dependencies": {
     "@geckos.io/phaser-on-nodejs": "^1.2.3",
     "@types/pathfinding": "0.0.4",
+    "canvas": "^2.7.0",
     "express": "^4.17.1",
     "pathfinding": "^0.4.18",
     "phaser": "^3.24.1",

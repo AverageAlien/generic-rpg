@@ -7,9 +7,7 @@ import {
 } from '../networkPackets/fromServer/spawnEntity';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
 import { CharacterEntity } from '../gameData/gameplay/entities/characterEntity';
-import { LevelScene } from '../core/levelScene';
 import { PacketInitLevel } from '../networkPackets/fromServer/initLevel';
-import { LevelLoaderService } from '../gameData/gameServices/level-loader.service';
 import { PacketSpawnPlayer } from '../networkPackets/fromServer/spawnPlayer';
 import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { PacketSyncSnapshot } from '../networkPackets/fromServer/syncSnapshot';

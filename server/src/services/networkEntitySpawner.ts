@@ -34,7 +34,7 @@ export class NetworkEntitySpawner {
     });
 
     entity.networkId = UUID();
-    entity.controller = new ClientController(gameClient.socket, entity);
+    entity.controller = new ClientController(gameClient, entity);
     NetworkControllerService.addPlayerInputListeners(entity.controller as ClientController, this.levelScene);
 
     entity.destroyed.subscribe(() => {

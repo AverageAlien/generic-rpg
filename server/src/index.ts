@@ -8,7 +8,8 @@ import { RoomService } from './services/roomService';
 const app = express();
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
-  path: '/game-ws'
+  path: '/game-ws',
+  pingInterval: 2000
 });
 
 const roomService = new RoomService(ioServer);

@@ -59,7 +59,9 @@ export class RoomService {
 
         targetRoom.location.addPlayer({
           nickname: playerName,
-          socket
+          socket,
+          socketSubscriptions: [],
+          ping: 0,
         });
       });
   }

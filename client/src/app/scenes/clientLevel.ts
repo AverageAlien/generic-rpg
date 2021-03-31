@@ -10,6 +10,7 @@ import { LevelScene } from '../core/levelScene';
 import { NetworkingService } from '../services/networking.service';
 import { ClientEntitySpawnerService } from '../gameServices/client-entity-spawner.service';
 import { fromEvent } from 'rxjs';
+import { CharacterEntity } from '../gameplay/entities/characterEntity';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -52,6 +53,10 @@ export class ClientLevel extends Scene implements LevelScene {
     fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
 
     this.levelUI.push(new UI.HealthBarPlayer(this));
+
+    this.networkingService.playerLeft.subscribe(packet => {
+      (this.entities.find(e => e.networkId === packet.networkId) as CharacterEntity).destroy();
+    });
 
     this.networkingService.loadLevel(this);
   }
