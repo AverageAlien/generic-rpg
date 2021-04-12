@@ -15,6 +15,10 @@ import { PacketSyncSnapshot } from '../networking/networkPackets/fromServer/sync
 import { PingService } from './ping.service';
 import { PacketClientSync } from '../networking/networkPackets/fromClient/clientSync';
 import { PacketPlayerLeft } from '../networking/networkPackets/fromServer/playerLeft';
+import { Armor } from '../gameplay/items/armor';
+import { PacketEquipArmor } from '../networking/networkPackets/fromClient/equipArmor';
+import { PacketArmorEquipped } from '../networking/networkPackets/fromServer/armorEquipped';
+import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +36,7 @@ export class NetworkingService {
   private spawnEntityHumanoid$ = new Subject<PacketSpawnEntityHumanoid>();
   private spawnPlayer$ = new Subject<PacketSpawnPlayer>();
   private playerInputMove$ = new Subject<PacketPlayerInputMove>();
+  private playerEquippedArmor$ = new Subject<PacketArmorEquipped>();
   private playerLeft$ = new Subject<PacketPlayerLeft>();
 
   public get spawnEntityCharacter() {
@@ -45,6 +50,9 @@ export class NetworkingService {
   }
   public get playerInputMove() {
     return this.playerInputMove$.asObservable();
+  }
+  public get playerEquippedArmor() {
+    return this.playerEquippedArmor$.asObservable();
   }
   public get playerLeft() {
     return this.playerLeft$.asObservable();
@@ -63,7 +71,7 @@ export class NetworkingService {
       username: this.chosenUsername
     } as PacketClientInit);
 
-    this.startListen();
+    this.startListen(levelScene);
   }
 
   sendMovement(movementVector: Phaser.Math.Vector2) {
@@ -71,6 +79,11 @@ export class NetworkingService {
       moveX: movementVector.x,
       moveY: movementVector.y
     } as PacketMoveInput);
+  }
+
+  sendEquipArmor(armor: Armor) {
+    console.log('EQUIP ARMOR');
+    this.socket.emit(ClientPackets.EQUIP_ARMOR, { armor } as PacketEquipArmor);
   }
 
   synchronizeWithServer(levelScene: ClientLevel) {
@@ -112,7 +125,7 @@ export class NetworkingService {
     this.syncSnapshot = null;
   }
 
-  private startListen() {
+  private startListen(clientLevel: ClientLevel) {
     this.socket.fromEvent<PacketSpawnEntityCharacter>(ServerPackets.SPAWN_ENTITY_CHARACTER)
       .subscribe(packet => {
         this.spawnEntityCharacter$.next(packet);
@@ -131,6 +144,15 @@ export class NetworkingService {
     this.socket.fromEvent<PacketPlayerInputMove>(ServerPackets.PLAYER_INPUT_MOVE)
       .subscribe(packet => {
         this.playerInputMove$.next(packet);
+      });
+
+    this.socket.fromEvent<PacketArmorEquipped>(ServerPackets.ARMOR_EQUIPPED)
+      .subscribe(packet => {
+        console.log('<<< ARMOR_EQUIPPED');
+        const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
+        if (!!ent && ent instanceof HumanoidEntity) {
+          ent.equipArmor(packet.armor);
+        }
       });
 
     this.socket.fromEvent<PacketSyncSnapshot>(ServerPackets.SYNC_SNAPSHOT)

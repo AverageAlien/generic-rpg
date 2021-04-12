@@ -59,6 +59,17 @@ export class ClientLevel extends Scene implements LevelScene {
     });
 
     this.networkingService.loadLevel(this);
+
+    setTimeout(() => {
+      this.networkingService.sendEquipArmor({
+        description: 'aaa armor desc',
+        level: 5,
+        mass: 15,
+        name: 'leather vest',
+        price: 600,
+        texture: 'leather_vest'
+      });
+    }, 3000);
   }
 
   preload() {
