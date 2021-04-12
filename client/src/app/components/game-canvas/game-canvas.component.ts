@@ -1,6 +1,5 @@
 import { Component, OnInit, NgZone } from '@angular/core';
 import Phaser from 'phaser';
-import { Socket } from 'ngx-socket-io';
 
 import { InputService } from 'src/app/gameServices/input.service';
 import { ClientLevel } from 'src/app/scenes/clientLevel';

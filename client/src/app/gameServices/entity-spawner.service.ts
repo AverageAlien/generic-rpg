@@ -47,8 +47,6 @@ export class EntitySpawnerService {
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
-
-      // console.log(this.levelScene.player);
     });
 
     this.levelScene.entities.push(entity);

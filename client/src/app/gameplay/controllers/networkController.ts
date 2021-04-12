@@ -10,7 +10,6 @@ export class NetworkController implements Controller {
     networkingService.playerInputMove
       .pipe(filter(packet => packet.networkId === parentEntity.networkId))
       .subscribe(packet => {
-        // console.log(`movement packet: ${packet.moveX}; ${packet.moveY}`);
         this.currentMovement = new Phaser.Math.Vector2(packet.moveX, packet.moveY);
       });
   }

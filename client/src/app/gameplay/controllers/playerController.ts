@@ -14,7 +14,6 @@ export class PlayerController implements Controller {
       -this.inputKeys.up.isDown || +this.inputKeys.down.isDown).normalize();
 
     if (!movementVector.equals(this.movementChanged$.value)) {
-      // console.log('Movement changed!');
       this.movementChanged$.next(movementVector);
     }
     return new Phaser.Math.Vector2(movementVector);

@@ -55,7 +55,6 @@ export class NetworkingService {
   loadLevel(levelScene: ClientLevel) {
     this.socket.fromEvent<PacketInitLevel>(ServerPackets.INIT_LEVEL)
       .subscribe(packet => {
-        // console.log(`<< ${ServerPackets.INIT_LEVEL}`);
         levelScene.levelName = packet.locationName;
         LevelLoaderService.importlevel(packet.levelData, levelScene);
       });
@@ -63,7 +62,6 @@ export class NetworkingService {
     this.socket.emit(ClientPackets.CLIENT_INIT, {
       username: this.chosenUsername
     } as PacketClientInit);
-    // console.log(`>> ${ClientPackets.CLIENT_INIT}`);
 
     this.startListen();
   }
@@ -73,7 +71,6 @@ export class NetworkingService {
       moveX: movementVector.x,
       moveY: movementVector.y
     } as PacketMoveInput);
-    // console.log(`>> ${ClientPackets.MOVE_INPUT}`);
   }
 
   synchronizeWithServer(levelScene: ClientLevel) {
@@ -82,8 +79,6 @@ export class NetworkingService {
     }
 
     const ping = this.pingService.Ping + (performance.now() - this.snapshotTimestamp);
-
-    // console.log(`FIXED PING: ${ping}`);
 
     this.syncSnapshot.entities.forEach(es => {
       const entity = levelScene.entities.find(e => e.networkId === es.networkId);
@@ -97,9 +92,7 @@ export class NetworkingService {
         .add(new Phaser.Math.Vector2(serverVelocity)
           .scale(ping * 0.001));
       const posError = predictedPos.distanceSq(new Phaser.Math.Vector2(gameObject.x, gameObject.y));
-      console.log(`POSITION ERROR: ${posError}`);
       if (levelScene.player !== entity && posError > serverVelocity.lengthSq() * 0.5) {
-        console.log(`UPDATING ENTITY POS: ${predictedPos.x} ${predictedPos.y}`);
         gameObject.setPosition(predictedPos.x, predictedPos.y);
       } else if (levelScene.player === entity) {
         this.socket.emit(ClientPackets.CLIENT_SYNC, {
@@ -111,14 +104,10 @@ export class NetworkingService {
       }
 
       const velocityError = entity.gameObject.body.velocity.distanceSq(serverVelocity);
-      // console.log(`VELOCITY ERROR: ${velocityError}`);
       if (levelScene.player !== entity) {
-        // console.log(`FIXING VELOCITY ERROR`);
         entity.gameObject.body.setVelocity(es.velocityX, es.velocityY);
       }
     });
-
-    // console.log(`PING: ${this.pingService.Ping}`);
 
     this.syncSnapshot = null;
   }
@@ -126,32 +115,26 @@ export class NetworkingService {
   private startListen() {
     this.socket.fromEvent<PacketSpawnEntityCharacter>(ServerPackets.SPAWN_ENTITY_CHARACTER)
       .subscribe(packet => {
-        // console.log(`<< ${ServerPackets.SPAWN_ENTITY_CHARACTER}`);
         this.spawnEntityCharacter$.next(packet);
       });
 
     this.socket.fromEvent<PacketSpawnEntityHumanoid>(ServerPackets.SPAWN_ENTITY_HUMANOID)
       .subscribe(packet => {
-        // console.log(`<< ${ServerPackets.SPAWN_ENTITY_HUMANOID}`);
-        // console.log(packet);
         this.spawnEntityHumanoid$.next(packet);
       });
 
     this.socket.fromEvent<PacketSpawnPlayer>(ServerPackets.SPAWN_PLAYER)
       .subscribe(packet => {
-        // console.log(`<< ${ServerPackets.SPAWN_PLAYER}`);
         this.spawnPlayer$.next(packet);
       });
 
     this.socket.fromEvent<PacketPlayerInputMove>(ServerPackets.PLAYER_INPUT_MOVE)
       .subscribe(packet => {
-        // console.log(`<< ${ServerPackets.PLAYER_INPUT_MOVE}; ${packet.moveX}; ${packet.moveY}`);
         this.playerInputMove$.next(packet);
       });
 
     this.socket.fromEvent<PacketSyncSnapshot>(ServerPackets.SYNC_SNAPSHOT)
       .subscribe(packet => {
-        // console.log(`<< ${ServerPackets.SYNC_SNAPSHOT}`);
         this.syncSnapshot = packet;
         this.snapshotTimestamp = performance.now();
       });

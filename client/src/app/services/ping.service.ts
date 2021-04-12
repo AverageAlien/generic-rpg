@@ -22,7 +22,6 @@ export class PingService {
         if (this.pingPacketsQueue.indexOf(packet.clientTimestamp) >= 0) {
           this.measuredPing = (performance.now() - packet.clientTimestamp) * 0.5;
           while (this.pingPacketsQueue.shift() !== packet.clientTimestamp) {} // remove all previous queue entries as well as this one
-          console.log(`PING: ${this.measuredPing}`);
         }
       });
   }
