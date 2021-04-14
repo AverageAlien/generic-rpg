@@ -1,5 +1,6 @@
 import { CharacterEntity, CharacterConfig } from './characterEntity';
 import { Armor } from '../items/armor';
+import { EntityRendererService } from 'src/app/gameServices/entity-renderer.service';
 
 export class HumanoidEntity extends CharacterEntity {
   private armor: Armor = null;
@@ -30,11 +31,7 @@ export class HumanoidEntity extends CharacterEntity {
     super.refreshRenderSprite();
 
     if (this.armor) {
-      this.gameObject.draw(
-        this.armor.texture,
-        this.gameObject.width / 2 - 9,
-        this.gameObject.height / 2 - 5
-      );
+      EntityRendererService.drawArmorItem(this.armor.texture, this.gameObject);
     }
   }
 }

@@ -10,7 +10,10 @@ const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws',
   pingInterval: 2000,
-  origins: ['http://localhost:4200'],
+  origins: ['http://localhost:4200', 'localhost:42069'],
+  allowRequest: (req, callback) => {
+    return callback(null, true);
+  }
 });
 
 const roomService = new RoomService(ioServer);

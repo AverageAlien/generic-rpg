@@ -11,6 +11,7 @@ import { NetworkingService } from '../services/networking.service';
 import { ClientEntitySpawnerService } from '../gameServices/client-entity-spawner.service';
 import { fromEvent } from 'rxjs';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
+import { EntityRendererService } from '../gameServices/entity-renderer.service';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -37,6 +38,8 @@ export class ClientLevel extends Scene implements LevelScene {
     );
 
     this.mapGrid = new MapGrid(this, 'tileset');
+
+    EntityRendererService.init(this);
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
@@ -65,9 +68,9 @@ export class ClientLevel extends Scene implements LevelScene {
         description: 'aaa armor desc',
         level: 5,
         mass: 15,
-        name: 'leather vest',
+        name: 'steel armor',
         price: 600,
-        texture: 'leather_vest'
+        texture: 'steel_vest'
       });
     }, 3000);
   }

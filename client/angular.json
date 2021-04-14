@@ -25,7 +25,12 @@
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.png",
+                "input": "../textures/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
@@ -90,7 +95,12 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "**/*.png",
+                "input": "../textures/",
+                "output": "/assets/"
+              }
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/purple-green.css",
