@@ -1,7 +1,9 @@
 import { EquipmentItem } from './equipmentItem';
+import { ArmorType } from './itemEnums';
 
 export class Armor extends EquipmentItem {
-  public texture: string;
+  public armor: number;
+  public armorType: ArmorType;
 
   constructor(cfg: ArmorConfig) {
     super(
@@ -13,7 +15,8 @@ export class Armor extends EquipmentItem {
       cfg.level || 1
     );
 
-    this.texture = cfg.texture;
+    this.armor = cfg.armor || 0;
+    this.armorType = cfg.armorType || ArmorType.Chestplate;
   }
 }
 
@@ -25,4 +28,5 @@ interface ArmorConfig {
   mass?: number;
   level?: number;
   armor?: number;
+  armorType?: ArmorType;
 }

@@ -2,8 +2,6 @@ import { InputKeys } from '../models/inputKeys.model';
 import { ClientLevel } from '../scenes/clientLevel';
 import { PlayerController } from '../gameplay/controllers/playerController';
 import { Constants } from '../core/constants';
-import { Faction } from '../core/factions';
-import { WalkerController } from '../gameplay/controllers/walkerController';
 import { UI } from '../ui/ui';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 import { NetworkingService } from '../services/networking.service';
@@ -47,7 +45,10 @@ export class ClientEntitySpawnerService {
       level: packet.level,
       speed: packet.speed,
       bodyTexture: 'humanoid',
-      armor: packet.armor
+      helmet: packet.helmet,
+      bodyArmor: packet.bodyArmor,
+      boots: packet.boots,
+      weapon: packet.weapon,
     });
 
     entity.networkId = packet.networkId;
@@ -92,7 +93,10 @@ export class ClientEntitySpawnerService {
       level: packet.level,
       speed: packet.speed,
       bodyTexture: 'humanoid',
-      armor: packet.armor
+      helmet: packet.helmet,
+      bodyArmor: packet.bodyArmor,
+      boots: packet.boots,
+      weapon: packet.weapon,
     });
 
     entity.faction = packet.faction;

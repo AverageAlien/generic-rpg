@@ -1,7 +1,6 @@
 import { Scene, GameObjects } from 'phaser';
 import { InputService } from '../gameServices/input.service';
 import { Entity } from '../gameplay/entities/baseEntity';
-import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
 import { AssetService } from '../gameServices/asset.service';
 import { MapGrid } from '../core/mapGrid';
 import { UI } from '../ui/ui';
@@ -12,6 +11,8 @@ import { ClientEntitySpawnerService } from '../gameServices/client-entity-spawne
 import { fromEvent } from 'rxjs';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { EntityRendererService } from '../gameServices/entity-renderer.service';
+import { Armor } from '../gameplay/items/armor';
+import { ArmorType } from '../gameplay/items/itemEnums';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -64,15 +65,39 @@ export class ClientLevel extends Scene implements LevelScene {
     this.networkingService.loadLevel(this);
 
     setTimeout(() => {
-      this.networkingService.sendEquipArmor({
+      this.networkingService.sendEquipArmor(new Armor({
         description: 'aaa armor desc',
         level: 5,
         mass: 15,
         name: 'steel armor',
         price: 600,
-        texture: 'steel_vest'
-      });
-    }, 3000);
+        texture: 'steel_vest',
+        armorType: ArmorType.Chestplate,
+        armor: 8
+      }));
+
+      this.networkingService.sendEquipArmor(new Armor({
+        name: 'steel bowl',
+        description: 'steel helmet to protect ur dum head',
+        level: 2,
+        mass: 5,
+        price: 200,
+        texture: 'steel_bowl',
+        armorType: ArmorType.Helmet,
+        armor: 5
+      }));
+
+      this.networkingService.sendEquipArmor(new Armor({
+        name: 'leather boots',
+        description: 'ooaaoaa',
+        level: 2,
+        mass: 5,
+        price: 200,
+        texture: 'leather_boots',
+        armorType: ArmorType.Boots,
+        armor: 5
+      }));
+    }, 5000);
   }
 
   preload() {

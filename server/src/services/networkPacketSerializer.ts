@@ -39,7 +39,12 @@ export class NetworkPacketSerializer {
 
       const packetHumanoid = packet as PacketSpawnEntityHumanoid;
 
-      packetHumanoid.armor = ent.armor;
+      const equipment = ent.getEquipment();
+
+      packetHumanoid.helmet = equipment.helmet;
+      packetHumanoid.bodyArmor = equipment.bodyArmor;
+      packetHumanoid.boots = equipment.boots;
+      packetHumanoid.weapon = equipment.weapon;
     }
 
     return [packetType, packet];

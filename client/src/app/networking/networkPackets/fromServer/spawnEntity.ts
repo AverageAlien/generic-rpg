@@ -17,5 +17,8 @@ export interface PacketSpawnEntityCharacter extends PacketSpawnEntity {
 }
 
 export interface PacketSpawnEntityHumanoid extends PacketSpawnEntityCharacter {
-    armor: Armor;
+    helmet: Armor;
+    bodyArmor: Armor;
+    boots: Armor;
+    weapon: string;
 }

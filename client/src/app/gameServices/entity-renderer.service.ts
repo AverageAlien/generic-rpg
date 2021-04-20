@@ -12,6 +12,6 @@ export class EntityRendererService {
 
     gameObject.draw(texture,
       gameObject.width / 2 - texture.width / 2,
-      gameObject.height / 2 - Math.ceil(texture.height / 2) + 3);
+      gameObject.height / 2 - Math.ceil(texture.height / 2));
   }
 }
