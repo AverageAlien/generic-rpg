@@ -12,7 +12,8 @@ import { fromEvent } from 'rxjs';
 import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { EntityRendererService } from '../gameServices/entity-renderer.service';
 import { Armor } from '../gameplay/items/armor';
-import { ArmorType } from '../gameplay/items/itemEnums';
+import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
+import { Weapon } from '../gameplay/items/weapon';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -96,6 +97,19 @@ export class ClientLevel extends Scene implements LevelScene {
         texture: 'leather_boots',
         armorType: ArmorType.Boots,
         armor: 5
+      }));
+
+      this.networkingService.sendEquipWeapon(new Weapon({
+        name: 'short sword',
+        description: 'ooaaoaa',
+        level: 2,
+        mass: 5,
+        price: 200,
+        texture: 'short_sword',
+        damage: [{
+          type: DamageType.Cut,
+          value: 8
+        }]
       }));
     }, 5000);
   }

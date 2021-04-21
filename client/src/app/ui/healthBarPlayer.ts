@@ -57,6 +57,7 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     );
     this.setHTML(HealthBarPlayer.elementHTML);
     this.setScrollFactor(0);
+    this.setDepth(15);
 
     levelScene.add.existing(this);
   }

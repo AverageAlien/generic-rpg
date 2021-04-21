@@ -5,6 +5,7 @@ import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
 import { PacketPlayerInputMove } from '../networkPackets/fromServer/playerInputMove';
 import { PacketArmorEquipped } from '../networkPackets/fromServer/armorEquipped';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
+import { PacketWeaponEquipped } from '../networkPackets/fromServer/weaponEquipped';
 
 export class NetworkControllerService {
   static addPlayerInputListeners(controller: ClientController, levelScene: NetworkLevel) {
@@ -27,6 +28,17 @@ export class NetworkControllerService {
           networkId: controller.controlledEntity.networkId,
           armor
         } as PacketArmorEquipped);
+      }
+    });
+
+    controller.equipWeapon.subscribe(weapon => {
+      if (controller.controlledEntity instanceof HumanoidEntity) {
+        controller.controlledEntity.equipWeapon(weapon);
+
+        levelScene.broadcastPacket(ServerPackets.WEAPON_EQUIPPED, {
+          networkId: controller.controlledEntity.networkId,
+          weapon
+        } as PacketWeaponEquipped)
       }
     })
   }

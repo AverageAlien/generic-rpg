@@ -1,5 +1,6 @@
 import { Faction } from '../../core/factions';
 import { Armor } from '../../gameData/gameplay/items/armor';
+import { Weapon } from '../../gameData/gameplay/items/weapon';
 
 export interface PacketSpawnEntity {
     entityName: string;
@@ -20,5 +21,5 @@ export interface PacketSpawnEntityHumanoid extends PacketSpawnEntityCharacter {
     helmet: Armor;
     bodyArmor: Armor;
     boots: Armor;
-    weapon: string;
+    weapon: Weapon;
 }

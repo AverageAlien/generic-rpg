@@ -7,10 +7,13 @@ import { Controllable } from '../entities/baseEntity';
 import { GameClient } from '../../../models/gameClient';
 import { PacketEquipArmor } from '../../../networkPackets/fromClient/equipArmor';
 import { Armor } from '../items/armor';
+import { Weapon } from '../items/weapon';
+import { PacketEquipWeapon } from '../../../networkPackets/fromClient/equipWeapon';
 
 export class ClientController implements Controller {
   private movementChanged$ = new BehaviorSubject<Phaser.Math.Vector2>(Phaser.Math.Vector2.ZERO);
   private equipArmor$ = new Subject<Armor>();
+  private equipWeapon$ = new Subject<Weapon>();
 
   constructor(private client: GameClient, public controlledEntity: Controllable) {
     client.socketSubscriptions.push(fromEvent<PacketMoveInput>(client.socket, ClientPackets.MOVE_INPUT)
@@ -22,6 +25,11 @@ export class ClientController implements Controller {
       .subscribe(p => {
         this.equipArmor$.next(p.armor);
       }));
+
+    client.socketSubscriptions.push(fromEvent<PacketEquipWeapon>(client.socket, ClientPackets.EQUIP_WEAPON)
+      .subscribe(p => {
+        this.equipWeapon$.next(p.weapon)
+      }))
   }
 
   get movement(): Phaser.Math.Vector2 {
@@ -34,6 +42,10 @@ export class ClientController implements Controller {
 
   get equipArmor() {
     return this.equipArmor$.asObservable();
+  }
+
+  get equipWeapon() {
+    return this.equipWeapon$.asObservable();
   }
 
   get attack(): Phaser.Math.Vector2 {

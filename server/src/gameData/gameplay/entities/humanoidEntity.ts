@@ -1,12 +1,13 @@
 import { CharacterEntity, CharacterConfig } from './characterEntity';
 import { Armor } from '../items/armor';
 import { ArmorType } from '../items/itemEnums';
+import { Weapon } from '../items/weapon';
 
 export class HumanoidEntity extends CharacterEntity {
   private helmet: Armor = null;
   private bodyArmor: Armor = null;
   private boots: Armor = null;
-  private weapon: string = null;
+  private weapon: Weapon = null;
 
   constructor(cfg: HumanoidConfig) {
     super(cfg);
@@ -51,6 +52,12 @@ export class HumanoidEntity extends CharacterEntity {
     this.refreshRenderSprite();
   }
 
+  public equipWeapon(weapon: Weapon) {
+    this.weapon = weapon;
+
+    this.refreshRenderSprite();
+  }
+
   public update() {
     super.update();
   }
@@ -68,5 +75,5 @@ export interface HumanoidConfig extends CharacterConfig {
   helmet?: Armor;
   bodyArmor?: Armor;
   boots?: Armor;
-  weapon?: string;
+  weapon?: Weapon;
 }

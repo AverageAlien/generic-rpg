@@ -19,6 +19,9 @@ import { Armor } from '../gameplay/items/armor';
 import { PacketEquipArmor } from '../networking/networkPackets/fromClient/equipArmor';
 import { PacketArmorEquipped } from '../networking/networkPackets/fromServer/armorEquipped';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
+import { Weapon } from '../gameplay/items/weapon';
+import { PacketEquipWeapon } from '../networking/networkPackets/fromClient/equipWeapon';
+import { PacketWeaponEquipped } from '../networking/networkPackets/fromServer/weaponEquipped';
 
 @Injectable({
   providedIn: 'root'
@@ -84,6 +87,11 @@ export class NetworkingService {
   sendEquipArmor(armor: Armor) {
     console.log('EQUIP ARMOR');
     this.socket.emit(ClientPackets.EQUIP_ARMOR, { armor } as PacketEquipArmor);
+  }
+
+  sendEquipWeapon(weapon: Weapon) {
+    console.log('EQUIP WEP');
+    this.socket.emit(ClientPackets.EQUIP_WEAPON, { weapon } as PacketEquipWeapon);
   }
 
   synchronizeWithServer(levelScene: ClientLevel) {
@@ -152,6 +160,16 @@ export class NetworkingService {
         const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
         if (!!ent && ent instanceof HumanoidEntity) {
           ent.equipArmor(packet.armor);
+        }
+      });
+
+    this.socket.fromEvent<PacketWeaponEquipped>(ServerPackets.WEAPON_EQUIPPED)
+      .subscribe(packet => {
+        console.log('<<< WEAPON_EQUIPPED');
+        debugger;
+        const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
+        if (!!ent && ent instanceof HumanoidEntity) {
+          ent.equipWeapon(packet.weapon);
         }
       });
 

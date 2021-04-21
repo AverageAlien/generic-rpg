@@ -5,5 +5,6 @@ export enum ClientPackets {
   PING = 'PING',
   PING2 = 'PING2',
   CLIENT_SYNC = 'CLIENT_SYNC',
-  EQUIP_ARMOR = 'EQUIP_ARMOR'
+  EQUIP_ARMOR = 'EQUIP_ARMOR',
+  EQUIP_WEAPON = 'EQUIP_WEAPON',
 }
