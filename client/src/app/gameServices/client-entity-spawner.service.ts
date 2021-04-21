@@ -68,7 +68,12 @@ export class ClientEntitySpawnerService {
     this.levelScene.entities.push(entity);
     this.levelScene.player = entity;
 
-    this.levelScene.cameras.main.startFollow(entity.gameObject, false, 0.1, 0.1);
+    this.levelScene.cameras.main.startFollow(entity.gameObject,
+      false,
+      0.1,
+      0.1,
+      -32,
+      -32);
 
     return entity;
   }
