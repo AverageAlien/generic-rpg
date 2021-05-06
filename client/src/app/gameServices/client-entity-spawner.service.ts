@@ -32,7 +32,8 @@ export class ClientEntitySpawnerService {
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    ).setDepth(6);
+    ).setDepth(6)
+    .setOrigin(0.5, 0.5);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
@@ -71,9 +72,7 @@ export class ClientEntitySpawnerService {
     this.levelScene.cameras.main.startFollow(entity.gameObject,
       false,
       0.1,
-      0.1,
-      -32,
-      -32);
+      0.1);
 
     return entity;
   }
@@ -85,7 +84,8 @@ export class ClientEntitySpawnerService {
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    ).setDepth(3);
+    ).setDepth(3)
+    .setOrigin(0.5, 0.5);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)

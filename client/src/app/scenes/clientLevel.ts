@@ -66,52 +66,64 @@ export class ClientLevel extends Scene implements LevelScene {
     this.networkingService.loadLevel(this);
 
     setTimeout(() => {
-      this.networkingService.sendEquipArmor(new Armor({
-        description: 'aaa armor desc',
-        level: 5,
-        mass: 15,
-        name: 'steel armor',
-        price: 600,
-        texture: 'steel_vest',
-        armorType: ArmorType.Chestplate,
-        armor: 8
-      }));
+      this.testArmor();
 
-      this.networkingService.sendEquipArmor(new Armor({
-        name: 'steel bowl',
-        description: 'steel helmet to protect ur dum head',
-        level: 2,
-        mass: 5,
-        price: 200,
-        texture: 'steel_bowl',
-        armorType: ArmorType.Helmet,
-        armor: 5
-      }));
+      this.tweens.add({
+        targets: this.player.gameObject,
+        angle: 360,
+        duration: 5000,
+        yoyo: true
+      });
 
-      this.networkingService.sendEquipArmor(new Armor({
-        name: 'leather boots',
-        description: 'ooaaoaa',
-        level: 2,
-        mass: 5,
-        price: 200,
-        texture: 'leather_boots',
-        armorType: ArmorType.Boots,
-        armor: 5
-      }));
+    }, 3000);
+  }
 
-      this.networkingService.sendEquipWeapon(new Weapon({
-        name: 'short sword',
-        description: 'ooaaoaa',
-        level: 2,
-        mass: 5,
-        price: 200,
-        texture: 'short_sword',
-        damage: [{
-          type: DamageType.Cut,
-          value: 8
-        }]
-      }));
-    }, 5000);
+  testArmor() {
+    this.networkingService.sendEquipArmor(new Armor({
+      description: 'aaa armor desc',
+      level: 5,
+      mass: 15,
+      name: 'steel armor',
+      price: 600,
+      texture: 'steel_vest',
+      armorType: ArmorType.Chestplate,
+      armor: 8
+    }));
+
+    this.networkingService.sendEquipArmor(new Armor({
+      name: 'steel bowl',
+      description: 'steel helmet to protect ur dum head',
+      level: 2,
+      mass: 5,
+      price: 200,
+      texture: 'steel_bowl',
+      armorType: ArmorType.Helmet,
+      armor: 5
+    }));
+
+    this.networkingService.sendEquipArmor(new Armor({
+      name: 'leather boots',
+      description: 'ooaaoaa',
+      level: 2,
+      mass: 5,
+      price: 200,
+      texture: 'leather_boots',
+      armorType: ArmorType.Boots,
+      armor: 5
+    }));
+
+    this.networkingService.sendEquipWeapon(new Weapon({
+      name: 'short sword',
+      description: 'ooaaoaa',
+      level: 2,
+      mass: 5,
+      price: 200,
+      texture: 'short_sword',
+      damage: [{
+        type: DamageType.Cut,
+        value: 8
+      }]
+    }));
   }
 
   preload() {
