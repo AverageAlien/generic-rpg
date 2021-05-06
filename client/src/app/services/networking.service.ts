@@ -166,7 +166,6 @@ export class NetworkingService {
     this.socket.fromEvent<PacketWeaponEquipped>(ServerPackets.WEAPON_EQUIPPED)
       .subscribe(packet => {
         console.log('<<< WEAPON_EQUIPPED');
-        debugger;
         const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
         if (!!ent && ent instanceof HumanoidEntity) {
           ent.equipWeapon(packet.weapon);

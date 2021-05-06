@@ -25,9 +25,11 @@ export class RoomService {
           console.log(`<< ${ClientPackets.CLIENT_INIT}`);
           socket.leaveAll();
 
-          socket.join('test_01');
-          this.playerJoinRoom(socket, packet.username, 'test_01', oldRoomName);
-          oldRoomName = 'test_01';
+          const roomName = 'test_01';
+
+          socket.join(roomName);
+          this.playerJoinRoom(socket, packet.username, roomName, oldRoomName);
+          oldRoomName = roomName;
         });
     });
   }
