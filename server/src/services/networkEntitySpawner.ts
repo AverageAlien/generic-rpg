@@ -7,6 +7,7 @@ import { Constants } from '../core/constants';
 import { Faction } from '../core/factions';
 import { ClientController } from '../gameData/gameplay/controllers/clientController';
 import { NetworkControllerService } from './networkControllerService';
+import { ServerWrapperController } from '../gameData/gameplay/controllers/serverWrapperController';
 
 export class NetworkEntitySpawner {
   constructor(private levelScene: NetworkLevel) {}
@@ -18,7 +19,8 @@ export class NetworkEntitySpawner {
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    );
+    )
+    .setOrigin(0.5, 0.5);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
@@ -57,7 +59,8 @@ export class NetworkEntitySpawner {
         this.levelScene.textures.getFrame('humanoid', 0).width,
         this.levelScene.textures.getFrame('humanoid', 0).height
       )
-    );
+    )
+    .setOrigin(0.5, 0.5);
 
     gameObject.body
       .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
@@ -74,7 +77,9 @@ export class NetworkEntitySpawner {
 
     entity.networkId = UUID();
     entity.faction = Faction.Baddies;
-    entity.controller = new WalkerController(entity, this.levelScene, 512);
+
+    entity.controller = new ServerWrapperController(new WalkerController(entity, this.levelScene, 256), entity);
+    NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
     entity.destroyed.subscribe(() => {
       const entityIndex = this.levelScene.entities.indexOf(entity);

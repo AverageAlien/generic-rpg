@@ -3,6 +3,9 @@ import { DamageType } from './itemEnums';
 
 export class Weapon extends EquipmentItem {
   public damage: Damage[];
+  public reach: number;
+  public refire: number; // ms
+  public swing: number; // degrees
 
   constructor(cfg: WeaponConfig) {
     super(
@@ -15,6 +18,9 @@ export class Weapon extends EquipmentItem {
     );
 
     this.damage = cfg.damage || [];
+    this.refire = cfg.refire || 1000;
+    this.reach = cfg.reach || 64;
+    this.swing = cfg.swing || 90;
   }
 }
 
@@ -31,4 +37,7 @@ interface WeaponConfig {
   mass?: number;
   level?: number;
   damage?: Damage[];
+  refire?: number;
+  reach?: number;
+  swing?: number;
 }

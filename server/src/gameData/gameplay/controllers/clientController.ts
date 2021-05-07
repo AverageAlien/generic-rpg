@@ -1,4 +1,3 @@
-import * as io from 'socket.io';
 import { Controller } from './baseController';
 import { ClientPackets } from '../../../networkPackets/fromClient/clientPackets';
 import { PacketMoveInput } from '../../../networkPackets/fromClient/moveInput';

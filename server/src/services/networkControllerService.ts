@@ -6,6 +6,7 @@ import { PacketPlayerInputMove } from '../networkPackets/fromServer/playerInputM
 import { PacketArmorEquipped } from '../networkPackets/fromServer/armorEquipped';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
 import { PacketWeaponEquipped } from '../networkPackets/fromServer/weaponEquipped';
+import { ServerWrapperController } from '../gameData/gameplay/controllers/serverWrapperController';
 
 export class NetworkControllerService {
   static addPlayerInputListeners(controller: ClientController, levelScene: NetworkLevel) {
@@ -19,11 +20,9 @@ export class NetworkControllerService {
     });
 
     controller.equipArmor.subscribe(armor => {
-      console.log('EQUIP ARMOR HANDLED');
       if (controller.controlledEntity instanceof HumanoidEntity) {
         controller.controlledEntity.equipArmor(armor);
 
-        console.log('EQUIP ARMOR HANDLED 2');
         levelScene.broadcastPacket(ServerPackets.ARMOR_EQUIPPED, {
           networkId: controller.controlledEntity.networkId,
           armor
@@ -40,6 +39,17 @@ export class NetworkControllerService {
           weapon
         } as PacketWeaponEquipped)
       }
+    })
+  }
+
+  static addServerBotInputListeners(controller: ServerWrapperController, levelScene: NetworkLevel) {
+    controller.movementChanged.subscribe(movement => {
+      const networkId = controller.controlledEntity.networkId;
+      levelScene.broadcastPacket(ServerPackets.PLAYER_INPUT_MOVE, {
+        moveX: movement.x,
+        moveY: movement.y,
+        networkId,
+      } as PacketPlayerInputMove);
     })
   }
 }

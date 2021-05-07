@@ -17,6 +17,8 @@ import { PacketPing } from '../../networkPackets/fromServer/ping';
 import { PacketClientSync } from '../../networkPackets/fromClient/clientSync';
 import { PacketPlayerLeft } from '../../networkPackets/fromServer/playerLeft';
 import { take } from 'rxjs/operators';
+import { ArmorType } from '../gameplay/items/itemEnums';
+import { Armor } from '../gameplay/items/armor';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -54,6 +56,18 @@ export class NetworkLevel extends Scene implements LevelScene {
     fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
 
     this.roomReady$.next(true);
+
+    setTimeout(() => {
+      const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(4, 4), 20);
+      stalker.equipArmor(new Armor({
+        armor: 5,
+        armorType: ArmorType.Chestplate,
+        name: 'leather vest',
+        texture: 'leather_vest'
+      }));
+
+      this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(stalker));
+    }, 10000);
   }
 
   preload() {
@@ -167,7 +181,7 @@ export class NetworkLevel extends Scene implements LevelScene {
             networkId: player.controlledEntity.networkId
           } as PacketPlayerLeft);
         }
-      }))
+      }));
   }
 
   broadcastPacket(packetType: ServerPackets, packet: any) {

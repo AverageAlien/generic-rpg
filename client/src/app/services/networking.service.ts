@@ -108,12 +108,13 @@ export class NetworkingService {
 
       const serverPos = new Phaser.Math.Vector2(es.positionX, es.positionY);
       const serverVelocity = new Phaser.Math.Vector2(es.velocityX, es.velocityY);
+      const clientVelocity = new Phaser.Math.Vector2(entity.gameObject.body.velocity.x, entity.gameObject.body.velocity.y);
 
       const predictedPos = new Phaser.Math.Vector2(serverPos)
         .add(new Phaser.Math.Vector2(serverVelocity)
           .scale(ping * 0.001));
       const posError = predictedPos.distanceSq(new Phaser.Math.Vector2(gameObject.x, gameObject.y));
-      if (levelScene.player !== entity && posError > serverVelocity.lengthSq() * 0.5) {
+      if (levelScene.player !== entity && posError > clientVelocity.lengthSq() * 0.5) {
         gameObject.setPosition(predictedPos.x, predictedPos.y);
       } else if (levelScene.player === entity) {
         this.socket.emit(ClientPackets.CLIENT_SYNC, {

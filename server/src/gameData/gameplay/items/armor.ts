@@ -15,7 +15,7 @@ export class Armor extends EquipmentItem {
       cfg.level || 1
     );
 
-    this.texture = cfg.texture;
+    this.armor = cfg.armor || 0;
     this.armorType = cfg.armorType || ArmorType.Chestplate;
   }
 }
