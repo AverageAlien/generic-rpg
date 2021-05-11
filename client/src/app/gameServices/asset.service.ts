@@ -28,6 +28,6 @@ export class AssetService {
 
   private static addWeaponItem(loader: Phaser.Loader.LoaderPlugin, itemName: string) {
     loader.image(itemName, texturesFolderUrl + 'items/weapons/' + itemName + '.png');
-    loader.image(itemName + '_outline', texturesFolderUrl + 'items/weapons/' + itemName + '_icon.png');
+    loader.image(itemName + '_icon', texturesFolderUrl + 'items/weapons/' + itemName + '_icon.png');
   }
 }

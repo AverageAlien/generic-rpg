@@ -114,8 +114,25 @@ export class NetworkingService {
         .add(new Phaser.Math.Vector2(serverVelocity)
           .scale(ping * 0.001));
       const posError = predictedPos.distanceSq(new Phaser.Math.Vector2(gameObject.x, gameObject.y));
-      if (levelScene.player !== entity && posError > clientVelocity.lengthSq() * 0.5) {
-        gameObject.setPosition(predictedPos.x, predictedPos.y);
+      if (levelScene.player !== entity && posError > 1 && posError > clientVelocity.lengthSq() * 0.5) {
+        levelScene.tweens.getTweensOf(gameObject).forEach(t => { console.log(t); t.stop(); });
+        if (posError > 1024) {
+          gameObject.setPosition(predictedPos.x, predictedPos.y);
+        } else {
+          levelScene.tweens.getTweensOf(gameObject).forEach(t => t.stop());
+          levelScene.tweens.add({
+            targets: gameObject,
+            x: {
+              from: gameObject.x,
+              to: predictedPos.x
+            },
+            y: {
+              from: gameObject.y,
+              to: predictedPos.y
+            },
+            duration: 250
+          });
+        }
       } else if (levelScene.player === entity) {
         this.socket.emit(ClientPackets.CLIENT_SYNC, {
           positionX: gameObject.x,
@@ -125,7 +142,7 @@ export class NetworkingService {
         } as PacketClientSync);
       }
 
-      const velocityError = entity.gameObject.body.velocity.distanceSq(serverVelocity);
+      // const velocityError = entity.gameObject.body.velocity.distanceSq(serverVelocity);
       if (levelScene.player !== entity) {
         entity.gameObject.body.setVelocity(es.velocityX, es.velocityY);
       }

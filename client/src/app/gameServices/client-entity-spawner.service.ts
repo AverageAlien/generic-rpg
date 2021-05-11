@@ -56,7 +56,7 @@ export class ClientEntitySpawnerService {
     entity.faction = packet.faction;
     entity.health = packet.health;
 
-    entity.controller = new PlayerController(this.inputKeys, this.networkingService);
+    entity.controller = new PlayerController(this.inputKeys, this.levelScene);
 
     (entity.controller as PlayerController).movementChanged.subscribe(vector => {
       this.networkingService.sendMovement(vector);

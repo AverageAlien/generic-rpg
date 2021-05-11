@@ -1,12 +1,12 @@
 import { Controller } from './baseController';
 import { InputKeys } from 'src/app/models/inputKeys.model';
-import { NetworkingService } from 'src/app/services/networking.service';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import { LevelScene } from 'src/app/core/levelScene';
 
 export class PlayerController implements Controller {
   private movementChanged$ = new BehaviorSubject<Phaser.Math.Vector2>(Phaser.Math.Vector2.ZERO);
 
-  constructor(private inputKeys: InputKeys, private networkingService: NetworkingService) {}
+  constructor(private inputKeys: InputKeys, private levelScene: LevelScene) {}
 
   get movement(): Phaser.Math.Vector2 {
     const movementVector = new Phaser.Math.Vector2(
@@ -24,6 +24,8 @@ export class PlayerController implements Controller {
   }
 
   get attack(): Phaser.Math.Vector2 {
-    return null;
+    return this.levelScene.input.activePointer.primaryDown
+    ? this.levelScene.input.activePointer.positionToCamera(this.levelScene.cameras.main) as Phaser.Math.Vector2
+    : null;
   }
 }

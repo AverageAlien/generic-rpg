@@ -40,6 +40,8 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
 
   update() {
     this.move();
+
+    this.attack();
   }
 
   damage(dmg: number): void {
@@ -67,6 +69,16 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     }
 
     this.gameObject.body.setAcceleration(movement.x, movement.y);
+  }
+
+  protected attack() {
+    const attack = this.controller.attack;
+
+    if (!attack) {
+      return;
+    }
+
+    console.log(`Attacking: ${attack.x}; ${attack.y}`);
   }
 
   protected lookRight(condition: boolean) {

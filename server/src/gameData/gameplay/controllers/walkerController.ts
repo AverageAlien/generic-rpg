@@ -132,7 +132,7 @@ export class WalkerController implements Controller {
 
     const grid = new PF.Grid(matrix);
     const finder = new PF.AStarFinder({
-      diagonalMovement: DiagonalMovement.IfAtMostOneObstacle,
+      diagonalMovement: DiagonalMovement.OnlyWhenNoObstacles,
       weight: 1,
       heuristic: PF.Heuristic.euclidean
     });
