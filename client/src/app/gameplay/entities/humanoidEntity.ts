@@ -3,12 +3,15 @@ import { Armor } from '../items/armor';
 import { EntityRendererService } from 'src/app/gameServices/entity-renderer.service';
 import { ArmorType } from '../items/itemEnums';
 import { Weapon } from '../items/weapon';
+import { WeaponSwingEffect } from '../effects/weaponSwing';
 
 export class HumanoidEntity extends CharacterEntity {
   private helmet: Armor = null;
   private bodyArmor: Armor = null;
   private boots: Armor = null;
   private weapon: Weapon = null;
+
+  private readyForAttack = true;
 
   constructor(cfg: HumanoidConfig) {
     super(cfg);
@@ -61,6 +64,35 @@ export class HumanoidEntity extends CharacterEntity {
 
   public update() {
     super.update();
+  }
+
+  protected attack() {
+    if (!this.weapon || !this.readyForAttack) {
+      return;
+    }
+
+    const attack = this.controller.attack;
+
+    if (!attack) {
+      return;
+    }
+
+    this.readyForAttack = false;
+
+    const attackAngle = 90 + Phaser.Math.RadToDeg(
+      Phaser.Math.Angle.BetweenPoints(this.gameObject.body.center, attack));
+
+    const effect = new WeaponSwingEffect(
+      this.weapon,
+      this.gameObject.body.center.x,
+      this.gameObject.body.center.y,
+      attackAngle,
+      this.gameObject
+    );
+
+    setTimeout(() => this.readyForAttack = true, this.weapon.refire);
+
+    console.log(`ATTACKED: ${attackAngle}`);
   }
 
   protected lookRight(condition: boolean) {

@@ -14,7 +14,8 @@ import { EntityRendererService } from '../gameServices/entity-renderer.service';
 import { Armor } from '../gameplay/items/armor';
 import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
 import { Weapon } from '../gameplay/items/weapon';
-import { WeaponSwingEffect } from '../gameplay/effects/weaponSwing';
+import { EffectsSystem } from '../gameplay/effects/effectsSystem';
+import { DamageNumberEffect } from '../gameplay/effects/damageNumber';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -44,7 +45,7 @@ export class ClientLevel extends Scene implements LevelScene {
 
     EntityRendererService.init(this);
 
-    WeaponSwingEffect.initLevelScene(this);
+    EffectsSystem.InitializeEffects(this);
 
     this.backgroundImage = this.add.tileSprite(
       0, 0,
@@ -70,25 +71,12 @@ export class ClientLevel extends Scene implements LevelScene {
 
     setTimeout(() => {
       this.testArmor();
-
-      // this.tweens.add({
-      //   targets: this.player.gameObject,
-      //   x: {
-      //     from: this.player.gameObject.x,
-      //     to: 0
-      //   },
-      //   y: {
-      //     from: this.player.gameObject.y,
-      //     to: 0
-      //   },
-      //   duration: 500
-      // });
-
     }, 3000);
-
-    setTimeout(() => {
-      new WeaponSwingEffect(this.player.getEquipment().weapon, this.player.gameObject.x, this.player.gameObject.y, 15, this.player.gameObject);
-    }, 4000);
+    setInterval(() => {
+      [5, 10, 25, 100, 500, 1000, 2500, 6666, 10000, Infinity].forEach((v, i) => {
+        new DamageNumberEffect(v, 0, i * 32);
+      });
+    }, 7000);
   }
 
   testArmor() {
@@ -138,7 +126,7 @@ export class ClientLevel extends Scene implements LevelScene {
       }],
       swing: 90,
       refire: 500,
-      reach: 128
+      reach: 48
     }));
   }
 

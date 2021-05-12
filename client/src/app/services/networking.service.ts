@@ -116,7 +116,7 @@ export class NetworkingService {
       const posError = predictedPos.distanceSq(new Phaser.Math.Vector2(gameObject.x, gameObject.y));
       if (levelScene.player !== entity && posError > 1 && posError > clientVelocity.lengthSq() * 0.5) {
         levelScene.tweens.getTweensOf(gameObject).forEach(t => { console.log(t); t.stop(); });
-        if (posError > 1024) {
+        if (posError > 2048) {
           gameObject.setPosition(predictedPos.x, predictedPos.y);
         } else {
           levelScene.tweens.getTweensOf(gameObject).forEach(t => t.stop());
@@ -130,6 +130,7 @@ export class NetworkingService {
               from: gameObject.y,
               to: predictedPos.y
             },
+            ease: 'Sine.easeOut',
             duration: 250
           });
         }

@@ -78,7 +78,10 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
       return;
     }
 
-    console.log(`Attacking: ${attack.x}; ${attack.y}`);
+    const attackAngle = 90 + Phaser.Math.RadToDeg(
+      Phaser.Math.Angle.BetweenPoints(this.gameObject.body.center, attack));
+
+    console.log(`Attacking: ${attackAngle}`);
   }
 
   protected lookRight(condition: boolean) {
