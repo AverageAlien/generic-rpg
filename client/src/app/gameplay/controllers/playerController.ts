@@ -5,8 +5,18 @@ import { LevelScene } from 'src/app/core/levelScene';
 
 export class PlayerController implements Controller {
   private movementChanged$ = new BehaviorSubject<Phaser.Math.Vector2>(Phaser.Math.Vector2.ZERO);
+  private mouseDown = false;
 
-  constructor(private inputKeys: InputKeys, private levelScene: LevelScene) {}
+  constructor(private inputKeys: InputKeys, private levelScene: LevelScene) {
+    this.levelScene.input.on('pointerdown', () => {
+      console.log('down');
+      this.mouseDown = true;
+    });
+    this.levelScene.input.on('pointerup', () => {
+      console.log('up');
+      this.mouseDown = false;
+    });
+  }
 
   get movement(): Phaser.Math.Vector2 {
     const movementVector = new Phaser.Math.Vector2(
@@ -16,6 +26,7 @@ export class PlayerController implements Controller {
     if (!movementVector.equals(this.movementChanged$.value)) {
       this.movementChanged$.next(movementVector);
     }
+
     return new Phaser.Math.Vector2(movementVector);
   }
 
@@ -24,7 +35,7 @@ export class PlayerController implements Controller {
   }
 
   get attack(): Phaser.Math.Vector2 {
-    return this.levelScene.input.activePointer.primaryDown
+    return this.mouseDown
     ? this.levelScene.input.activePointer.positionToCamera(this.levelScene.cameras.main) as Phaser.Math.Vector2
     : null;
   }

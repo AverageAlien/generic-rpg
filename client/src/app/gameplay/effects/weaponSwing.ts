@@ -33,7 +33,8 @@ export class WeaponSwingEffect extends BaseEffect {
           from: angle - weapon.swing * 0.5,
           to: angle + weapon.swing * 0.5
         },
-        duration: 200,
+        ease: 'Sine.easeOut',
+        duration: 333,
         onComplete: () => sprite.destroy(),
         onUpdate: !attachTo ? null : () => sprite.setPosition(attachTo.body.center.x, attachTo.body.center.y),
       });

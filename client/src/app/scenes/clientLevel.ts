@@ -60,6 +60,7 @@ export class ClientLevel extends Scene implements LevelScene {
 
     fromEvent(this.events, 'preupdate').subscribe(this.preupdate.bind(this));
     fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
+    window.addEventListener('resize', () => this.game.scale.updateBounds());
 
     this.levelUI.push(new UI.HealthBarPlayer(this));
 
@@ -74,7 +75,7 @@ export class ClientLevel extends Scene implements LevelScene {
     }, 3000);
     setInterval(() => {
       [5, 10, 25, 100, 500, 1000, 2500, 6666, 10000, Infinity].forEach((v, i) => {
-        new DamageNumberEffect(v, 0, i * 32);
+        new DamageNumberEffect(v, 1024, i * 32);
       });
     }, 7000);
   }
@@ -124,7 +125,7 @@ export class ClientLevel extends Scene implements LevelScene {
         type: DamageType.Cut,
         value: 8
       }],
-      swing: 90,
+      swing: 60,
       refire: 500,
       reach: 48
     }));
