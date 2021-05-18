@@ -8,9 +8,11 @@ import { PacketEquipArmor } from '../../../networkPackets/fromClient/equipArmor'
 import { Armor } from '../items/armor';
 import { Weapon } from '../items/weapon';
 import { PacketEquipWeapon } from '../../../networkPackets/fromClient/equipWeapon';
+import { PacketEntityAttack } from '../../../networkPackets/fromClient/entityAttack';
 
 export class ClientController implements Controller {
   private movementChanged$ = new BehaviorSubject<Phaser.Math.Vector2>(Phaser.Math.Vector2.ZERO);
+  private attack$ = new Subject<PacketEntityAttack>();
   private equipArmor$ = new Subject<Armor>();
   private equipWeapon$ = new Subject<Weapon>();
 
@@ -27,7 +29,12 @@ export class ClientController implements Controller {
 
     client.socketSubscriptions.push(fromEvent<PacketEquipWeapon>(client.socket, ClientPackets.EQUIP_WEAPON)
       .subscribe(p => {
-        this.equipWeapon$.next(p.weapon)
+        this.equipWeapon$.next(p.weapon);
+      }));
+
+    client.socketSubscriptions.push(fromEvent<PacketEntityAttack>(client.socket, ClientPackets.ENTITY_ATTACK)
+      .subscribe(p => {
+        this.attack$.next(p);
       }))
   }
 
@@ -49,5 +56,9 @@ export class ClientController implements Controller {
 
   get attack(): Phaser.Math.Vector2 {
     return null;
+  }
+
+  get attacked() {
+    return this.attack$.asObservable();
   }
 }

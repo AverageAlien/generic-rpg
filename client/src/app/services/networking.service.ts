@@ -22,15 +22,17 @@ import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 import { Weapon } from '../gameplay/items/weapon';
 import { PacketEquipWeapon } from '../networking/networkPackets/fromClient/equipWeapon';
 import { PacketWeaponEquipped } from '../networking/networkPackets/fromServer/weaponEquipped';
+import { PacketEntityDamaged } from '../networking/networkPackets/fromServer/entityDamaged';
+import { CharacterEntity } from '../gameplay/entities/characterEntity';
+import { Destroyable } from '../gameplay/entities/baseEntity';
+import { PacketEntityAttacks } from '../networking/networkPackets/fromServer/entityAttacks';
+import { PacketEntityAttack } from '../networking/networkPackets/fromClient/entityAttack';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NetworkingService {
   public chosenUsername: string;
-
-  private readonly syncPositionEpsilonSqr = 256;
-  private readonly syncVelocityEpsilonSqr = 0;
 
   private syncSnapshot: PacketSyncSnapshot;
   private snapshotTimestamp = 0;
@@ -41,6 +43,7 @@ export class NetworkingService {
   private playerInputMove$ = new Subject<PacketPlayerInputMove>();
   private playerEquippedArmor$ = new Subject<PacketArmorEquipped>();
   private playerLeft$ = new Subject<PacketPlayerLeft>();
+  private entityAttacks$ = new Subject<PacketEntityAttacks>();
 
   public get spawnEntityCharacter() {
     return this.spawnEntityCharacter$.asObservable();
@@ -59,6 +62,9 @@ export class NetworkingService {
   }
   public get playerLeft() {
     return this.playerLeft$.asObservable();
+  }
+  public get entityAttacks() {
+    return this.entityAttacks$.asObservable();
   }
 
   constructor(private socket: Socket, private pingService: PingService) { }
@@ -85,13 +91,18 @@ export class NetworkingService {
   }
 
   sendEquipArmor(armor: Armor) {
-    console.log('EQUIP ARMOR');
     this.socket.emit(ClientPackets.EQUIP_ARMOR, { armor } as PacketEquipArmor);
   }
 
   sendEquipWeapon(weapon: Weapon) {
-    console.log('EQUIP WEP');
     this.socket.emit(ClientPackets.EQUIP_WEAPON, { weapon } as PacketEquipWeapon);
+  }
+
+  sendAttackMelee(hitTargets: Destroyable[], attackPoint: Phaser.Math.Vector2) {
+    this.socket.emit(ClientPackets.ENTITY_ATTACK, {
+      attackPoint,
+      targetsHit: hitTargets.map(t => t.networkId)
+    } as PacketEntityAttack);
   }
 
   synchronizeWithServer(levelScene: ClientLevel) {
@@ -115,7 +126,7 @@ export class NetworkingService {
           .scale(ping * 0.001));
       const posError = predictedPos.distanceSq(new Phaser.Math.Vector2(gameObject.x, gameObject.y));
       if (levelScene.player !== entity && posError > 1 && posError > clientVelocity.lengthSq() * 0.5) {
-        levelScene.tweens.getTweensOf(gameObject).forEach(t => { console.log(t); t.stop(); });
+        levelScene.tweens.getTweensOf(gameObject).forEach(t => t.stop());
         if (posError > 2048) {
           gameObject.setPosition(predictedPos.x, predictedPos.y);
         } else {
@@ -160,6 +171,7 @@ export class NetworkingService {
 
     this.socket.fromEvent<PacketSpawnEntityHumanoid>(ServerPackets.SPAWN_ENTITY_HUMANOID)
       .subscribe(packet => {
+        console.log(packet);
         this.spawnEntityHumanoid$.next(packet);
       });
 
@@ -175,7 +187,6 @@ export class NetworkingService {
 
     this.socket.fromEvent<PacketArmorEquipped>(ServerPackets.ARMOR_EQUIPPED)
       .subscribe(packet => {
-        console.log('<<< ARMOR_EQUIPPED');
         const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
         if (!!ent && ent instanceof HumanoidEntity) {
           ent.equipArmor(packet.armor);
@@ -184,11 +195,26 @@ export class NetworkingService {
 
     this.socket.fromEvent<PacketWeaponEquipped>(ServerPackets.WEAPON_EQUIPPED)
       .subscribe(packet => {
-        console.log('<<< WEAPON_EQUIPPED');
         const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
         if (!!ent && ent instanceof HumanoidEntity) {
           ent.equipWeapon(packet.weapon);
         }
+      });
+
+    this.socket.fromEvent<PacketEntityDamaged>(ServerPackets.ENTITY_DAMAGED)
+      .subscribe(packet => {
+        const ent = clientLevel.entities.find(e => e.networkId === packet.networkId);
+
+        if (!ent || !(ent instanceof CharacterEntity) || ent.health <= 0) {
+          return;
+        }
+
+        ent.damage(packet.damageAmount);
+      });
+
+    this.socket.fromEvent<PacketEntityAttacks>(ServerPackets.ENTITY_ATTACKS)
+      .subscribe(packet => {
+        this.entityAttacks$.next(packet);
       });
 
     this.socket.fromEvent<PacketSyncSnapshot>(ServerPackets.SYNC_SNAPSHOT)

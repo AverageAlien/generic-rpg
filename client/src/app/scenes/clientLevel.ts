@@ -16,6 +16,7 @@ import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
 import { Weapon } from '../gameplay/items/weapon';
 import { EffectsSystem } from '../gameplay/effects/effectsSystem';
 import { DamageNumberEffect } from '../gameplay/effects/damageNumber';
+import { WeaponService } from '../gameServices/weapon.service';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -44,6 +45,8 @@ export class ClientLevel extends Scene implements LevelScene {
     this.mapGrid = new MapGrid(this, 'tileset');
 
     EntityRendererService.init(this);
+
+    WeaponService.init(this, this.networkingService);
 
     EffectsSystem.InitializeEffects(this);
 
@@ -121,10 +124,10 @@ export class ClientLevel extends Scene implements LevelScene {
       mass: 5,
       price: 200,
       texture: 'short_sword',
-      damage: [{
-        type: DamageType.Cut,
-        value: 8
-      }],
+      damage: [
+        { type: DamageType.Cut, value: 80 },
+        { type: DamageType.Blunt, value: 60 },
+      ],
       swing: 60,
       refire: 500,
       reach: 48

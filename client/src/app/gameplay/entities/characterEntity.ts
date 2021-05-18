@@ -4,6 +4,7 @@ import { Subject, Observable } from 'rxjs';
 import { Controller } from '../controllers/baseController';
 import { Constants } from 'src/app/core/constants';
 import { Faction } from 'src/app/core/factions';
+import { DamageNumberEffect } from '../effects/damageNumber';
 
 
 export class CharacterEntity implements Entity, Controllable, Destroyable {
@@ -27,7 +28,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     this.gameObject = cfg.gameObject;
     this.bodyTexture = cfg.bodyTexture;
     this.maxHealth = cfg.maxHealth || 100;
-    this.health = this.maxHealth;
+    this.health = cfg.health || this.maxHealth;
     this.level = cfg.level || 1;
     this.speed = cfg.speed || 20;
 
@@ -42,14 +43,23 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     this.move();
 
     this.attack();
+
+    // const deviation = new Phaser.Math.Vector2(this.gameObject).subtract(this.gameObject.body.center);
+    // console.log(`${this.entityName}: x: ${ deviation.x }; y: ${ deviation.y }`);
   }
 
   damage(dmg: number): void {
     this.health -= dmg;
 
-    if (this.health <= 0) {
-      this.destroy();
-    }
+    const randomOffset = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), this.gameObject.body.width + 16);
+    const effect = new DamageNumberEffect(dmg,
+      this.gameObject.x + randomOffset.x,
+      this.gameObject.y + randomOffset.y,
+      dmg > 0
+      ? 'red'
+      : dmg === 0
+      ? 'gray'
+      : 'lime');
   }
 
   destroy(): void {
@@ -80,8 +90,6 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
 
     const attackAngle = 90 + Phaser.Math.RadToDeg(
       Phaser.Math.Angle.BetweenPoints(this.gameObject.body.center, attack));
-
-    console.log(`Attacking: ${attackAngle}`);
   }
 
   protected lookRight(condition: boolean) {
@@ -102,6 +110,7 @@ export interface CharacterConfig {
   gameObject: Phaser.GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body };
   bodyTexture: string;
   maxHealth?: number;
+  health?: number;
   level?: number;
   speed?: number;
 }

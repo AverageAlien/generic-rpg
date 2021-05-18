@@ -43,6 +43,7 @@ export class ClientEntitySpawnerService {
       name: packet.entityName,
       gameObject,
       maxHealth: packet.maxHealth,
+      health: packet.health,
       level: packet.level,
       speed: packet.speed,
       bodyTexture: 'humanoid',
@@ -94,7 +95,8 @@ export class ClientEntitySpawnerService {
     const entity = new HumanoidEntity({
       name: packet.entityName,
       gameObject,
-      maxHealth: packet.health,
+      maxHealth: packet.maxHealth,
+      health: packet.health,
       level: packet.level,
       speed: packet.speed,
       bodyTexture: 'humanoid',

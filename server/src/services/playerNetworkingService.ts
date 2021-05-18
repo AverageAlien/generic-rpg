@@ -4,8 +4,6 @@ import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { GameClient } from '../models/gameClient';
 import { ClientPackets } from '../networkPackets/fromClient/clientPackets';
 import { PacketClientSync } from '../networkPackets/fromClient/clientSync';
-import { PacketEquipArmor } from '../networkPackets/fromClient/equipArmor';
-import { PacketArmorEquipped } from '../networkPackets/fromServer/armorEquipped';
 import { PacketPing } from '../networkPackets/fromServer/ping';
 import { PacketPlayerLeft } from '../networkPackets/fromServer/playerLeft';
 import { ServerPackets } from '../networkPackets/fromServer/serverPackets';

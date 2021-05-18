@@ -7,6 +7,10 @@ import { PacketArmorEquipped } from '../networkPackets/fromServer/armorEquipped'
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
 import { PacketWeaponEquipped } from '../networkPackets/fromServer/weaponEquipped';
 import { ServerWrapperController } from '../gameData/gameplay/controllers/serverWrapperController';
+import { CharacterEntity } from '../gameData/gameplay/entities/characterEntity';
+import { PacketEntityAttacks } from '../networkPackets/fromServer/entityAttacks';
+import { PacketEntityDamaged } from '../networkPackets/fromServer/entityDamaged';
+import { DamageCalculationService } from './damageCalculationService';
 
 export class NetworkControllerService {
   static addPlayerInputListeners(controller: ClientController, levelScene: NetworkLevel) {
@@ -38,6 +42,34 @@ export class NetworkControllerService {
           networkId: controller.controlledEntity.networkId,
           weapon
         } as PacketWeaponEquipped)
+      }
+    });
+
+    controller.attacked.subscribe(packet => {
+      const targets = packet.targetsHit
+        .map(t => levelScene.entities.find(e => e.networkId === t))
+        .filter(target => !!target && target instanceof CharacterEntity) as CharacterEntity[];
+
+      if (controller.controlledEntity instanceof HumanoidEntity) {
+        const humanoid = controller.controlledEntity;
+
+        targets.forEach(t => {
+          const damage = DamageCalculationService.calculateHumanoidDamage(
+            humanoid,
+            t as HumanoidEntity
+          );
+
+          t.damage(damage);
+          levelScene.broadcastPacket(ServerPackets.ENTITY_DAMAGED, {
+            networkId: t.networkId,
+            damageAmount: damage
+          } as PacketEntityDamaged);
+        });
+
+        levelScene.broadcastPacket(ServerPackets.ENTITY_ATTACKS, {
+          attackPoint: packet.attackPoint,
+          attackerNetworkId: controller.controlledEntity.networkId
+        } as PacketEntityAttacks);
       }
     })
   }

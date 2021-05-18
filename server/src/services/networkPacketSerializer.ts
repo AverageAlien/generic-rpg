@@ -30,6 +30,7 @@ export class NetworkPacketSerializer {
 
       packetCharacter.health = ent.health;
       packetCharacter.maxHealth = ent.maxHealth;
+      packetCharacter.health = ent.health;
       packetCharacter.speed = ent.speed;
       packetCharacter.level = ent.level;
     }

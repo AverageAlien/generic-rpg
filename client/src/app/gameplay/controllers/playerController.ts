@@ -9,11 +9,9 @@ export class PlayerController implements Controller {
 
   constructor(private inputKeys: InputKeys, private levelScene: LevelScene) {
     this.levelScene.input.on('pointerdown', () => {
-      console.log('down');
       this.mouseDown = true;
     });
     this.levelScene.input.on('pointerup', () => {
-      console.log('up');
       this.mouseDown = false;
     });
   }

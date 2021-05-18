@@ -69,7 +69,7 @@ export class NetworkEntitySpawner {
     const entity = new HumanoidEntity({
       name: 'Stalker',
       gameObject,
-      maxHealth: 100,
+      maxHealth: 20000,
       level: 1,
       speed,
       bodyTexture: 'humanoid'
@@ -78,7 +78,7 @@ export class NetworkEntitySpawner {
     entity.networkId = UUID();
     entity.faction = Faction.Baddies;
 
-    entity.controller = new ServerWrapperController(new WalkerController(entity, this.levelScene, 256), entity);
+    entity.controller = new ServerWrapperController(new WalkerController(entity, this.levelScene, 0), entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
     entity.destroyed.subscribe(() => {

@@ -2,7 +2,7 @@ import { BaseEffect } from './baseEffect';
 
 const damageRange = [10, 10000];
 const magnitudeRange = damageRange.map(d => Math.log10(d));
-const fontRange = [14, 24];
+const fontRange = [18, 28];
 const durationRange = [1500, 5000];
 
 export class DamageNumberEffect extends BaseEffect {
@@ -19,7 +19,7 @@ export class DamageNumberEffect extends BaseEffect {
 
     const evaluation = this.evaluateDamage(damage);
 
-    const label = DamageNumberEffect.levelScene.add.text(x, y, '' + (-damage), {
+    const label = DamageNumberEffect.levelScene.add.text(x, y, '' + (Math.abs(damage)), {
       fontFamily: 'fantasy',
       fontSize: `${evaluation.fontSize}px`,
       fontWeight: '100',
