@@ -5,6 +5,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { RoomService } from './services/roomService';
 
+import { PgClient } from './database/databaseClient';
+import { UserDTO } from './database/models/userDTO';
+
+
+new PgClient().query<UserDTO>('select * from public.users').subscribe(u => {
+  console.log(u);
+});
+
 const app = express();
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {

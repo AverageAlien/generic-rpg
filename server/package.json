@@ -30,6 +30,7 @@
     "express": "^4.17.1",
     "pathfinding": "^0.4.18",
     "phaser": "^3.24.1",
+    "postgresql-client": "^1.16.5",
     "rxjs": "^6.6.2",
     "socket.io": "^2.3.0",
     "uuid": "^8.3.0",
