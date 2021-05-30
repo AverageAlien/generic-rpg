@@ -16,3 +16,51 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
   background-color: $mainBgColor;
 }
+
+.window {
+  border-style: solid;
+  border-color: $borderColor;
+  border-width: 4px;
+  background-color: $windowBgColor;
+  padding: 4px;
+}
+
+.text-input {
+  border-style: solid;
+  border-width: 2px;
+  border-color: $borderColor;
+  background-color: $inputBgColor;
+  height: 32px;
+  font-size: 18px;
+  padding-left: 4px;
+}
+
+.button {
+  border-radius: 4px;
+  border-style: none;
+  background-color: $borderColor;
+  color: $gold;
+  font-weight: 500;
+  font-size: 20px;
+  height: 32px;
+  width: 128px;
+  cursor: pointer;
+
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: $buttonBgHover;
+  }
+
+  &:active {
+    background-color: $buttonBgHold;
+  }
+
+  &:disabled {
+    background-color: $buttonBgDisabled;
+    cursor: not-allowed;
+  }
+}

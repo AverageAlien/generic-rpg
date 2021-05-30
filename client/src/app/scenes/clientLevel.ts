@@ -72,6 +72,7 @@ export class ClientLevel extends Scene implements LevelScene {
     });
 
     this.networkingService.loadLevel(this);
+    this.game.scale.updateBounds();
 
     setTimeout(() => {
       this.testArmor();

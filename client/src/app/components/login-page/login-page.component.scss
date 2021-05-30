@@ -1,0 +1,75 @@
+@import './../../../assets/styles/theme-colors.scss';
+
+.root {
+  min-height: 400px;
+  width: 100%;
+  margin-top: 96px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: stretch;
+
+  .window {
+    padding: 8px;
+    width: 260px;
+    color: $textColor;
+    font-size: 18px;
+    font-weight: 500;
+
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: flex-start;
+    align-items: stretch;
+
+    .header {
+      font-size: 24px;
+      font-weight: 600;
+      height: 48px;
+      text-align: center;
+
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content {
+      flex-grow: 1;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: flex-start;
+      align-items: stretch;
+
+      * {
+        margin-bottom: 8px;
+      }
+
+      p {
+        padding-left: 4px;
+      }
+
+      .text-input {
+        width: 100%;
+      }
+
+      .before-space {
+        margin-bottom: auto;
+      }
+
+      .before-space + * {
+        margin-top: 8px;
+      }
+
+      .form-error {
+        align-self: center;
+        color: #ff3838;
+        font-size: 12px;
+        font-weight: 400;
+      }
+
+      .button {
+        align-self: center;
+      }
+    }
+  }
+}

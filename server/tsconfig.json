@@ -14,7 +14,7 @@
     "outDir": "build",
     "rootDir": "src",
     "strict": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strictNullChecks": false

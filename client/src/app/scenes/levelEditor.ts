@@ -12,6 +12,7 @@ export class LevelEditor extends ClientLevel {
   create() {
     this.localEntitySpawner = new EntitySpawnerService();
     this.localEntitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
+    debugger;
 
     this.mapGrid = new MapGrid(this, 'tileset');
 
@@ -29,6 +30,7 @@ export class LevelEditor extends ClientLevel {
     window.addEventListener('resize', () => {
       this.game.scale.updateBounds();
     });
+    this.game.scale.updateBounds();
   }
 
   update() {

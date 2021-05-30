@@ -8,12 +8,14 @@ export class PlayerController implements Controller {
   private mouseDown = false;
 
   constructor(private inputKeys: InputKeys, private levelScene: LevelScene) {
-    this.levelScene.input.on('pointerdown', () => {
-      this.mouseDown = true;
-    });
-    this.levelScene.input.on('pointerup', () => {
-      this.mouseDown = false;
-    });
+    if (!!levelScene && !!levelScene.input) {
+      this.levelScene.input.on('pointerdown', () => {
+        this.mouseDown = true;
+      });
+      this.levelScene.input.on('pointerup', () => {
+        this.mouseDown = false;
+      });
+    }
   }
 
   get movement(): Phaser.Math.Vector2 {

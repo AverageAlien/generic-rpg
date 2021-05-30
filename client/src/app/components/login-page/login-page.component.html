@@ -1,0 +1,32 @@
+<div class='root'>
+  <div class='window'>
+    <div class='header'>
+      Login
+    </div>
+    <div class='content'>
+      <p>Username</p>
+      <input class='text-input' type='text' [(ngModel)]='login.username'>
+      <p>Password</p>
+      <input class='text-input before-space' type='password' [(ngModel)]='login.password'>
+      <p class='form-error' *ngIf="!!loginError && loginError.length > 0">{{loginError}}</p>
+      <button class='button' [disabled]='!validateLogin()' (click)='onLogin()'>Log in</button>
+    </div>
+  </div>
+  <div class='window'>
+    <div class='header'>
+      Make an account
+    </div>
+    <div class='content'>
+      <p>Username</p>
+      <input class='text-input' type='text' [(ngModel)]='register.username'>
+      <p>Password</p>
+      <input class='text-input' type='password' [(ngModel)]='register.password'>
+      <p>Confirm password</p>
+      <input class='text-input' type='password' [(ngModel)]='register.confirmPassword'>
+      <p>Email</p>
+      <input class='text-input before-space' type='email' [(ngModel)]='register.email'>
+      <p class='form-error' *ngIf="!!registerError && registerError.length > 0">{{registerError}}</p>
+      <button class='button' [disabled]='!validateRegister()' (click)='onRegister()'>Register</button>
+    </div>
+  </div>
+</div>

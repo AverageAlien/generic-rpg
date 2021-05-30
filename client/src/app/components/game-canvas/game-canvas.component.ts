@@ -6,6 +6,7 @@ import { ClientLevel } from 'src/app/scenes/clientLevel';
 import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
 import { NetworkingService } from 'src/app/services/networking.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-game-canvas',
@@ -19,7 +20,8 @@ export class GameCanvasComponent implements OnInit {
 
   constructor(
     private ngZone: NgZone,
-    private networkingService: NetworkingService
+    private networkingService: NetworkingService,
+    private authService: AuthService
   ) {
     this.level = new ClientLevel(new InputService(), networkingService);
 
@@ -40,7 +42,7 @@ export class GameCanvasComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.networkingService.chosenUsername = prompt('Enter username', 'DefaultPlayer');
+    this.networkingService.chosenUsername = this.authService.currentUsername;
 
     this.ngZone.runOutsideAngular(() => {
       this.phaserGame = new Phaser.Game(this.config);

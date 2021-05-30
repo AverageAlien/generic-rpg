@@ -51,7 +51,7 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
   damage(dmg: number): void {
     this.health -= dmg;
 
-    const randomOffset = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), this.gameObject.body.width + 16);
+    const randomOffset = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), Math.random() * (this.gameObject.body.width + 16));
     const effect = new DamageNumberEffect(dmg,
       this.gameObject.x + randomOffset.x,
       this.gameObject.y + randomOffset.y,

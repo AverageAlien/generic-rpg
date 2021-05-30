@@ -1,4 +1,3 @@
-import * as io from 'socket.io';
 import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { ClientController } from '../gameData/gameplay/controllers/clientController';
 import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
