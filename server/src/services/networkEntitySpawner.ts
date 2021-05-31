@@ -55,6 +55,7 @@ export class NetworkEntitySpawner {
         this.levelScene.entities.splice(entityIndex, 1);
       }
 
+      (entity.controller as ClientController).subs.forEach(s => s.unsubscribe());
       this.levelScene.broadcastPacket(ServerPackets.ENTITY_DIED, { networkId: entity.networkId } as PacketEntityDied);
     });
 
