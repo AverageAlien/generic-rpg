@@ -14,6 +14,7 @@ ALTER TABLE public.users
 CREATE TABLE IF NOT EXISTS public.locations
 (
 	name varchar(32) NOT NULL,
+    locationTitle varchar(64) NOT NULL,
 	levelData text NOT NULL,
 	PRIMARY KEY (name)
 );

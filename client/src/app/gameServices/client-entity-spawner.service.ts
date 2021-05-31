@@ -63,9 +63,12 @@ export class ClientEntitySpawnerService {
       this.networkingService.sendMovement(vector);
     });
 
-    // entity.destroyed.subscribe(() => {
-    //   // TODO
-    // });
+    entity.destroyed.subscribe(() => {
+      const entityIndex = this.levelScene.entities.indexOf(entity);
+      if (entityIndex >= 0) {
+        this.levelScene.entities.splice(entityIndex, 1);
+      }
+    });
 
     this.levelScene.entities.push(entity);
     this.levelScene.player = entity;

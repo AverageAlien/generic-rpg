@@ -19,6 +19,7 @@ export class AssetService {
     this.addArmorItem(loader, 'leather_boots');
 
     this.addWeaponItem(loader, 'short_sword');
+    this.addWeaponItem(loader, 'wooden_stick');
   }
 
   private static addArmorItem(loader: Phaser.Loader.LoaderPlugin, itemName: string) {

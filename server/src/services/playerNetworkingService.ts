@@ -1,4 +1,5 @@
 import { fromEvent } from 'rxjs';
+import { performance } from 'perf_hooks';
 import { take } from 'rxjs/operators';
 import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { GameClient } from '../models/gameClient';
@@ -7,9 +8,10 @@ import { PacketClientSync } from '../networkPackets/fromClient/clientSync';
 import { PacketPing } from '../networkPackets/fromServer/ping';
 import { PacketPlayerLeft } from '../networkPackets/fromServer/playerLeft';
 import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
+import { PlayerDataService } from './playerDataService';
 
 export class PlayerNetworkingService {
-  constructor(private networkLevel: NetworkLevel) {}
+  constructor(private networkLevel: NetworkLevel, private playerDataService: PlayerDataService) {}
 
   public addPlayerInputListeners(player: GameClient) {
     player.socketSubscriptions.push(fromEvent<number>(player.socket, ClientPackets.PING)
@@ -59,6 +61,8 @@ export class PlayerNetworkingService {
         console.error('Player not found.');
         return;
       }
+
+      this.playerDataService.savePlayerData(player.nickname, this.networkLevel.levelName, player);
 
       this.networkLevel.clients.splice(index, 1);
       player.controlledEntity?.destroy();

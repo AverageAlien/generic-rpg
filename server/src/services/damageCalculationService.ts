@@ -1,5 +1,5 @@
-import { HumanoidEntity } from "../gameData/gameplay/entities/humanoidEntity";
-import { DamageType } from "../gameData/gameplay/items/itemEnums";
+import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
+import { DamageType } from '../gameData/gameplay/items/itemEnums';
 
 const damageMultipliers = {
   [DamageType.Cut]: 0.8,

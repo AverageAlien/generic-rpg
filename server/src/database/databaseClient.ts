@@ -4,6 +4,8 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 
 export class PgClient {
   public query<T>(command: string, params: any[] = []): Observable<T[]> {
+    console.log(command);
+
     const connection = new Connection(this.configFactory());
 
     const observable = from(connection.connect())

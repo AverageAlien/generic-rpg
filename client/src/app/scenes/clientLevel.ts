@@ -74,14 +74,14 @@ export class ClientLevel extends Scene implements LevelScene {
     this.networkingService.loadLevel(this);
     this.game.scale.updateBounds();
 
-    setTimeout(() => {
-      this.testArmor();
-    }, 3000);
-    setInterval(() => {
-      [5, 10, 25, 100, 500, 1000, 2500, 6666, 10000, Infinity].forEach((v, i) => {
-        new DamageNumberEffect(v, 1024, i * 32);
-      });
-    }, 7000);
+    // setTimeout(() => {
+    //   this.testArmor();
+    // }, 3000);
+    // setInterval(() => {
+    //   [5, 10, 25, 100, 500, 1000, 2500, 6666, 10000, Infinity].forEach((v, i) => {
+    //     new DamageNumberEffect(v, 1024, i * 32);
+    //   });
+    // }, 7000);
   }
 
   testArmor() {

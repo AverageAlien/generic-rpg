@@ -27,6 +27,7 @@ import { CharacterEntity } from '../gameplay/entities/characterEntity';
 import { Destroyable } from '../gameplay/entities/baseEntity';
 import { PacketEntityAttacks } from '../networking/networkPackets/fromServer/entityAttacks';
 import { PacketEntityAttack } from '../networking/networkPackets/fromClient/entityAttack';
+import { PacketEntityDied } from '../networking/networkPackets/fromServer/entityDied';
 
 @Injectable({
   providedIn: 'root'
@@ -215,6 +216,19 @@ export class NetworkingService {
     this.socket.fromEvent<PacketEntityAttacks>(ServerPackets.ENTITY_ATTACKS)
       .subscribe(packet => {
         this.entityAttacks$.next(packet);
+      });
+
+    this.socket.fromEvent<PacketEntityDied>(ServerPackets.ENTITY_DIED)
+      .subscribe(packet => {
+        const entity = clientLevel.entities.find(e => e.networkId === packet.networkId);
+        if (entity === clientLevel.player) {
+          // clientLevel.player = null;
+          console.log('Player died.');
+        }
+
+        if (entity instanceof CharacterEntity) {
+          entity.destroy();
+        }
       });
 
     this.socket.fromEvent<PacketSyncSnapshot>(ServerPackets.SYNC_SNAPSHOT)

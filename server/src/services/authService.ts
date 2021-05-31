@@ -1,23 +1,23 @@
 import { Observable, of } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, tap } from 'rxjs/operators';
 import { PgClient } from '../database/databaseClient';
 import { UserDTO } from '../database/models/userDTO';
 import { AuthResult } from '../models/authResult.model';
 import { LoginModel } from '../models/login.model';
 import { RegisterModel } from '../models/register.model';
+import { PlayerDataService } from './playerDataService';
 const md5 = require('md5');
 
 export class AuthenticationService {
-  constructor() {}
+  constructor(private playerDataService: PlayerDataService) {}
 
   login(model: LoginModel): Observable<AuthResult> {
     const client = new PgClient();
 
     const passwordHash = md5(model.password) as string;
 
-    const query = `SELECT * FROM public.Users WHERE username = \'${model.username}\' AND password = \'${passwordHash}\'`;
+    const query = `SELECT * FROM public.Users WHERE username = '${model.username}' AND password = '${passwordHash}'`;
 
-    console.log(query)
     const result = client.query<UserDTO>(query);
 
     return result.pipe(
@@ -42,10 +42,10 @@ export class AuthenticationService {
 
     const passwordHash = md5(model.password) as string;
 
-    const findUser = `SELECT * FROM public.Users WHERE username = \'${model.username}\'`;
+    const findUser = `SELECT * FROM public.Users WHERE username = '${model.username}'`;
     const addUser = `
       INSERT INTO public.Users (username, password, isadmin, isbanned, email)
-      VALUES (\'${model.username}\', \'${passwordHash}\', false, false, \'${model.email}\')
+      VALUES ('${model.username}', '${passwordHash}', false, false, '${model.email}')
       RETURNING *`;
 
     return client.query<UserDTO>(findUser).pipe(
@@ -70,6 +70,13 @@ export class AuthenticationService {
               username: add[0].username,
               error: null
             } as AuthResult;
+          }),
+          tap(add => {
+            if (!!add.username && add.error == null) {
+              this.playerDataService.createPlayerData(add.username).subscribe(playerData => {
+                console.log(`Created playerData for ${add.username}`);
+              });
+            }
           })
         );
       })

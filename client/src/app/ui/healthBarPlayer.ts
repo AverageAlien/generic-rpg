@@ -11,7 +11,7 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     '>
       <div id='full' style='
         height: 100%;
-        width: 100%;
+        width: 0%;
         display: flex;
         flex-flow: column nowrap;
       '>
@@ -43,7 +43,7 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
         justify-content: center;
         align-items: center;
       '>
-        100/100
+        0/0
       </div>
     </div>
   `;
@@ -69,9 +69,6 @@ export class HealthBarPlayer extends Phaser.GameObjects.DOMElement {
     const label = this.getChildByID('label') as HTMLElement;
 
     if (!plr) {
-      bar.style.width = `0%`;
-      label.innerText = `0/0`;
-
       return;
     }
 

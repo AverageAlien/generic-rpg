@@ -8,11 +8,14 @@ import { Faction } from '../core/factions';
 import { ClientController } from '../gameData/gameplay/controllers/clientController';
 import { NetworkControllerService } from './networkControllerService';
 import { ServerWrapperController } from '../gameData/gameplay/controllers/serverWrapperController';
+import { PlayerDataSnapshot } from '../models/userDataSnapshot';
+import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
+import { PacketEntityDied } from '../networkPackets/fromServer/entityDied';
 
 export class NetworkEntitySpawner {
   constructor(private levelScene: NetworkLevel) {}
 
-  public spawnPlayer(gameClient: GameClient, position: Phaser.Math.Vector2): HumanoidEntity {
+  public spawnPlayer(gameClient: GameClient, playerData: PlayerDataSnapshot, position: Phaser.Math.Vector2): HumanoidEntity {
     const gameObject = this.createRenderTexture(
       position,
       new Phaser.Math.Vector2(
@@ -29,14 +32,20 @@ export class NetworkEntitySpawner {
     const entity = new HumanoidEntity({
       name: gameClient.nickname,
       gameObject,
-      maxHealth: 100,
-      level: 1,
-      speed: 30,
+      maxHealth: playerData.maxHealth,
+      level: playerData.level,
+      speed: playerData.speed,
       bodyTexture: 'humanoid'
     });
 
     entity.networkId = UUID();
     entity.controller = new ClientController(gameClient, entity);
+
+    if (!!playerData.equipment.weapon) entity.equipWeapon(playerData.equipment.weapon);
+    if (!!playerData.equipment.helmet) entity.equipArmor(playerData.equipment.helmet);
+    if (!!playerData.equipment.armor) entity.equipArmor(playerData.equipment.armor);
+    if (!!playerData.equipment.boots) entity.equipArmor(playerData.equipment.boots);
+
     NetworkControllerService.addPlayerInputListeners(entity.controller as ClientController, this.levelScene);
 
     entity.destroyed.subscribe(() => {
@@ -45,6 +54,8 @@ export class NetworkEntitySpawner {
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
+
+      this.levelScene.broadcastPacket(ServerPackets.ENTITY_DIED, { networkId: entity.networkId } as PacketEntityDied);
     });
 
     this.levelScene.entities.push(entity);
@@ -69,7 +80,7 @@ export class NetworkEntitySpawner {
     const entity = new HumanoidEntity({
       name: 'Stalker',
       gameObject,
-      maxHealth: 20000,
+      maxHealth: 110,
       level: 1,
       speed,
       bodyTexture: 'humanoid'
@@ -78,7 +89,7 @@ export class NetworkEntitySpawner {
     entity.networkId = UUID();
     entity.faction = Faction.Baddies;
 
-    entity.controller = new ServerWrapperController(new WalkerController(entity, this.levelScene, 0), entity);
+    entity.controller = new ServerWrapperController(new WalkerController(entity, this.levelScene, 128), entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
     entity.destroyed.subscribe(() => {
@@ -86,6 +97,8 @@ export class NetworkEntitySpawner {
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
       }
+
+      this.levelScene.broadcastPacket(ServerPackets.ENTITY_DIED, { networkId: entity.networkId } as PacketEntityDied);
     });
 
     this.levelScene.entities.push(entity);

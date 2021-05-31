@@ -8,6 +8,9 @@ import { ClientPackets } from '../networkPackets/fromClient/clientPackets';
 import { PacketClientInit } from '../networkPackets/fromClient/clientInit';
 import { Room } from '../models/room';
 import { take, filter } from 'rxjs/operators';
+import { PlayerDataService } from './playerDataService';
+import { UserDataDTO } from '../database/models/userDataDTO';
+import { PlayerDataSnapshot } from '../models/userDataSnapshot';
 
 const defaultRoom = 'test01';
 global.phaserOnNodeFPS = 30;
@@ -15,7 +18,7 @@ global.phaserOnNodeFPS = 30;
 export class RoomService {
   private rooms: Room[] = [];
 
-  constructor(private server: io.Server) {
+  constructor(private server: io.Server, private playerDataService: PlayerDataService) {
     server.on('connection', socket => {
       console.log(`${socket.client.id} connected.`);
       let oldRoomName: string;
@@ -27,14 +30,18 @@ export class RoomService {
 
           const roomName = 'test_01';
 
-          socket.join(roomName);
-          this.playerJoinRoom(socket, packet.username, roomName, oldRoomName);
-          oldRoomName = roomName;
+          this.playerDataService.loadPlayerData(packet.username).subscribe(userData => {
+            socket.join(roomName);
+            this.playerJoinRoom(socket, packet.username, userData, oldRoomName);
+            oldRoomName = roomName;
+          });
         });
     });
   }
 
-  public playerJoinRoom(socket: io.Socket, playerName: string, roomName: string, oldRoomName?: string) {
+  public playerJoinRoom(socket: io.Socket, playerName: string, userData: UserDataDTO, oldRoomName?: string) {
+    const roomName = userData.location;
+
     if (oldRoomName) {
       const oldRoom = this.rooms.find(r => r.roomName === oldRoomName);
 
@@ -59,12 +66,15 @@ export class RoomService {
       .subscribe(ready => {
         console.log('room ready');
 
+        const playerData: PlayerDataSnapshot = JSON.parse(userData.playerdata);
+
         targetRoom.location.addPlayer({
           nickname: playerName,
+          inventory: playerData.inventory,
           socket,
           socketSubscriptions: [],
           ping: 0,
-        });
+        }, playerData);
       });
   }
 
@@ -72,7 +82,7 @@ export class RoomService {
     const room = new Room();
     room.roomName = roomName;
 
-    room.location = new NetworkLevel(this.server, roomName);
+    room.location = new NetworkLevel(this.server, this.playerDataService, roomName);
 
     const gameConfig = {
       type: Phaser.HEADLESS,

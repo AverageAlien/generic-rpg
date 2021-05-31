@@ -43,15 +43,12 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     this.move();
 
     this.attack();
-
-    // const deviation = new Phaser.Math.Vector2(this.gameObject).subtract(this.gameObject.body.center);
-    // console.log(`${this.entityName}: x: ${ deviation.x }; y: ${ deviation.y }`);
   }
 
   damage(dmg: number): void {
     this.health -= dmg;
 
-    const randomOffset = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), Math.random() * (this.gameObject.body.width + 16));
+    const randomOffset = Phaser.Math.RandomXY(new Phaser.Math.Vector2(), Math.random() * (this.gameObject.body.width + 4));
     const effect = new DamageNumberEffect(dmg,
       this.gameObject.x + randomOffset.x,
       this.gameObject.y + randomOffset.y,
@@ -71,6 +68,11 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
   protected move() {
     const maxSpeedMult = Constants.Character.MAX_SPEED_MULT;
     const movement = this.controller.movement.scale(this.speed * maxSpeedMult * 10);
+
+    if (this.gameObject?.body == null) {
+      return;
+    }
+
     if (this.gameObject.body.velocity.lengthSq() > (this.speed * this.speed * maxSpeedMult * maxSpeedMult)) {
       this.gameObject.body.velocity.normalize().scale(this.speed * maxSpeedMult);
     }

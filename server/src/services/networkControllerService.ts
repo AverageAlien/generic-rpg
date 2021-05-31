@@ -58,11 +58,11 @@ export class NetworkControllerService {
             t as HumanoidEntity
           );
 
-          t.damage(damage);
           levelScene.broadcastPacket(ServerPackets.ENTITY_DAMAGED, {
             networkId: t.networkId,
             damageAmount: damage
           } as PacketEntityDamaged);
+          t.damage(damage);
         });
 
         levelScene.broadcastPacket(ServerPackets.ENTITY_ATTACKS, {

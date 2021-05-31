@@ -1,7 +1,9 @@
 import { EquipmentItem } from './equipmentItem';
-import { DamageType } from './itemEnums';
+import { DamageType, ItemType } from './itemEnums';
 
 export class Weapon extends EquipmentItem {
+  public itemType = ItemType.Weapon;
+
   public damage: Damage[];
   public reach: number;
   public refire: number; // ms

@@ -4,18 +4,13 @@ import * as http from 'http';
 import io from 'socket.io';
 import * as fs from 'fs';
 import * as path from 'path';
-import { RoomService } from './services/roomService';
 
-import { PgClient } from './database/databaseClient';
-import { UserDTO } from './database/models/userDTO';
+import { RoomService } from './services/roomService';
 import { AuthenticationService } from './services/authService';
 import { LoginModel } from './models/login.model';
 import { RegisterModel } from './models/register.model';
 import { AuthResult } from './models/authResult.model';
-
-new PgClient().query<UserDTO>('select * from public.users').subscribe(u => {
-  console.log(u);
-});
+import { PlayerDataService } from './services/playerDataService';
 
 const app = express();
 app.use(cors.default({
@@ -31,8 +26,9 @@ const ioServer = io(httpServer, {
   }
 });
 
-const authService = new AuthenticationService();
-const roomService = new RoomService(ioServer);
+const playerDataService = new PlayerDataService();
+const authService = new AuthenticationService(playerDataService);
+const roomService = new RoomService(ioServer, playerDataService);
 
 const clientRoot = path.join(__dirname, 'client');
 

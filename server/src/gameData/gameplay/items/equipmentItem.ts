@@ -1,6 +1,9 @@
 import { Item } from './baseItem';
+import { ItemType } from './itemEnums';
 
 export class EquipmentItem implements Item {
+  public itemType = ItemType.EquipmentItem;
+
   constructor(
     public name: string,
     public texture: string,

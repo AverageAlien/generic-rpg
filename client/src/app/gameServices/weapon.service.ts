@@ -42,7 +42,12 @@ export class WeaponService {
 
         const angleToEntity = Phaser.Math.RadToDeg(Phaser.Math.Angle.BetweenPoints(attackerCenter, targetCenter));
 
-        const angleDiff = Phaser.Math.Angle.ShortestBetween(angleToEntity, attackAngle - 90);
+        const correctedAttackAngle = attackAngle - 90;
+
+
+        let angleDiff = Math.abs(angleToEntity - correctedAttackAngle);
+        angleDiff = Math.min(angleDiff, 360 - angleDiff);
+        console.log(`Attack angle: ${correctedAttackAngle}; Angle to entity: ${angleToEntity}; Angle diff: ${angleDiff}`);
         const swingResult = angleDiff <= weapon.swing / 2;
 
         return swingResult;
