@@ -1,4 +1,11 @@
 <div class='root'>
   <div id='gameContainer'></div>
+
+  <div class='ui-overlay' [ngClass]="{'visible': !isAlive}">
+    <div class='window death'>
+      You died!
+      <button class='button' (click)="onRespawn()">Respawn</button>
+    </div>
+  </div>
 </div>
 

@@ -33,10 +33,10 @@ export class WeaponService {
         const distanceSq = new Phaser.Math.Vector2(targetCenter).subtract(attackerCenter).lengthSq();
 
         if (distanceSq > weapon.reach ** 2) {
-          console.log(`FAIL ON DISTANCE ${distanceSq}`);
+          // console.log(`FAIL ON DISTANCE ${distanceSq}`);
           return false;
         } else if (distanceSq <= (0.25 * weapon.reach) ** 2) {
-          console.log(`SUCCESS TOO CLOSE`);
+          // console.log(`SUCCESS TOO CLOSE`);
           return true;
         }
 
@@ -47,7 +47,7 @@ export class WeaponService {
 
         let angleDiff = Math.abs(angleToEntity - correctedAttackAngle);
         angleDiff = Math.min(angleDiff, 360 - angleDiff);
-        console.log(`Attack angle: ${correctedAttackAngle}; Angle to entity: ${angleToEntity}; Angle diff: ${angleDiff}`);
+        // console.log(`Attack angle: ${correctedAttackAngle}; Angle to entity: ${angleToEntity}; Angle diff: ${angleDiff}`);
         const swingResult = angleDiff <= weapon.swing / 2;
 
         return swingResult;
@@ -71,7 +71,7 @@ export class WeaponService {
 
     const hitTargets = WeaponService.scanHitArea(weapon, attacker, attackAngle);
 
-    console.log(`ATTACKED: ${hitTargets.length} TARGETS`);
+    // console.log(`ATTACKED: ${hitTargets.length} TARGETS`);
     this.networkingService.sendAttackMelee(hitTargets, attackPoint);
   }
 

@@ -17,6 +17,7 @@ import { Weapon } from '../gameplay/items/weapon';
 import { EffectsSystem } from '../gameplay/effects/effectsSystem';
 import { DamageNumberEffect } from '../gameplay/effects/damageNumber';
 import { WeaponService } from '../gameServices/weapon.service';
+import { UiOverlayService } from '../services/ui-overlay.service';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -31,7 +32,7 @@ export class ClientLevel extends Scene implements LevelScene {
 
   protected backgroundImage: GameObjects.TileSprite;
 
-  constructor(protected inputService: InputService, protected networkingService: NetworkingService) {
+  constructor(protected inputService: InputService, protected networkingService: NetworkingService, protected uiOverlay: UiOverlayService) {
     super({ key: 'level' });
   }
 
@@ -73,6 +74,8 @@ export class ClientLevel extends Scene implements LevelScene {
 
     this.networkingService.loadLevel(this);
     this.game.scale.updateBounds();
+
+    if (!!this.uiOverlay) { this.uiOverlay.init(this, this.networkingService); }
 
     // setTimeout(() => {
     //   this.testArmor();

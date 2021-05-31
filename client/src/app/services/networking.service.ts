@@ -28,6 +28,7 @@ import { Destroyable } from '../gameplay/entities/baseEntity';
 import { PacketEntityAttacks } from '../networking/networkPackets/fromServer/entityAttacks';
 import { PacketEntityAttack } from '../networking/networkPackets/fromClient/entityAttack';
 import { PacketEntityDied } from '../networking/networkPackets/fromServer/entityDied';
+import { PacketRespawn } from '../networking/networkPackets/fromClient/respawn';
 
 @Injectable({
   providedIn: 'root'
@@ -100,10 +101,15 @@ export class NetworkingService {
   }
 
   sendAttackMelee(hitTargets: Destroyable[], attackPoint: Phaser.Math.Vector2) {
+    console.log('ATTACKED');
     this.socket.emit(ClientPackets.ENTITY_ATTACK, {
       attackPoint,
       targetsHit: hitTargets.map(t => t.networkId)
     } as PacketEntityAttack);
+  }
+
+  sendRespawn() {
+    this.socket.emit(ClientPackets.RESPAWN, {} as PacketRespawn);
   }
 
   synchronizeWithServer(levelScene: ClientLevel) {

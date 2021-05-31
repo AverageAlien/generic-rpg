@@ -127,75 +127,48 @@ export class NetworkLevel extends Scene implements LevelScene {
   }
 
   addPlayer(player: GameClient, playerData: PlayerDataSnapshot) {
-    const existingPlayers = [...this.clients];
-
     player.socket.emit(ServerPackets.INIT_LEVEL, NetworkPacketSerializer.initLevel(this));
-    console.log(`>> ${ServerPackets.INIT_LEVEL}`);
+    // console.log(`>> ${ServerPackets.INIT_LEVEL}`);
 
     this.entities.forEach(e => {
       player.socket.emit(...NetworkPacketSerializer.spawnEntity(e));
-      console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn all present entities for new player)`);
+      // console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn all present entities for new player)`);
     });
 
+    this.spawnPlayer(player, playerData);
+    // const spawnedEntity = this.entitySpawner.spawnPlayer(player, playerData, new Phaser.Math.Vector2(0, 0));
+    // console.log(`spawned entity pos: ${spawnedEntity.gameObject.body.x}; ${spawnedEntity.gameObject.body.y}`);
+    // player.controlledEntity = spawnedEntity;
+
+    // console.log('Existing players:');
+    // console.log(existingPlayers);
+    // existingPlayers.forEach(p => {
+    //   p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
+    //   console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
+    // });
+
+    // player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
+    // console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
+
+    this.clients.push(player);
+    this.playerNetworking.addPlayerInputListeners(player, playerData);
+  }
+
+  spawnPlayer(player: GameClient, playerData: PlayerDataSnapshot) {
+    const existingPlayers = this.clients.filter(gc => gc !== player);
     const spawnedEntity = this.entitySpawner.spawnPlayer(player, playerData, new Phaser.Math.Vector2(0, 0));
-    console.log(`spawned entity pos: ${spawnedEntity.gameObject.body.x}; ${spawnedEntity.gameObject.body.y}`);
+    // console.log(`spawned entity pos: ${spawnedEntity.gameObject.body.x}; ${spawnedEntity.gameObject.body.y}`);
     player.controlledEntity = spawnedEntity;
 
-    console.log('Existing players:');
-    console.log(existingPlayers);
+    // console.log('Existing players:');
+    // console.log(existingPlayers);
     existingPlayers.forEach(p => {
       p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
-      console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
+      // console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
     });
 
     player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
-    console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
-
-    this.clients.push(player);
-    this.playerNetworking.addPlayerInputListeners(player);
-    // player.socketSubscriptions.push(fromEvent<number>(player.socket, ClientPackets.PING)
-    //   .subscribe(clientTimestamp => {
-    //     player.socket.emit(ServerPackets.PONG, {
-    //       clientTimestamp,
-    //       serverTimeStamp: performance.now()
-    //     } as PacketPing);
-    //   }));
-
-    // player.socketSubscriptions.push(fromEvent<number>(player.socket, ClientPackets.PING2)
-    //   .subscribe(serverTimestamp => {
-    //     player.ping = (performance.now() - serverTimestamp) * 0.5;
-    //     // console.log(`PING: ${player.ping}`);
-    //   }));
-
-    // player.socketSubscriptions.push(fromEvent<PacketClientSync>(player.socket, ClientPackets.CLIENT_SYNC)
-    //   .subscribe(packet => {
-    //     player.syncSnapshot = packet;
-    //     player.syncSnapshotTimestamp = performance.now();
-    //   }));
-
-    // player.socketSubscriptions.push(fromEvent<string>(player.socket, 'disconnect')
-    //   .pipe(take(1))
-    //   .subscribe(reason => {
-    //     console.log(`PLAYER DISCONNECTED <network level>: ${reason}`);
-
-    //     const index = this.clients.indexOf(player);
-    //     const networkId = player.controlledEntity?.networkId;
-
-    //     if (index < 0) {
-    //       console.error('Player not found.');
-    //       return;
-    //     }
-
-    //     this.clients.splice(index, 1);
-    //     player.controlledEntity?.destroy();
-    //     player.socketSubscriptions.forEach(s => s.unsubscribe());
-
-    //     if (!!networkId) {
-    //       this.broadcastPacket(ServerPackets.PLAYER_LEFT, {
-    //         networkId: player.controlledEntity.networkId
-    //       } as PacketPlayerLeft);
-    //     }
-    //   }));
+    // console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
   }
 
   broadcastPacket(packetType: ServerPackets, packet: any) {

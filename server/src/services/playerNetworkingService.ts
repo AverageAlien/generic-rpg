@@ -9,11 +9,13 @@ import { PacketPing } from '../networkPackets/fromServer/ping';
 import { PacketPlayerLeft } from '../networkPackets/fromServer/playerLeft';
 import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
 import { PlayerDataService } from './playerDataService';
+import { PacketRespawn } from '../networkPackets/fromClient/respawn';
+import { PlayerDataSnapshot } from '../models/userDataSnapshot';
 
 export class PlayerNetworkingService {
   constructor(private networkLevel: NetworkLevel, private playerDataService: PlayerDataService) {}
 
-  public addPlayerInputListeners(player: GameClient) {
+  public addPlayerInputListeners(player: GameClient, playerData: PlayerDataSnapshot) {
     player.socketSubscriptions.push(fromEvent<number>(player.socket, ClientPackets.PING)
     .subscribe(this.listenPing(player)));
 
@@ -26,6 +28,9 @@ export class PlayerNetworkingService {
     player.socketSubscriptions.push(fromEvent<string>(player.socket, 'disconnect')
       .pipe(take(1))
       .subscribe(this.listenDisconnect(player)));
+
+    player.socketSubscriptions.push(fromEvent<PacketRespawn>(player.socket, ClientPackets.RESPAWN)
+      .subscribe(this.listenRespawn(player, playerData)));
   }
 
   private listenClientSync(player: GameClient): (value: PacketClientSync) => void {
@@ -48,6 +53,12 @@ export class PlayerNetworkingService {
         serverTimeStamp: performance.now()
       } as PacketPing);
     };
+  }
+
+  private listenRespawn(player: GameClient, data: PlayerDataSnapshot): (packet: PacketRespawn) => void {
+    return respawn => {
+      this.networkLevel.spawnPlayer(player, data);
+    }
   }
 
   private listenDisconnect(player: GameClient): (value: string) => void {

@@ -19,7 +19,7 @@ export class LevelEditorComponent implements OnInit {
   constructor(
     private ngZone: NgZone
   ) {
-    this.level = new LevelEditor(new InputService(), new NetworkingService(null, null));
+    this.level = new LevelEditor(new InputService(), new NetworkingService(null, null), null);
 
     this.config = {
       type: Phaser.AUTO,

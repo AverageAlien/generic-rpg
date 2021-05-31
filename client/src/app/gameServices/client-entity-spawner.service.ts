@@ -71,6 +71,11 @@ export class ClientEntitySpawnerService {
     });
 
     this.levelScene.entities.push(entity);
+
+    if (!!this.levelScene.player) {
+      this.levelScene.player.destroy();
+    }
+
     this.levelScene.player = entity;
 
     this.levelScene.cameras.main.startFollow(entity.gameObject,

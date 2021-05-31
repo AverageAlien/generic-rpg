@@ -8,4 +8,5 @@ export enum ClientPackets {
   EQUIP_ARMOR = 'EQUIP_ARMOR',
   EQUIP_WEAPON = 'EQUIP_WEAPON',
   ENTITY_ATTACK = 'ENTITY_ATTACK',
+  RESPAWN = 'RESPAWN',
 }

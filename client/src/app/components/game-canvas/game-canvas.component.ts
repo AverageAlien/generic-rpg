@@ -7,6 +7,7 @@ import { LevelLoaderService } from 'src/app/gameServices/level-loader.service';
 import { Constants } from 'src/app/core/constants';
 import { NetworkingService } from 'src/app/services/networking.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { UiOverlayService } from 'src/app/services/ui-overlay.service';
 
 @Component({
   selector: 'app-game-canvas',
@@ -21,9 +22,10 @@ export class GameCanvasComponent implements OnInit {
   constructor(
     private ngZone: NgZone,
     private networkingService: NetworkingService,
-    private authService: AuthService
+    private authService: AuthService,
+    private uiOverlay: UiOverlayService
   ) {
-    this.level = new ClientLevel(new InputService(), networkingService);
+    this.level = new ClientLevel(new InputService(), networkingService, uiOverlay);
 
     this.config = {
       type: Phaser.AUTO,
@@ -41,12 +43,20 @@ export class GameCanvasComponent implements OnInit {
 
   }
 
+  get isAlive() {
+    return this.uiOverlay.isAlive;
+  }
+
   ngOnInit() {
     this.networkingService.chosenUsername = this.authService.currentUsername;
 
     this.ngZone.runOutsideAngular(() => {
       this.phaserGame = new Phaser.Game(this.config);
     });
+  }
+
+  onRespawn() {
+    this.networkingService.sendRespawn();
   }
 
   onExportLevel() {

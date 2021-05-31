@@ -12,7 +12,6 @@ export class LevelEditor extends ClientLevel {
   create() {
     this.localEntitySpawner = new EntitySpawnerService();
     this.localEntitySpawner.init(this.inputService.getInputKeys(this.input.keyboard), this);
-    debugger;
 
     this.mapGrid = new MapGrid(this, 'tileset');
 
