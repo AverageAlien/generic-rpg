@@ -8,6 +8,11 @@ import { Constants } from 'src/app/core/constants';
 import { NetworkingService } from 'src/app/services/networking.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { UiOverlayService } from 'src/app/services/ui-overlay.service';
+import { InventoryItem } from 'src/app/models/inventoryItem.model';
+import { ItemType } from 'src/app/gameplay/items/itemEnums';
+import { Item } from 'src/app/gameplay/items/baseItem';
+import { Weapon } from 'src/app/gameplay/items/weapon';
+import { Armor } from 'src/app/gameplay/items/armor';
 
 @Component({
   selector: 'app-game-canvas',
@@ -18,6 +23,9 @@ export class GameCanvasComponent implements OnInit {
   phaserGame: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
   level: ClientLevel;
+
+  inventoryItems: Item[] = [];
+  selectedItem: any;
 
   constructor(
     private ngZone: NgZone,
@@ -40,7 +48,10 @@ export class GameCanvasComponent implements OnInit {
         createContainer: true
       }
     };
+  }
 
+  get showInventory() {
+    return this.uiOverlay.inventoryOpen;
   }
 
   get isAlive() {
@@ -55,19 +66,44 @@ export class GameCanvasComponent implements OnInit {
     });
   }
 
+  getTexturePath(item: Item) {
+    if (item.itemType === ItemType.Weapon) {
+      return `assets/items/weapons/${item.texture}_icon.png`;
+    } else {
+      return `assets/items/armor/${item.texture}_icon.png`;
+    }
+  }
+
+  getDamageString(item: Item) {
+    return ((item as Weapon).damage || []).map(d => `${d.value} ${d.type.toLocaleLowerCase()}`).join(', ');
+  }
+
+  onSelectItem(item: Item) {
+    this.selectedItem = item;
+  }
+
   onRespawn() {
     this.networkingService.sendRespawn();
   }
 
-  onExportLevel() {
-    console.log(LevelLoaderService.exportLevel(this.level));
+  onEquipItem() {
+    const item = this.inventoryItems.find(i => i === this.selectedItem);
+    if (!item) { return; }
+
+    if (item.itemType === ItemType.Weapon) {
+      this.networkingService.sendEquipWeapon(item as Weapon);
+    } else if (item.itemType === ItemType.Armor) {
+      this.networkingService.sendEquipArmor(item as Armor);
+    }
   }
 
-  onImportLevel() {
-    const levelJson = prompt('Paste level JSON');
+  onOpenInventory() {
+    this.inventoryItems = this.uiOverlay.loadPlayerItems();
+    this.selectedItem = this.inventoryItems[0];
+    this.uiOverlay.inventoryOpen = true;
+  }
 
-    if (!levelJson) { return; }
-
-    LevelLoaderService.importlevel(levelJson, this.level);
+  onCloseInventory() {
+    this.uiOverlay.inventoryOpen = false;
   }
 }

@@ -1,3 +1,10 @@
+export enum ItemType {
+  Armor = 'ARMOR',
+  Weapon = 'WEAPON',
+  StackItem = 'STACKITEM',
+  EquipmentItem = 'EQUIPMENTITEM'
+}
+
 export enum ArmorType {
   Helmet = 'HELMET',
   Chestplate = 'CHESTPLATE',

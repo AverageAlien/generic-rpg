@@ -77,6 +77,8 @@ export class ClientEntitySpawnerService {
     }
 
     this.levelScene.player = entity;
+    console.log(packet.inventory);
+    this.levelScene.inventory = packet.inventory;
 
     this.levelScene.cameras.main.startFollow(entity.gameObject,
       false,

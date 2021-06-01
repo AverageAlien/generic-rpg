@@ -1,7 +1,9 @@
 import { EquipmentItem } from './equipmentItem';
-import { ArmorType } from './itemEnums';
+import { ArmorType, ItemType } from './itemEnums';
 
 export class Armor extends EquipmentItem {
+  public itemType = ItemType.Armor;
+
   public armor: number;
   public armorType: ArmorType;
 

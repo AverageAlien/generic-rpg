@@ -1,6 +1,39 @@
 <div class='root'>
   <div id='gameContainer'></div>
 
+  <div class='ui-overlay inventory-button' [ngClass]="{'visible': !showInventory}">
+    <button class='button' (click)="onOpenInventory()">Inventory</button>
+  </div>
+
+  <div class='ui-overlay' [ngClass]="{'visible': showInventory}">
+    <div class='window inventory'>
+      <div class='header'>
+        <div class='title'>Inventory</div>
+        <button class='window' (click)="onCloseInventory()">X</button>
+      </div>
+      <div class='content'>
+        <div class='window item-list'>
+          <img *ngFor="let item of inventoryItems"
+            class='window item'
+            [src]="getTexturePath(item)"
+            (click)="onSelectItem(item)"
+            draggable="false">
+        </div>
+        <div class='window item-info' *ngIf="!!selectedItem">
+          <div class='title'>{{selectedItem.name}}</div>
+          <img class='window item-icon' [src]="getTexturePath(selectedItem)">
+          <div class='center' *ngIf="!!selectedItem.level">Level: {{selectedItem.level}}</div>
+          <div class='label' *ngIf="!!selectedItem.damage">Damage: {{getDamageString(selectedItem)}}</div>
+          <div class='label' *ngIf="!!selectedItem.armor">Armor: {{selectedItem.armor}}</div>
+          <div class='label'>Mass: {{selectedItem.mass}}</div>
+          <div class='label'>Price: {{selectedItem.price}}</div>
+          <div class='small'>{{selectedItem.description}}</div>
+          <div class='button equip' (click)="onEquipItem()">Equip</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class='ui-overlay' [ngClass]="{'visible': !isAlive}">
     <div class='window death'>
       You died!

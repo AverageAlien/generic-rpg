@@ -15,9 +15,9 @@ import { Armor } from '../gameplay/items/armor';
 import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
 import { Weapon } from '../gameplay/items/weapon';
 import { EffectsSystem } from '../gameplay/effects/effectsSystem';
-import { DamageNumberEffect } from '../gameplay/effects/damageNumber';
 import { WeaponService } from '../gameServices/weapon.service';
 import { UiOverlayService } from '../services/ui-overlay.service';
+import { Item } from '../gameplay/items/baseItem';
 
 export class ClientLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -25,6 +25,7 @@ export class ClientLevel extends Scene implements LevelScene {
   public entities: Entity[] = [];
   public levelUI: GameObjects.DOMElement[] = [];
   public player: HumanoidEntity;
+  public inventory: Item[] = [];
 
   public debugGraphics: GameObjects.Graphics;
 

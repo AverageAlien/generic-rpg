@@ -167,7 +167,10 @@ export class NetworkLevel extends Scene implements LevelScene {
       // console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
     });
 
-    player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
+    const playerPacket = NetworkPacketSerializer.spawnPlayer(spawnedEntity);
+    playerPacket[1].inventory = player.inventory;
+
+    player.socket.emit(...playerPacket);
     // console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
   }
 

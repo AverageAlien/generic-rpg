@@ -42,7 +42,3 @@ CREATE TABLE IF NOT EXISTS public.userdata
 );
 ALTER TABLE public.userdata
     OWNER to my_user;
-	
-DROP TABLE userData;
-DROP TABLE locations;
-DROP TABLE users;

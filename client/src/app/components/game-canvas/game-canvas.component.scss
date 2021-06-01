@@ -29,6 +29,153 @@
       justify-content: space-around;
       align-items: center;
     }
+
+    &.inventory-button {
+      width: 128px;
+      height: 32px;
+
+      top: 4px;
+      right: 4px;
+      left: auto;
+    }
+
+    .inventory {
+      background-color: #775C3C;
+
+      width: 520px;
+      height: 500px;
+
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: stretch;
+
+      .header {
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        justify-content: space-between;
+        height: 48px;
+
+        color: #FFC700;
+        font-size: 36px;
+        font-weight: 500;
+
+        padding-left: 4px;
+
+        .window {
+          height: 36px;
+          width: 36px;
+          color: #FFC700;
+          font-size: 24px;
+          font-weight: 800;
+          align-self: flex-start;
+
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: #9E815C;
+        }
+
+        .window:hover {
+          background-color: #c5a881;
+        }
+
+        .window:active {
+          background-color: #55442e;
+        }
+      }
+
+      .content {
+        flex-grow: 1;
+
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: stretch;
+
+        .item-list {
+          width: 236px;
+          margin-right: 4px;
+          background-color: #46321A;
+
+          display: flex;
+          flex-flow: row wrap;
+          align-content: flex-start;
+
+          padding: 2px;
+
+          .item {
+            background-color: #9E815C;
+            width: 52px;
+            height: 52px;
+            padding: 2px;
+            margin: 2px;
+            object-fit: contain;
+            image-rendering: pixelated;
+          }
+
+          .item:hover {
+            background-color: #c5a881;
+          }
+
+          .item:active {
+            background-color: #55442e;
+          }
+        }
+
+        .item-info {
+          flex-grow: 1;
+          background-color: #9E815C;
+          display: flex;
+          flex-flow: column nowrap;
+          align-items: center;
+          color: white;
+          padding: 16px;
+
+          & * {
+            margin-bottom: 8px;
+          }
+
+          & *:last-child {
+            margin-bottom: 0px;
+          }
+
+          .title {
+            font-size: 24px;
+            height: 28px;
+          }
+
+          .item-icon {
+            background-color: #4B351A;
+            width: 128px;
+            height: 128px;
+            padding: 20px;
+            object-fit: contain;
+            image-rendering: pixelated;
+          }
+
+          .center {
+            font-size: 18px;
+            font-weight: 500;
+          }
+
+          .label {
+            align-self: stretch;
+            font-size: 14px;
+            font-weight: 500;
+          }
+
+          .small {
+            align-self: stretch;
+            font-size: 12px;
+          }
+
+          .equip {
+            margin-top: auto;
+          }
+        }
+      }
+    }
   }
 
   .visible {
