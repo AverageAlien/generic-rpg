@@ -1,4 +1,8 @@
 import express from 'express';
+import expressJwt from 'express-jwt';
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+import cookie from 'cookie';
 import * as cors from 'cors';
 import * as http from 'http';
 import io from 'socket.io';
@@ -13,18 +17,44 @@ import { AuthResult } from './models/authResult.model';
 import { PlayerDataService } from './services/playerDataService';
 
 const serverPort = process.env.PORT || 42069;
+const secret = process.env.SECRET || 'myLocalSecret';
+const authCookieName = 'GenericRpg.AuthCookie';
 
 const app = express();
+
 app.use(cors.default({
   origin: ['http://localhost:4200', `localhost:${serverPort}`]
 }));
+
+app.use(cookieParser());
+
+app.use(expressJwt({
+  secret,
+  algorithms: ['HS256'],
+  getToken: function fromHeaderOrQuerystring (req) {
+    console.log(req.cookies[authCookieName]);
+    return req.cookies[authCookieName];
+  }
+}).unless({
+  path: ['/api/login', '/api/register', '/api/test']
+}));
+
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws',
   pingInterval: 2000,
   origins: ['http://localhost:4200', `localhost:${serverPort}`],
   allowRequest: (req, callback) => {
-    return callback(null, true);
+    console.log('WEBSOCKET CONN');
+    const authToken = cookie.parse(req.headers.cookie)[authCookieName];
+
+    try {
+      const token = jwt.verify(authToken, secret);
+
+      return callback(null, true);
+    } catch (err) {
+      return callback(err, false);
+    }
   }
 });
 
@@ -36,13 +66,43 @@ const clientRoot = path.join(__dirname, 'client');
 
 app.use(express.json())
 app.get('/api/test', (req, res) => {
-  res.send('hello world!');
+  res.cookie(authCookieName, jwt.sign({
+    username: 'retard'
+  },
+  secret,
+  {
+    expiresIn: '7d'
+  }),
+  {
+    signed: false,
+    secure: true,
+    sameSite: 'none'
+  });
+  res.send(req.user);
 });
 
 app.post('/api/login', (req, res) => {
   const model = req.body as LoginModel;
+  console.log(req.user);
 
   authService.login(model).subscribe(result => {
+    if (!!result.username) {
+      console.log('LOGIN GOOD');
+
+      res.cookie(authCookieName, jwt.sign({
+        username: result.username
+      },
+      secret,
+      {
+        expiresIn: '7d'
+      }),
+      {
+        signed: false,
+        secure: true,
+        sameSite: 'none'
+      });
+    }
+
     res.send(result);
   },
   err => {
