@@ -19,7 +19,8 @@ export class UiOverlayService {
   constructor() { }
 
   get isAlive() {
-    return (!!this.clientLevel) && this.clientLevel.entities.indexOf(this.clientLevel.player) >= 0;
+    const idx = this.clientLevel.entities.indexOf(this.clientLevel.player);
+    return !(!!this.clientLevel && !!this.clientLevel.player && idx < 0);
   }
 
   init(lvl: ClientLevel, networking: NetworkingService) {

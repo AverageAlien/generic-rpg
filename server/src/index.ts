@@ -12,15 +12,17 @@ import { RegisterModel } from './models/register.model';
 import { AuthResult } from './models/authResult.model';
 import { PlayerDataService } from './services/playerDataService';
 
+const serverPort = process.env.PORT || 42069;
+
 const app = express();
 app.use(cors.default({
-  origin: ['http://localhost:4200', 'localhost:42069']
+  origin: ['http://localhost:4200', `localhost:${serverPort}`]
 }));
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws',
   pingInterval: 2000,
-  origins: ['http://localhost:4200', 'localhost:42069'],
+  origins: ['http://localhost:4200', `localhost:${serverPort}`],
   allowRequest: (req, callback) => {
     return callback(null, true);
   }
@@ -77,4 +79,4 @@ app.get('*', (req, res) => {
   });
 });
 
-httpServer.listen(42069);
+httpServer.listen(serverPort);
