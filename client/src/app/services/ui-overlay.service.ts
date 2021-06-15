@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Armor } from '../gameplay/items/armor';
 import { Item } from '../gameplay/items/baseItem';
-import { ItemType } from '../gameplay/items/itemEnums';
-import { Weapon } from '../gameplay/items/weapon';
-import { InventoryItem } from '../models/inventoryItem.model';
 import { ClientLevel } from '../scenes/clientLevel';
 import { NetworkingService } from './networking.service';
 
