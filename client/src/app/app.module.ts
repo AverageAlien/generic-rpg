@@ -12,9 +12,10 @@ import { LevelEditorComponent } from './components/level-editor/level-editor.com
 import { LoginPageComponent } from './components/login-page/login-page.component';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 const socketIoConfig: SocketIoConfig = {
-  url: 'http://localhost:42069',
+  url: environment.apiUrl,
   options: {
     path: '/game-ws'
   }

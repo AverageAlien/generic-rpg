@@ -1,16 +1,20 @@
 import * as io from 'socket.io';
 import '@geckos.io/phaser-on-nodejs';
 import * as Phaser from 'phaser';
-import { NetworkLevel } from '../gameData/scenes/networkLevel';
+import { fromEvent } from 'rxjs';
+import { take, filter } from 'rxjs/operators';
+import cookie from 'cookie';
+
+import { GLOBAL_AUTH_COOKIENAME } from '..';
 import { Constants } from '../core/constants';
-import { fromEvent, timer } from 'rxjs';
+import { NetworkLevel } from '../gameData/scenes/networkLevel';
 import { ClientPackets } from '../networkPackets/fromClient/clientPackets';
 import { PacketClientInit } from '../networkPackets/fromClient/clientInit';
 import { Room } from '../models/room';
-import { take, filter } from 'rxjs/operators';
 import { PlayerDataService } from './playerDataService';
 import { UserDataDTO } from '../database/models/userDataDTO';
 import { PlayerDataSnapshot } from '../models/userDataSnapshot';
+import { AuthenticationService } from './authService';
 
 const defaultRoom = 'test01';
 global.phaserOnNodeFPS = 30;
@@ -20,7 +24,15 @@ export class RoomService {
 
   constructor(private server: io.Server, private playerDataService: PlayerDataService) {
     server.on('connection', socket => {
-      console.log(`${socket.client.id} connected.`);
+      const authCookie = cookie.parse(socket.request.headers.cookie)[GLOBAL_AUTH_COOKIENAME];
+      const tokenPayload = AuthenticationService.getTokenPayload(authCookie);
+
+      if (tokenPayload === null) {
+        socket.disconnect(true);
+        return;
+      }
+
+      console.log(`${socket.client.id} (${tokenPayload.username}) connected.`);
       let oldRoomName: string;
 
       fromEvent<PacketClientInit>(socket, ClientPackets.CLIENT_INIT)
@@ -30,9 +42,9 @@ export class RoomService {
 
           const roomName = 'test_01';
 
-          this.playerDataService.loadPlayerData(packet.username).subscribe(userData => {
+          this.playerDataService.loadPlayerData(tokenPayload.username).subscribe(userData => {
             socket.join(roomName);
-            this.playerJoinRoom(socket, packet.username, userData, oldRoomName);
+            this.playerJoinRoom(socket, tokenPayload.username, userData, oldRoomName);
             oldRoomName = roomName;
           });
         });

@@ -15,7 +15,7 @@ export class UiOverlayService {
   constructor() { }
 
   get isAlive() {
-    const idx = this.clientLevel.entities.indexOf(this.clientLevel.player);
+    const idx = this.clientLevel?.entities?.indexOf(this.clientLevel.player) || 1;
     return !(!!this.clientLevel && !!this.clientLevel.player && idx < 0);
   }
 

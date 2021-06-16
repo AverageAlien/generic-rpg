@@ -1,7 +1,8 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PgClient } from '../database/databaseClient';
+import { PgClient } from '../database/pgClient';
 import { LocationDTO } from '../database/models/locationDTO';
+import { DataTypeOIDs } from 'postgresql-client';
 
 export class LocationDataService {
   constructor() {}
@@ -9,16 +10,19 @@ export class LocationDataService {
   loadLevelData(locationName: string): Observable<LocationDTO> {
     const client = new PgClient();
 
-    const query = `SELECT * FROM public.locations WHERE name = '${locationName}'`;
+    const query = 'SELECT * FROM public.locations WHERE name = $1';
 
-    const result = client.query<LocationDTO>(query).pipe(
-      map(r => {
-        if (r.length === 0) {
-          return this.defaultLocation;
-        }
+    const result = client
+      .query<LocationDTO>(query, [{ value: locationName, type: DataTypeOIDs.varchar }])
+      .pipe(
+        map((r) => {
+          if (r.length === 0) {
+            return this.defaultLocation;
+          }
 
-        return r[0];
-      }));
+          return r[0];
+        })
+      );
 
     return result;
   }
@@ -27,7 +31,7 @@ export class LocationDataService {
     return {
       name: 'empty',
       locationTitle: 'Empty',
-      levelData: '{"l":[]}'
+      levelData: '{"l":[]}',
     };
   }
 }
