@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/AverageAlien/generic-rpg/issues"
   },
-  "homepage": "https://github.com/AverageAlien/generic-rpg#readme"
+  "homepage": "https://github.com/AverageAlien/generic-rpg#readme",
+  "dependencies": {
+    "concurrently": "^6.2.0"
+  }
 }
