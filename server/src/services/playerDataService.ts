@@ -1,12 +1,13 @@
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { PgClient } from '../database/databaseClient';
+import { PgClient } from '../database/pgClient';
 import { UserDataDTO } from '../database/models/userDataDTO';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
 import { DamageType } from '../gameData/gameplay/items/itemEnums';
 import { Weapon } from '../gameData/gameplay/items/weapon';
 import { GameClient } from '../models/gameClient';
 import { MakeUserDataSnapshot, PlayerDataSnapshot } from '../models/userDataSnapshot';
+import { DataTypeOIDs } from 'postgresql-client';
 
 export class PlayerDataService {
   constructor() {}
@@ -15,9 +16,9 @@ export class PlayerDataService {
     const client = new PgClient();
 
     const query = `
-      SELECT ud.* FROM public.userdata ud JOIN public.users u ON ud.userid = u.id WHERE u.username = '${username}'`;
+      SELECT ud.* FROM public.userdata ud JOIN public.users u ON ud.userid = u.id WHERE u.username = $1`;
 
-    return client.query<UserDataDTO>(query).pipe(
+    return client.query<UserDataDTO>(query, [{value: username, type: DataTypeOIDs.varchar}]).pipe(
       map(r => {
         if (r.length === 0) {
           return null;
@@ -37,12 +38,16 @@ export class PlayerDataService {
       INSERT INTO public.userdata (userid, location, playerdata)
       SELECT
         id as userid,
-        '${startLocation}' as location,
-        '${JSON.stringify(playerData)}' as playerdata
-      FROM public.users WHERE username = '${username}'
+        $1 as location,
+        $2 as playerdata
+      FROM public.users WHERE username = $3
       RETURNING *`;
 
-    return client.query<UserDataDTO>(query).pipe(
+    return client.query<UserDataDTO>(query, [
+      {value: startLocation, type: DataTypeOIDs.varchar},
+      {value: JSON.stringify(playerData), type: DataTypeOIDs.text},
+      {value: username, type: DataTypeOIDs.varchar}
+    ]).pipe(
       map(r => {
         if (r.length === 0) {
           return null;
@@ -64,13 +69,17 @@ export class PlayerDataService {
 
     const query = `
       UPDATE userdata SET
-        playerdata = '${JSON.stringify(snapshot)}',
-        location = '${roomName}'
+        playerdata = $1,
+        location = $2
       FROM public.users u
-      WHERE u.username = '${username}' AND userdata.userid = u.id
+      WHERE u.username = $3 AND userdata.userid = u.id
       RETURNING userdata.*`;
 
-    client.query<UserDataDTO>(query).subscribe(r => {
+    client.query<UserDataDTO>(query, [
+      {value: JSON.stringify(snapshot), type: DataTypeOIDs.text},
+      {value: roomName, type: DataTypeOIDs.varchar},
+      {value: username, type: DataTypeOIDs.varchar}
+    ]).subscribe(r => {
       console.log(`Saved player data for ${username}`);
     });
   }

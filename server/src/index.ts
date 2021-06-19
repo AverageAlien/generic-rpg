@@ -1,4 +1,6 @@
 import express from 'express';
+import expressJwt from 'express-jwt';
+import cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as http from 'http';
 import io from 'socket.io';
@@ -13,11 +15,28 @@ import { AuthResult } from './models/authResult.model';
 import { PlayerDataService } from './services/playerDataService';
 
 const serverPort = process.env.PORT || 42069;
+export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';
+export const GLOBAL_AUTH_COOKIENAME = 'GenericRpg.AuthCookie';
 
 const app = express();
+
 app.use(cors.default({
-  origin: ['http://localhost:4200', `localhost:${serverPort}`]
+  origin: ['http://localhost:4200', `localhost:${serverPort}`],
+  credentials: true
 }));
+
+app.use(cookieParser());
+
+app.use(expressJwt({
+  secret: GLOBAL_AUTH_SECRET,
+  algorithms: ['HS256'],
+  getToken: function fromHeaderOrQuerystring (req) {
+    console.log(req.cookies[GLOBAL_AUTH_COOKIENAME]);
+    return req.cookies[GLOBAL_AUTH_COOKIENAME];
+  },
+  credentialsRequired: false
+}));
+
 const httpServer = new http.Server(app);
 const ioServer = io(httpServer, {
   path: '/game-ws',
@@ -36,13 +55,19 @@ const clientRoot = path.join(__dirname, 'client');
 
 app.use(express.json())
 app.get('/api/test', (req, res) => {
-  res.send('hello world!');
+  res.send(req.user);
 });
 
 app.post('/api/login', (req, res) => {
   const model = req.body as LoginModel;
+  console.log(req.user);
 
   authService.login(model).subscribe(result => {
+    if (!!result.username) {
+      const authToken = AuthenticationService.makeToken(result);
+      AuthenticationService.attachAuthCookie(res, authToken);
+    }
+
     res.send(result);
   },
   err => {
@@ -58,6 +83,11 @@ app.post('/api/register', (req, res) => {
   const model = req.body as RegisterModel;
 
   authService.register(model).subscribe(result => {
+    if (!!result.username) {
+      const authToken = AuthenticationService.makeToken(result);
+      AuthenticationService.attachAuthCookie(res, authToken);
+    }
+
     res.send(result);
   },
   err => {
