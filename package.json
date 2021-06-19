@@ -4,7 +4,13 @@
   "description": "Generic-RPG HTML5 browser game",
   "main": "server/build/index.js",
   "scripts": {
-    "start": "cd server && npm install && npm run build && echo \"[SERVER BUILD FINISHED]\" && concurrently \"node build/index.js\" \"cd ../client && npm install && npm run build --prod\"",
+    "postinstall": "concurrently \"npm run postinstall:server\" \"npm run postinstall:client\"",
+    "postinstall:server": "cd server && npm install && echo \"[INSTALLED SERVER DEPENDENCIES]\"",
+    "postinstall:client": "cd client && npm install && echo \"[INSTALLED CLIENT DEPENDENCIES]\"",
+    "heroku-postbuild": "npm run heroku-postbuild:server && npm run heroku-postbuild:client",
+    "heroku-postbuild:server": "cd server && npm run build",
+    "heroku-postbuild:client": "cd client && npm run build --prod",
+    "start": "node server/build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
