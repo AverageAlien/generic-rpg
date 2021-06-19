@@ -4,10 +4,10 @@
   "description": "Generic-RPG HTML5 browser game",
   "main": "server/build/index.js",
   "scripts": {
-    "postinstall": "concurrently \"npm run postinstall:server\" \"npm run postinstall:client\" && npm run heroku-postbuild:server && npm run heroku-postbuild:client",
+    "postinstall": "concurrently \"npm run postinstall:server\" \"npm run postinstall:client\"",
     "postinstall:server": "cd server && npm install && echo \"[INSTALLED SERVER DEPENDENCIES]\"",
     "postinstall:client": "cd client && npm install && echo \"[INSTALLED CLIENT DEPENDENCIES]\"",
-    "heroku-postbuild-skip": "npm run heroku-postbuild:server && npm run heroku-postbuild:client",
+    "heroku-postbuild": "npm run heroku-postbuild:server && npm run heroku-postbuild:client",
     "heroku-postbuild:server": "cd server && npm run build",
     "heroku-postbuild:client": "cd client && npm run build:prod",
     "start": "node server/build/index.js",
