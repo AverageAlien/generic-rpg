@@ -9,7 +9,7 @@
     "postinstall:client": "cd client && npm install && echo \"[INSTALLED CLIENT DEPENDENCIES]\"",
     "heroku-postbuild": "npm run heroku-postbuild:server && npm run heroku-postbuild:client",
     "heroku-postbuild:server": "cd server && npm run build",
-    "heroku-postbuild:client": "cd client && npm run build --prod",
+    "heroku-postbuild:client": "cd client && npm run build --configuration=production",
     "start": "node server/build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
