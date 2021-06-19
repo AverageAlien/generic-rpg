@@ -15,7 +15,7 @@ export class PgClient {
     console.log(command);
     console.log(params);
 
-    const connection = new Connection(this.configFactory());
+    const connection = new Connection(process.env.DATABASE_URL || this.configFactory());
 
     const observable = from(connection.connect())
       .pipe(
