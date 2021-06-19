@@ -77,7 +77,6 @@ export class ClientEntitySpawnerService {
     }
 
     this.levelScene.player = entity;
-    console.log(packet.inventory);
     this.levelScene.inventory = packet.inventory;
 
     this.levelScene.cameras.main.startFollow(entity.gameObject,
@@ -125,7 +124,6 @@ export class ClientEntitySpawnerService {
     const nameLabel = new UI.EntityHeader(this.levelScene, entity, true);
 
     entity.destroyed.subscribe(() => {
-      console.log('whoops destroyed');
       // TODO ????????
       healthBar.destroy();
       nameLabel.destroy();

@@ -63,8 +63,6 @@ export class PlayerNetworkingService {
 
   private listenDisconnect(player: GameClient): (value: string) => void {
     return reason => {
-      console.log(`PLAYER DISCONNECTED: ${reason}`);
-
       const index = this.networkLevel.clients.indexOf(player);
       const networkId = player.controlledEntity?.networkId;
 

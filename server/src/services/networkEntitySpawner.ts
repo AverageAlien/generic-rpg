@@ -127,7 +127,6 @@ export class NetworkEntitySpawner {
     size: Phaser.Math.Vector2
   ): Phaser.GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body } {
     let gameObject: Phaser.GameObjects.RenderTexture & { body: Phaser.Physics.Arcade.Body };
-    console.log(`render texture pos ${position.x}; ${position.y}`);
 
     gameObject = this.levelScene.add.renderTexture(
       position.x * Constants.Level.GRID_SIZE_X,

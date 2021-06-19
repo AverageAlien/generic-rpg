@@ -36,8 +36,6 @@ export class AuthenticationService {
 
       return payload as AuthToken;
     } catch (err) {
-      console.log(`Token error: ${err}`);
-
       return null;
     }
   }

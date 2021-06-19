@@ -13,6 +13,8 @@ export class StackItem implements Item {
     public unitMass: number
   ) {}
 
+  // TODO: move this method out of the class
+  // We do not want Item classes to have any methods since they will be broken after serialization
   public get mass(): number {
     return this.unitMass * this.quantity;
   }
