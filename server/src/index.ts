@@ -110,3 +110,4 @@ app.get('*', (req, res) => {
 });
 
 httpServer.listen(serverPort);
+console.log(`Server READY and listening to port ${serverPort}`);

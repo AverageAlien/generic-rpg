@@ -1,0 +1,20 @@
+{
+  "name": "generic-rpg",
+  "version": "1.0.0",
+  "description": "Generic-RPG HTML5 browser game",
+  "main": "server/build/index.js",
+  "scripts": {
+    "start": "cd server && npm run build && cd ../client && npm run build --prod && cd .. && node server/build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AverageAlien/generic-rpg.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AverageAlien/generic-rpg/issues"
+  },
+  "homepage": "https://github.com/AverageAlien/generic-rpg#readme"
+}

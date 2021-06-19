@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:42069'
+  apiUrl: 'https://pixel-rpg.herokuapp.com'
 };
