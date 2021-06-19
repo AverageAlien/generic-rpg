@@ -16,8 +16,8 @@ export class PgClient {
     console.log(params);
 
     const connection = new Connection(!!process.env.DATABASE_URL
-      ? process.env.DATABASE_URL + '?sslmode=allow'
-      : this.configFactory());
+      ? this.makeProdConnectionConfig(process.env.DATABASE_URL)
+      : this.makeLocalConnectionConfig());
 
     const observable = from(connection.connect())
       .pipe(
@@ -32,7 +32,7 @@ export class PgClient {
     return observable;
   }
 
-  private configFactory() {
+  private makeLocalConnectionConfig() {
     return {
       host: 'localhost',
       port: 5432,
@@ -40,6 +40,22 @@ export class PgClient {
       password: '12345',
       database: 'genericRpg',
       timezone: 'Europe/Amsterdam'
+    } as ConnectionConfiguration;
+  }
+
+  private makeProdConnectionConfig(databaseUrl: string) {
+    const connectionRegex = /postgres:\/\/([a-z]+):([\w]+)@(.+):([\d]+)\/([\w]+)/g;
+    const matches = connectionRegex.exec(databaseUrl);
+
+    return {
+      host: matches[3],
+      port: Number.parseInt(matches[4], 10),
+      user: matches[1],
+      password: matches[2],
+      database: matches[5],
+      ssl: {
+        rejectUnauthorized: false
+      }
     } as ConnectionConfiguration;
   }
 }
