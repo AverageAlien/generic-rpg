@@ -16,7 +16,7 @@ export class PgClient {
     console.log(params);
 
     const connection = new Connection(!!process.env.DATABASE_URL
-      ? process.env.DATABASE_URL + '?sslmode=require'
+      ? process.env.DATABASE_URL + '?sslmode=allow'
       : this.configFactory());
 
     const observable = from(connection.connect())
