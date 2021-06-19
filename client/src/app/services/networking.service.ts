@@ -101,7 +101,6 @@ export class NetworkingService {
   }
 
   sendAttackMelee(hitTargets: Destroyable[], attackPoint: Phaser.Math.Vector2) {
-    console.log('ATTACKED');
     this.socket.emit(ClientPackets.ENTITY_ATTACK, {
       attackPoint,
       targetsHit: hitTargets.map(t => t.networkId)
@@ -178,7 +177,6 @@ export class NetworkingService {
 
     this.socket.fromEvent<PacketSpawnEntityHumanoid>(ServerPackets.SPAWN_ENTITY_HUMANOID)
       .subscribe(packet => {
-        console.log(packet);
         this.spawnEntityHumanoid$.next(packet);
       });
 
@@ -227,10 +225,6 @@ export class NetworkingService {
     this.socket.fromEvent<PacketEntityDied>(ServerPackets.ENTITY_DIED)
       .subscribe(packet => {
         const entity = clientLevel.entities.find(e => e.networkId === packet.networkId);
-        if (entity === clientLevel.player) {
-          // clientLevel.player = null;
-          console.log('Player died.');
-        }
 
         if (entity instanceof CharacterEntity) {
           entity.destroy();

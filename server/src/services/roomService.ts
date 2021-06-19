@@ -32,20 +32,16 @@ export class RoomService {
         return;
       }
 
-      console.log(`${socket.client.id} (${tokenPayload.username}) connected.`);
       let oldRoomName: string;
 
       fromEvent<PacketClientInit>(socket, ClientPackets.CLIENT_INIT)
         .subscribe(packet => {
-          console.log(`<< ${ClientPackets.CLIENT_INIT}`);
           socket.leaveAll();
 
-          const roomName = 'test_01';
-
           this.playerDataService.loadPlayerData(tokenPayload.username).subscribe(userData => {
-            socket.join(roomName);
-            this.playerJoinRoom(socket, tokenPayload.username, userData, oldRoomName);
-            oldRoomName = roomName;
+            socket.join(userData.location);
+            this.playerJoinRoom(socket, tokenPayload.username, userData, userData.location);
+            oldRoomName = userData.location;
           });
         });
     });
@@ -76,8 +72,6 @@ export class RoomService {
       filter(ready => ready),
       take(1))
       .subscribe(ready => {
-        console.log('room ready');
-
         const playerData: PlayerDataSnapshot = JSON.parse(userData.playerdata);
 
         targetRoom.location.addPlayer({

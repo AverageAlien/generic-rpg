@@ -1,14 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss']
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
   login = {
     username: '',
     password: ''
@@ -63,9 +62,5 @@ export class LoginPageComponent implements OnInit {
 
         this.registerError = r.error;
     });
-  }
-
-  ngOnInit() {
-    console.log(`PRODUCTION: ${environment.production}`);
   }
 }

@@ -79,10 +79,6 @@ export class WalkerController implements Controller {
     if (!this.pathWaypoints || this.timeSinceLastSearch >= this.searchFrequency) {
       this.pathWaypoints = this.buildPathToTarget(targetPos);
       this.timeSinceLastSearch = 0;
-
-      if (!this.pathWaypoints) {
-        debugger;
-      }
     }
 
     if (this.pathWaypoints.length === 0) {
@@ -148,17 +144,13 @@ export class WalkerController implements Controller {
       Math.round(targetPos.y / Constants.Level.GRID_SIZE_Y) - gridLowerCorner.y
     );
 
-    try {
-      path = finder.findPath(
-        pathStart.x,
-        pathStart.y,
-        pathFinish.x,
-        pathFinish.y,
-        grid
-      );
-    } catch {
-      debugger;
-    }
+    path = finder.findPath(
+      pathStart.x,
+      pathStart.y,
+      pathFinish.x,
+      pathFinish.y,
+      grid
+    );
 
     if (this._DEBUG && this.levelScene instanceof ClientLevel) {
       this._drawDebug(this.levelScene.debugGraphics, matrix, path, myPos, targetPos, gridLowerCorner);

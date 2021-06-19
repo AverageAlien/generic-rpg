@@ -12,8 +12,6 @@ interface QueryParameter {
 
 export class PgClient {
   public query<T>(command: string, params: QueryParameter[] = []): Observable<T[]> {
-    console.log(command);
-    console.log(params);
 
     const connection = new Connection(!!process.env.DATABASE_URL
       ? this.makeProdConnectionConfig(process.env.DATABASE_URL)

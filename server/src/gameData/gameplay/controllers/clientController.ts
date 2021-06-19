@@ -33,7 +33,6 @@ export class ClientController implements Controller {
         }),
       fromEvent<PacketEntityAttack>(client.socket, ClientPackets.ENTITY_ATTACK)
         .subscribe(p => {
-          console.log(`ATTACKED ${controlledEntity.gameObject.body}`);
           this.attack$.next(p);
         })
     ];

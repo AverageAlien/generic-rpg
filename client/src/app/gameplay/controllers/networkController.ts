@@ -19,7 +19,6 @@ export class NetworkController implements Controller {
     networkingService.entityAttacks
       .pipe(filter(packet => packet.attackerNetworkId === parentEntity.networkId))
       .subscribe(packet => {
-        console.log(`>>> ATTACK ENTITY: ${parentEntity.entityName} (${packet.attackPoint.x}; ${packet.attackPoint.y})`);
         WeaponService.attackLocal(parentEntity as HumanoidEntity, new Phaser.Math.Vector2(packet.attackPoint));
       });
   }

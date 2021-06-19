@@ -11,15 +11,9 @@ import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 import { LocationList } from '../../serverCore/locationList';
-import { BehaviorSubject, fromEvent, Observable, Subscription } from 'rxjs';
-import { ClientPackets } from '../../networkPackets/fromClient/clientPackets';
-import { PacketPing } from '../../networkPackets/fromServer/ping';
-import { PacketClientSync } from '../../networkPackets/fromClient/clientSync';
-import { PacketPlayerLeft } from '../../networkPackets/fromServer/playerLeft';
-import { take } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent } from 'rxjs';
 import { ArmorType } from '../gameplay/items/itemEnums';
 import { Armor } from '../gameplay/items/armor';
-import { PacketEntityDamaged } from '../../networkPackets/fromServer/entityDamaged';
 import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
 import { PlayerNetworkingService } from '../../services/playerNetworkingService';
 import { PlayerDataService } from '../../services/playerDataService';
@@ -90,7 +84,6 @@ export class NetworkLevel extends Scene implements LevelScene {
       .forEach(c => {
         const clientPos = new Phaser.Math.Vector2(c.syncSnapshot.positionX, c.syncSnapshot.positionY);
         const clientVelocity = new Phaser.Math.Vector2(c.syncSnapshot.velocityX, c.syncSnapshot.velocityY);
-        // console.log(`SYNC PACKET: X: ${c.syncSnapshot.positionX}; Y: ${c.syncSnapshot.positionY}`);
         c.syncSnapshot = null;
 
         const ping = c.ping + (performance.now() - c.syncSnapshotTimestamp);
@@ -102,11 +95,8 @@ export class NetworkLevel extends Scene implements LevelScene {
           c.controlledEntity.gameObject.body.setVelocityX(clientVelocity.x);
           c.controlledEntity.gameObject.body.setVelocityY(clientVelocity.y);
         } catch (err) {
-          console.log(this.clients.map(cli => { return { name: cli.nickname, body: cli.controlledEntity.gameObject.body }}));
           throw err;
         }
-
-        // console.log(`SYNCED: X: ${c.controlledEntity.gameObject.x}`)
       });
   }
 
@@ -128,27 +118,12 @@ export class NetworkLevel extends Scene implements LevelScene {
 
   addPlayer(player: GameClient, playerData: PlayerDataSnapshot) {
     player.socket.emit(ServerPackets.INIT_LEVEL, NetworkPacketSerializer.initLevel(this));
-    // console.log(`>> ${ServerPackets.INIT_LEVEL}`);
 
     this.entities.forEach(e => {
       player.socket.emit(...NetworkPacketSerializer.spawnEntity(e));
-      // console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn all present entities for new player)`);
     });
 
     this.spawnPlayer(player, playerData);
-    // const spawnedEntity = this.entitySpawner.spawnPlayer(player, playerData, new Phaser.Math.Vector2(0, 0));
-    // console.log(`spawned entity pos: ${spawnedEntity.gameObject.body.x}; ${spawnedEntity.gameObject.body.y}`);
-    // player.controlledEntity = spawnedEntity;
-
-    // console.log('Existing players:');
-    // console.log(existingPlayers);
-    // existingPlayers.forEach(p => {
-    //   p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
-    //   console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
-    // });
-
-    // player.socket.emit(...NetworkPacketSerializer.spawnPlayer(spawnedEntity));
-    // console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
 
     this.clients.push(player);
     this.playerNetworking.addPlayerInputListeners(player, playerData);
@@ -157,21 +132,16 @@ export class NetworkLevel extends Scene implements LevelScene {
   spawnPlayer(player: GameClient, playerData: PlayerDataSnapshot) {
     const existingPlayers = this.clients.filter(gc => gc !== player);
     const spawnedEntity = this.entitySpawner.spawnPlayer(player, playerData, new Phaser.Math.Vector2(0, 0));
-    // console.log(`spawned entity pos: ${spawnedEntity.gameObject.body.x}; ${spawnedEntity.gameObject.body.y}`);
     player.controlledEntity = spawnedEntity;
 
-    // console.log('Existing players:');
-    // console.log(existingPlayers);
     existingPlayers.forEach(p => {
       p.socket.emit(...NetworkPacketSerializer.spawnEntity(spawnedEntity));
-      // console.log(`>> ${ServerPackets.SPAWN_ENTITY} (spawn new player for existing players)`);
     });
 
     const playerPacket = NetworkPacketSerializer.spawnPlayer(spawnedEntity);
     playerPacket[1].inventory = player.inventory;
 
     player.socket.emit(...playerPacket);
-    // console.log(`>> ${ServerPackets.SPAWN_PLAYER} (tell player to spawn himself)`);
   }
 
   broadcastPacket(packetType: ServerPackets, packet: any) {

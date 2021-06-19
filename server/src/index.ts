@@ -31,7 +31,6 @@ app.use(expressJwt({
   secret: GLOBAL_AUTH_SECRET,
   algorithms: ['HS256'],
   getToken: function fromHeaderOrQuerystring (req) {
-    console.log(req.cookies[GLOBAL_AUTH_COOKIENAME]);
     return req.cookies[GLOBAL_AUTH_COOKIENAME];
   },
   credentialsRequired: false
@@ -60,7 +59,6 @@ app.get('/api/test', (req, res) => {
 
 app.post('/api/login', (req, res) => {
   const model = req.body as LoginModel;
-  console.log(req.user);
 
   authService.login(model).subscribe(result => {
     if (!!result.username) {
