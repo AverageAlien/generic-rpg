@@ -4,7 +4,7 @@
   "description": "Generic-RPG HTML5 browser game",
   "main": "server/build/index.js",
   "scripts": {
-    "start": "cd server && npm install && npm run build && cd ../client && npm install && npm run build --prod && cd .. && node server/build/index.js",
+    "start": "cd server && npm install && npm run build && \"[SERVER BUILD FINISHED]\" && cd ../client && npm install && npm run build --prod && cd .. && node server/build/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
