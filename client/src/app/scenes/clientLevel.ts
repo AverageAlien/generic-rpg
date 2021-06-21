@@ -33,7 +33,10 @@ export class ClientLevel extends Scene implements LevelScene {
 
   protected backgroundImage: GameObjects.TileSprite;
 
-  constructor(protected inputService: InputService, protected networkingService: NetworkingService, protected uiOverlay: UiOverlayService) {
+  constructor(
+    protected inputService: InputService,
+    protected networkingService: NetworkingService,
+    protected uiOverlay: UiOverlayService) {
     super({ key: 'level' });
   }
 

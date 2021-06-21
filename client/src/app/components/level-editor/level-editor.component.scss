@@ -1,0 +1,69 @@
+.root {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: flex-start;
+
+  .main-window {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+    height: 608px;
+
+    .block-picker {
+      width: 100px;
+      background-color: rgb(75, 75, 75);
+
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: flex-start;
+      align-content: flex-start; // important for fixing tall rows in flex item grids!
+
+      overflow-x: hidden;
+      overflow-y: scroll;
+
+      .block-item {
+        width: 48px;
+        height: 48px;
+        margin: 1px;
+        border: 1px solid white;
+        background-color: black;
+        object-fit: scale-down;
+      }
+
+      .left {
+        border-color: red !important;
+      }
+
+      .right {
+        border-color: blue !important;
+      }
+
+      .block-item:hover {
+        border-color: yellow;
+      }
+
+    }
+
+    .block-picker::-webkit-scrollbar {
+      display: none;
+    }
+
+    .block-picker {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  }
+
+  .bottom-row {
+    margin: 8px 0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+
+    button {
+      margin: 0 4px;
+    }
+  }
+}

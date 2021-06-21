@@ -1,13 +1,28 @@
-import { ClientLevel } from './clientLevel';
 import { GameObjects } from 'phaser';
+
+import { ClientLevel } from './clientLevel';
 import { EntitySpawnerService } from '../gameServices/entity-spawner.service';
 import { Constants } from '../core/constants';
 import { MapGrid } from '../core/mapGrid';
+import { EditorOverlayService } from '../services/editor-overlay.service';
+import { InputService } from '../gameServices/input.service';
+import { NetworkingService } from '../services/networking.service';
+import { UiOverlayService } from '../services/ui-overlay.service';
+import { BlockErase, Blocks, BlockType } from '../core/blocks';
 
 export class LevelEditor extends ClientLevel {
   private grid: GameObjects.Grid;
   private cursorActive = true;
+  private eraseMode: BlockType = null;
   public localEntitySpawner: EntitySpawnerService;
+
+  constructor(
+    protected inputService: InputService,
+    protected networkingService: NetworkingService,
+    protected uiOverlay: UiOverlayService,
+    protected editorOverlay: EditorOverlayService) {
+    super(inputService, networkingService, uiOverlay);
+  }
 
   create() {
     this.localEntitySpawner = new EntitySpawnerService();
@@ -42,8 +57,6 @@ export class LevelEditor extends ClientLevel {
 
     this.grid.setPosition(gridPos.x, gridPos.y);
 
-    // this.input.activePointer.updateWorldPoint(this.cameras.main);
-
     if (this.cursorActive) {
 
       const worldPoint = this.input.activePointer.positionToCamera(this.cameras.main) as Phaser.Math.Vector2;
@@ -54,14 +67,48 @@ export class LevelEditor extends ClientLevel {
       );
 
       if (this.input.manager.activePointer.leftButtonDown()) {
-        if (!this.mapGrid.getBlockAt(placePosition)) {
-          this.mapGrid.addBlock(placePosition, 'stone_bricks');
-        }
+        this.handleBlockPlacement(this.editorOverlay.selectedLeftMouseBlock, placePosition);
       } else if (this.input.manager.activePointer.rightButtonDown()) {
-        if (!this.mapGrid.getBlockAt(placePosition, -1)) {
-          this.mapGrid.addBlock(placePosition, 'stone_floor', -1);
-        }
+        this.handleBlockPlacement(this.editorOverlay.selectedRightMouseBlock, placePosition);
+      } else {
+        this.eraseMode = null;
       }
+    }
+  }
+
+  private handleBlockPlacement(blockId: string, placePosition: Phaser.Math.Vector2) {
+    if (blockId == null) {
+      return;
+    }
+
+    const foreground = this.mapGrid.getBlockAt(placePosition);
+    const background = this.mapGrid.getBlockAt(placePosition, -1);
+
+    if (blockId === BlockErase) {
+      if (!this.eraseMode) {
+        this.eraseMode = !!foreground ? BlockType.Foreground : BlockType.Background;
+      }
+
+      if ((!!foreground && this.eraseMode === BlockType.Foreground)
+        || (!!background && this.eraseMode === BlockType.Background)) {
+        this.mapGrid.removeBlockAt(placePosition, this.blockTypeToLayer(this.eraseMode));
+      }
+
+      return;
+    }
+
+    const blockInfo = Blocks.get(blockId);
+
+    if ((!foreground && blockInfo.type === BlockType.Foreground)
+      || (!background && blockInfo.type === BlockType.Background)) {
+      this.mapGrid.addBlock(placePosition, blockId, this.blockTypeToLayer(blockInfo.type));
+    }
+  }
+
+  private blockTypeToLayer(blockType: BlockType) {
+    switch (blockType) {
+      case BlockType.Foreground: return 0;
+      case BlockType.Background: return -1;
     }
   }
 

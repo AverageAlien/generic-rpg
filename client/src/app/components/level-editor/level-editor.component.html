@@ -1,7 +1,23 @@
 <div class='root'>
-  <div id='gameContainer'></div>
+  <div class='main-window'>
+    <div id='gameContainer'></div>
+    <div class='block-picker'>
+      <img *ngFor="let block of availableBlocks"
+        draggable="false"
+        class='block-item'
+        [src]='getBlockTexturePath(block)'
+        [ngClass]="{
+          'left': block === leftSelection,
+          'right': block === rightSelection
+        }"
+        (click)="onSelectLeftBlock(block)"
+        (contextmenu)="onSelectRightBlock(block)">
+    </div>
+  </div>
 
-  <button mat-raised-button (click)="onExportLevel()">Export level</button>
-  <button mat-raised-button (click)="onImportLevel()">Import level</button>
+  <div class='bottom-row'>
+    <button mat-raised-button (click)="onExportLevel()">Export level</button>
+    <button mat-raised-button (click)="onImportLevel()">Import level</button>
+  </div>
 </div>
 

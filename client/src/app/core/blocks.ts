@@ -1,6 +1,6 @@
 export enum BlockType {
-  Background,
-  Foreground
+  Background = 1,
+  Foreground = 2
 }
 
 export interface BlockInfo {
@@ -13,6 +13,8 @@ export const Blocks = new Map<string, BlockInfo>([
   ['grass', {type: BlockType.Background, texture: 'grass01'}],
   ['stone_floor', {type: BlockType.Background, texture: 'stone_floor01'}],
   ['stone_bricks', {type: BlockType.Foreground, texture: 'stone_wall01'}],
+  ['wooden_floor', {type: BlockType.Background, texture: 'wooden_floor01'}]
 ]) as ReadonlyMap<string, BlockInfo>;
 
 export const BlockIds = Array.from(Blocks.keys());
+export const BlockErase = 'empty'; // reserved block ID for erase action in the editor

@@ -39,6 +39,7 @@ export class NetworkEntitySpawner {
     });
 
     entity.networkId = UUID();
+    entity.faction = Faction.Player;
     entity.controller = new ClientController(gameClient, entity);
 
     if (!!playerData.equipment.weapon) entity.equipWeapon(playerData.equipment.weapon);

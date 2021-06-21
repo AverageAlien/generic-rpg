@@ -1,6 +1,6 @@
 export enum Faction {
-  Player,
-  Baddies
+  Player = 1,
+  Baddies = 2
 }
 
 export function FactionsAreFriendly(fac1: Faction, fac2: Faction): boolean {
