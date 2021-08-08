@@ -17,6 +17,8 @@ import { Armor } from '../gameplay/items/armor';
 import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
 import { PlayerNetworkingService } from '../../services/playerNetworkingService';
 import { PlayerDataService } from '../../services/playerDataService';
+import { LocationDataService } from '../../services/locationDataService';
+import { filter } from 'rxjs/operators';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -47,9 +49,7 @@ export class NetworkLevel extends Scene implements LevelScene {
   create() {
     this.mapGrid = new MapGrid(this, 'tileset');
 
-    this.levelLoader = new LevelLoaderService(this);
-
-    this.levelLoader.importlevel(LocationList.get(this.roomName).levelData);
+    this.levelLoader = new LevelLoaderService(this, new LocationDataService());
 
     this.entitySpawner = new NetworkEntitySpawner(this);
     this.playerNetworking = new PlayerNetworkingService(this, this.playerDataService);
@@ -57,7 +57,11 @@ export class NetworkLevel extends Scene implements LevelScene {
     fromEvent(this.events, 'preupdate').subscribe(this.preupdate.bind(this));
     fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
 
-    this.roomReady$.next(true);
+    this.levelLoader.importLevelByName(this.roomName).pipe(
+      filter(b => b)
+    ).subscribe(_ => {
+      this.roomReady$.next(true)
+    });
 
     setTimeout(() => {
       const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(-2, 12), 10);

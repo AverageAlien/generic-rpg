@@ -5,6 +5,7 @@ export class AssetService {
     loader.image('grass01', texturesFolderUrl + 'blocks/grass01.png');
     loader.image('stone_wall01', texturesFolderUrl + 'blocks/stone_wall01.png');
     loader.image('stone_floor01', texturesFolderUrl + 'blocks/stone_floor01.png');
+    loader.image('wooden_floor01', texturesFolderUrl + 'blocks/wooden_floor01.png');
     loader.image('tileset', texturesFolderUrl + 'blocks/tileset-extruded.png');
   }
 

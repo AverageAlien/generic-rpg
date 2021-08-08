@@ -30,8 +30,8 @@ export class LocationDataService {
   private get defaultLocation(): LocationDTO {
     return {
       name: 'empty',
-      locationTitle: 'Empty',
-      levelData: '{"l":[]}',
+      locationtitle: 'Empty',
+      leveldata: '{"l":[]}',
     };
   }
 }
