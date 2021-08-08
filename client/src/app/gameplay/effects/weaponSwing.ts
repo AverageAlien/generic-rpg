@@ -22,12 +22,12 @@ export class WeaponSwingEffect extends BaseEffect {
         x,
         y,
         textureName
-      ).setDepth(4)
-      .setScale(length * 0.75, length)
-      .setOrigin(0.5, 1)
-      .setAngle(angle - weapon.swing * 0.5);
+        ).setDepth(4)
+        .setScale(length * 0.75, length)
+        .setOrigin(0.5, 1)
+        .setAngle(angle - weapon.swing * 0.5);
 
-      WeaponSwingEffect.levelScene.tweens.add({
+      const animation = WeaponSwingEffect.levelScene.tweens.add({
         targets: sprite,
         angle: {
           from: angle - weapon.swing * 0.5,
@@ -37,6 +37,14 @@ export class WeaponSwingEffect extends BaseEffect {
         duration: 333,
         onComplete: () => sprite.destroy(),
         onUpdate: !attachTo ? null : () => sprite.setPosition(attachTo.body.center.x, attachTo.body.center.y),
+      });
+
+      attachTo.on('destroy', gameObject => {
+        console.log('DESTROY EVENT');
+        console.log(gameObject);
+
+        animation.stop();
+        sprite.destroy();
       });
   }
 }

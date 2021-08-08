@@ -64,6 +64,8 @@ export class ClientEntitySpawnerService {
     });
 
     entity.destroyed.subscribe(() => {
+      this.levelScene.tweens.getTweensOf(entity.gameObject).forEach(t => t.stop());
+
       const entityIndex = this.levelScene.entities.indexOf(entity);
       if (entityIndex >= 0) {
         this.levelScene.entities.splice(entityIndex, 1);
@@ -124,6 +126,8 @@ export class ClientEntitySpawnerService {
     const nameLabel = new UI.EntityHeader(this.levelScene, entity, true);
 
     entity.destroyed.subscribe(() => {
+      this.levelScene.tweens.getTweensOf(entity.gameObject).forEach(t => t.stop());
+
       // TODO ????????
       healthBar.destroy();
       nameLabel.destroy();
