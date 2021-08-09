@@ -23,7 +23,8 @@ export class WeaponService {
       const allEntities = this.levelScene.entities;
 
       const hitEntities = allEntities.filter(e => {
-        if (e === attacker || !(e instanceof CharacterEntity)) {
+        // todo: add faction friends check
+        if (e === attacker || !(e instanceof CharacterEntity) || FactionsAreFriendly(attacker.faction, e.faction)) {
           return false;
         }
 

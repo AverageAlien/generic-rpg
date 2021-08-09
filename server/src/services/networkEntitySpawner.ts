@@ -91,7 +91,7 @@ export class NetworkEntitySpawner {
     entity.networkId = UUID();
     entity.faction = Faction.Baddies;
 
-    entity.controller = new ServerWrapperController(new WalkerController(entity, this.levelScene, 128), entity);
+    entity.controller = new ServerWrapperController(this.levelScene, new WalkerController(entity, this.levelScene, 128), entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
     entity.destroyed.subscribe(() => {

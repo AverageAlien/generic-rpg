@@ -7,6 +7,7 @@ import { Constants } from '../../../core/constants';
 import { LevelScene } from '../../../core/levelScene';
 import { ClientLevel } from '../../../gameData/scenes/clientLevel';
 import { FactionsAreFriendly } from '../../../core/factions';
+import { HumanoidEntity } from '../entities/humanoidEntity';
 
 export class WalkerController implements Controller {
   private target: Entity = null;
@@ -60,6 +61,12 @@ export class WalkerController implements Controller {
   }
 
   get attack(): Phaser.Math.Vector2 {
+    if (!!this.target
+      && this.target.gameObject.body.position.distanceSq(this.myself.gameObject.body.position)
+      < 1.2 * (this.myself as HumanoidEntity).getEquipment().weapon.reach) {
+      return new Phaser.Math.Vector2(this.target.gameObject.body.position);
+    }
+
     return null;
   }
 

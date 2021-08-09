@@ -10,23 +10,28 @@ import { MapGrid } from '../../core/mapGrid';
 import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
-import { LocationList } from '../../serverCore/locationList';
 import { BehaviorSubject, fromEvent } from 'rxjs';
-import { ArmorType } from '../gameplay/items/itemEnums';
+import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
 import { Armor } from '../gameplay/items/armor';
 import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
 import { PlayerNetworkingService } from '../../services/playerNetworkingService';
 import { PlayerDataService } from '../../services/playerDataService';
 import { LocationDataService } from '../../services/locationDataService';
 import { filter } from 'rxjs/operators';
+import { ServerWrapperController } from '../gameplay/controllers/serverWrapperController';
+import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
+import { Weapon } from '../gameplay/items/weapon';
+import { WeaponService } from '../../services/weaponService';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
   public levelLoader: LevelLoaderService;
+  public weaponService: WeaponService;
 
   public levelName: string;
   public entities: Entity[] = [];
   public clients: GameClient[] = [];
+  private networkBots: ServerWrapperController[] = [];
 
   protected entitySpawner: NetworkEntitySpawner;
   protected playerNetworking: PlayerNetworkingService;
@@ -53,6 +58,7 @@ export class NetworkLevel extends Scene implements LevelScene {
 
     this.entitySpawner = new NetworkEntitySpawner(this);
     this.playerNetworking = new PlayerNetworkingService(this, this.playerDataService);
+    this.weaponService = new WeaponService(this);
 
     fromEvent(this.events, 'preupdate').subscribe(this.preupdate.bind(this));
     fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
@@ -70,6 +76,19 @@ export class NetworkLevel extends Scene implements LevelScene {
         armorType: ArmorType.Chestplate,
         name: 'Steel vest',
         texture: 'steel_vest'
+      }));
+      stalker.equipWeapon(new Weapon({
+        name: 'Short sword',
+        texture: 'short_sword',
+        damage: [
+          {
+            type: DamageType.Cut,
+            value: 15
+          }
+        ],
+        reach: 64,
+        refire: 300,
+        swing: 90
       }));
 
       this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(stalker));
@@ -108,6 +127,10 @@ export class NetworkLevel extends Scene implements LevelScene {
     this.entities.forEach(e => {
       e.update();
     });
+
+    this.networkBots
+      .filter(nb => !!(nb.controlledEntity as HumanoidEntity).getEquipment().weapon)
+      .forEach(nb => nb.processAttack());
   }
 
   postupdate() {
@@ -150,5 +173,21 @@ export class NetworkLevel extends Scene implements LevelScene {
 
   broadcastPacket(packetType: ServerPackets, packet: any) {
     this.server.to(this.roomName).emit(packetType, packet);
+  }
+
+  registerNetworkBot(controller: ServerWrapperController) {
+    if (!(controller.controlledEntity instanceof HumanoidEntity)) {
+      console.log('REGISTER FAIL');
+      return;
+    }
+
+    this.networkBots.push(controller);
+    controller.controlledEntity.gameObject.on('destroy', () => {
+      const controllerIndex = this.networkBots.indexOf(controller);
+
+      if (controllerIndex >= 0) {
+        this.networkBots.splice(controllerIndex, 1);
+      }
+    });
   }
 }

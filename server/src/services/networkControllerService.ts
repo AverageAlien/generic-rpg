@@ -81,6 +81,8 @@ export class NetworkControllerService {
         moveY: movement.y,
         networkId,
       } as PacketPlayerInputMove);
-    })
+    });
+
+    levelScene.registerNetworkBot(controller);
   }
 }

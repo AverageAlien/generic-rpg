@@ -1,11 +1,14 @@
+import { Blocks } from '../../core/blocks';
+
 const texturesFolderUrl = '../../../../../textures/';
 
 export class AssetService {
   public static loadBlockSprites(loader: Phaser.Loader.LoaderPlugin): void {
-    loader.image('grass01', texturesFolderUrl + 'blocks/grass01.png');
-    loader.image('stone_wall01', texturesFolderUrl + 'blocks/stone_wall01.png');
-    loader.image('stone_floor01', texturesFolderUrl + 'blocks/stone_floor01.png');
-    loader.image('wooden_floor01', texturesFolderUrl + 'blocks/wooden_floor01.png');
+    this.registerBlockTextures(loader);
+    // loader.image('grass01', texturesFolderUrl + 'blocks/grass01.png');
+    // loader.image('stone_wall01', texturesFolderUrl + 'blocks/stone_wall01.png');
+    // loader.image('stone_floor01', texturesFolderUrl + 'blocks/stone_floor01.png');
+    // loader.image('wooden_floor01', texturesFolderUrl + 'blocks/wooden_floor01.png');
     loader.image('tileset', texturesFolderUrl + 'blocks/tileset-extruded.png');
   }
 
@@ -21,6 +24,12 @@ export class AssetService {
 
     this.addWeaponItem(loader, 'short_sword');
     this.addWeaponItem(loader, 'wooden_stick');
+  }
+
+  private static registerBlockTextures(loader: Phaser.Loader.LoaderPlugin) {
+    Blocks.forEach(blockInfo => {
+      loader.image(blockInfo.texture, texturesFolderUrl + `blocks/${blockInfo.texture}.png`);
+    });
   }
 
   private static addArmorItem(loader: Phaser.Loader.LoaderPlugin, itemName: string) {
