@@ -5,6 +5,7 @@ export class StackItem implements Item {
   public itemType = ItemType.StackItem;
 
   constructor(
+    public itemId: string,
     public name: string,
     public texture: string,
     public description: string,

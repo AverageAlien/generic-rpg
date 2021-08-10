@@ -1,6 +1,5 @@
 import { performance } from 'perf_hooks';
 import { BehaviorSubject } from 'rxjs';
-import { WeaponService } from '../../../services/weaponService';
 import { NetworkLevel } from '../../scenes/networkLevel';
 import { Controllable } from '../entities/baseEntity';
 import { HumanoidEntity } from '../entities/humanoidEntity';

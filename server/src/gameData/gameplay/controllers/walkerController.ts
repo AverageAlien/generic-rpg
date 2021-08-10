@@ -36,7 +36,7 @@ export class WalkerController implements Controller {
 
   get movement(): Phaser.Math.Vector2 {
 
-    if (!this.target || !this.target.gameObject || !this.target.gameObject.body) {
+    if (!this.checkEntityExistsAndAlive(this.target)) {
       const searched = this.searchTarget();
 
       if (!searched) {
@@ -61,9 +61,9 @@ export class WalkerController implements Controller {
   }
 
   get attack(): Phaser.Math.Vector2 {
-    if (!!this.target
+    if (this.checkEntityExistsAndAlive(this.target)
       && this.target.gameObject.body.position.distanceSq(this.myself.gameObject.body.position)
-      < 1.2 * (this.myself as HumanoidEntity).getEquipment().weapon.reach) {
+      < (48 + (this.myself as HumanoidEntity).getEquipment().weapon.reach) ** 2) {
       return new Phaser.Math.Vector2(this.target.gameObject.body.position);
     }
 
@@ -197,6 +197,10 @@ export class WalkerController implements Controller {
     if (!targetEntity) { throw new Error('Entity for closest GameObject not found!'); }
 
     return targetEntity;
+  }
+
+  private checkEntityExistsAndAlive(entity: Entity) {
+    return !!entity && !!entity.gameObject && !!entity.gameObject.body;
   }
 
   private _drawDebug(

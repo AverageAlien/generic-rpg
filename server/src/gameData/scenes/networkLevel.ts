@@ -83,12 +83,12 @@ export class NetworkLevel extends Scene implements LevelScene {
         damage: [
           {
             type: DamageType.Cut,
-            value: 15
+            value: 30
           }
         ],
-        reach: 64,
-        refire: 300,
-        swing: 90
+        reach: 32,
+        refire: 250,
+        swing: 30
       }));
 
       this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(stalker));

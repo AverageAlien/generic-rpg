@@ -1,3 +1,4 @@
+import { v4 as UUID } from 'uuid';
 import { EquipmentItem } from './equipmentItem';
 import { ArmorType, ItemType } from './itemEnums';
 
@@ -9,6 +10,7 @@ export class Armor extends EquipmentItem {
 
   constructor(cfg: ArmorConfig) {
     super(
+      cfg.itemId || UUID(),
       cfg.name,
       cfg.texture,
       cfg.description || 'No information.',
@@ -31,4 +33,5 @@ interface ArmorConfig {
   level?: number;
   armor?: number;
   armorType?: ArmorType;
+  itemId?: string;
 }

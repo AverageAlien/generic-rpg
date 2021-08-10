@@ -5,6 +5,7 @@ export class EquipmentItem implements Item {
   public itemType = ItemType.EquipmentItem;
 
   constructor(
+    public itemId: string,
     public name: string,
     public texture: string,
     public description: string,

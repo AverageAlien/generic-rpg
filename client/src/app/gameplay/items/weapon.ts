@@ -1,3 +1,4 @@
+import { v4 as UUID } from 'uuid';
 import { EquipmentItem } from './equipmentItem';
 import { DamageType, ItemType } from './itemEnums';
 
@@ -11,6 +12,7 @@ export class Weapon extends EquipmentItem {
 
   constructor(cfg: WeaponConfig) {
     super(
+      cfg.itemId || UUID(),
       cfg.name,
       cfg.texture,
       cfg.description || 'No information.',
@@ -42,4 +44,5 @@ interface WeaponConfig {
   refire?: number;
   reach?: number;
   swing?: number;
+  itemId?: string;
 }
