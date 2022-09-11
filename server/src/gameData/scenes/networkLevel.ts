@@ -22,6 +22,7 @@ import { ServerWrapperController } from '../gameplay/controllers/serverWrapperCo
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
 import { Weapon } from '../gameplay/items/weapon';
 import { WeaponService } from '../../services/weaponService';
+import { ArmorPresets, WeaponPresets } from '../itemPresets/itemPresets';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -71,25 +72,8 @@ export class NetworkLevel extends Scene implements LevelScene {
 
     setTimeout(() => {
       const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(-2, 12), 10);
-      stalker.equipArmor(new Armor({
-        armor: 100,
-        armorType: ArmorType.Chestplate,
-        name: 'Steel vest',
-        texture: 'steel_vest'
-      }));
-      stalker.equipWeapon(new Weapon({
-        name: 'Short sword',
-        texture: 'short_sword',
-        damage: [
-          {
-            type: DamageType.Cut,
-            value: 30
-          }
-        ],
-        reach: 32,
-        refire: 250,
-        swing: 30
-      }));
+      stalker.equipArmor(ArmorPresets.chestplates.steelVest);
+      stalker.equipWeapon(WeaponPresets.shortSword);
 
       this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(stalker));
     }, 3000);
