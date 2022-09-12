@@ -3,12 +3,10 @@ import { map } from 'rxjs/operators';
 import { PgClient } from '../database/pgClient';
 import { UserDataDTO } from '../database/models/userDataDTO';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
-import { DamageType } from '../gameData/gameplay/items/itemEnums';
-import { Weapon } from '../gameData/gameplay/items/weapon';
 import { GameClient } from '../models/gameClient';
 import { MakeUserDataSnapshot, PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { DataTypeOIDs } from 'postgresql-client';
-import { WeaponPresets } from '../gameData/itemPresets/itemPresets';
+import { WeaponPresets } from '../gameData/itemPresets/weaponPresets';
 
 export class PlayerDataService {
   constructor() {}

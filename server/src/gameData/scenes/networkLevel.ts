@@ -11,8 +11,6 @@ import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 import { BehaviorSubject, fromEvent } from 'rxjs';
-import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
-import { Armor } from '../gameplay/items/armor';
 import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
 import { PlayerNetworkingService } from '../../services/playerNetworkingService';
 import { PlayerDataService } from '../../services/playerDataService';
@@ -20,9 +18,9 @@ import { LocationDataService } from '../../services/locationDataService';
 import { filter } from 'rxjs/operators';
 import { ServerWrapperController } from '../gameplay/controllers/serverWrapperController';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
-import { Weapon } from '../gameplay/items/weapon';
 import { WeaponService } from '../../services/weaponService';
-import { ArmorPresets, WeaponPresets } from '../itemPresets/itemPresets';
+import { ArmorPresets } from '../itemPresets/armorPresets';
+import { WeaponPresets } from '../itemPresets/weaponPresets';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
