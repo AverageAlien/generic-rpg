@@ -15,6 +15,7 @@ import { PlayerDataService } from './playerDataService';
 import { UserDataDTO } from '../database/models/userDataDTO';
 import { PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { AuthenticationService } from './authService';
+import { AIPlaygroundLevel } from '../gameData/scenes/aiPlaygroundLevel';
 
 const defaultRoom = 'test01';
 global.phaserOnNodeFPS = 30;
@@ -88,7 +89,7 @@ export class RoomService {
     const room = new Room();
     room.roomName = roomName;
 
-    room.location = new NetworkLevel(this.server, this.playerDataService, roomName);
+    room.location = new AIPlaygroundLevel(this.server, this.playerDataService, roomName);
 
     const gameConfig = {
       type: Phaser.HEADLESS,

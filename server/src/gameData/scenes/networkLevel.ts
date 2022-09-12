@@ -10,7 +10,7 @@ import { MapGrid } from '../../core/mapGrid';
 import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
-import { BehaviorSubject, fromEvent } from 'rxjs';
+import { BehaviorSubject, fromEvent, Observable } from 'rxjs';
 import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
 import { PlayerNetworkingService } from '../../services/playerNetworkingService';
 import { PlayerDataService } from '../../services/playerDataService';
@@ -62,19 +62,31 @@ export class NetworkLevel extends Scene implements LevelScene {
     fromEvent(this.events, 'preupdate').subscribe(this.preupdate.bind(this));
     fromEvent(this.events, 'postupdate').subscribe(this.postupdate.bind(this));
 
-    this.levelLoader.importLevelByName(this.roomName).pipe(
+    this.loadLevel().pipe(
       filter(b => b)
     ).subscribe(_ => {
       this.roomReady$.next(true)
     });
 
     setTimeout(() => {
-      const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(-2, 12), 10);
-      stalker.equipArmor(ArmorPresets.chestplates.steelVest);
-      stalker.equipWeapon(WeaponPresets.shortSword);
+      const entities = this.spawnEntities();
 
-      this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(stalker));
+      entities.forEach(e => {
+        this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(e))
+      });
     }, 3000);
+  }
+
+  protected loadLevel(): Observable<boolean> {
+    return this.levelLoader.importLevelByName(this.roomName);
+  }
+
+  protected spawnEntities(): HumanoidEntity[] {
+    const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(-2, 12), 10);
+    stalker.equipArmor(ArmorPresets.chestplates.steelVest);
+    stalker.equipWeapon(WeaponPresets.shortSword);
+
+    return [stalker];
   }
 
   preload() {
