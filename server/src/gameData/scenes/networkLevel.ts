@@ -11,8 +11,6 @@ import { ServerPackets } from '../../networkPackets/fromServer/serverPackets';
 import { LevelLoaderService } from '../../gameData/gameServices/level-loader.service';
 import { NetworkPacketSerializer } from '../../services/networkPacketSerializer';
 import { BehaviorSubject, fromEvent } from 'rxjs';
-import { ArmorType, DamageType } from '../gameplay/items/itemEnums';
-import { Armor } from '../gameplay/items/armor';
 import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
 import { PlayerNetworkingService } from '../../services/playerNetworkingService';
 import { PlayerDataService } from '../../services/playerDataService';
@@ -20,8 +18,9 @@ import { LocationDataService } from '../../services/locationDataService';
 import { filter } from 'rxjs/operators';
 import { ServerWrapperController } from '../gameplay/controllers/serverWrapperController';
 import { HumanoidEntity } from '../gameplay/entities/humanoidEntity';
-import { Weapon } from '../gameplay/items/weapon';
 import { WeaponService } from '../../services/weaponService';
+import { ArmorPresets } from '../itemPresets/armorPresets';
+import { WeaponPresets } from '../itemPresets/weaponPresets';
 
 export class NetworkLevel extends Scene implements LevelScene {
   public mapGrid: MapGrid;
@@ -71,25 +70,8 @@ export class NetworkLevel extends Scene implements LevelScene {
 
     setTimeout(() => {
       const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(-2, 12), 10);
-      stalker.equipArmor(new Armor({
-        armor: 100,
-        armorType: ArmorType.Chestplate,
-        name: 'Steel vest',
-        texture: 'steel_vest'
-      }));
-      stalker.equipWeapon(new Weapon({
-        name: 'Short sword',
-        texture: 'short_sword',
-        damage: [
-          {
-            type: DamageType.Cut,
-            value: 30
-          }
-        ],
-        reach: 32,
-        refire: 250,
-        swing: 30
-      }));
+      stalker.equipArmor(ArmorPresets.chestplates.steelVest);
+      stalker.equipWeapon(WeaponPresets.shortSword);
 
       this.broadcastPacket(...NetworkPacketSerializer.spawnEntity(stalker));
     }, 3000);

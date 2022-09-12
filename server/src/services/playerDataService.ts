@@ -3,11 +3,10 @@ import { map } from 'rxjs/operators';
 import { PgClient } from '../database/pgClient';
 import { UserDataDTO } from '../database/models/userDataDTO';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
-import { DamageType } from '../gameData/gameplay/items/itemEnums';
-import { Weapon } from '../gameData/gameplay/items/weapon';
 import { GameClient } from '../models/gameClient';
 import { MakeUserDataSnapshot, PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { DataTypeOIDs } from 'postgresql-client';
+import { WeaponPresets } from '../gameData/itemPresets/weaponPresets';
 
 export class PlayerDataService {
   constructor() {}
@@ -89,43 +88,9 @@ export class PlayerDataService {
       level: 1,
       speed: 25,
       maxHealth: 50,
-      inventory: [
-        new Weapon({
-          name: 'Wooden stick',
-          description: 'An old wooden stick to hit people with',
-          texture: 'wooden_stick',
-          damage: [
-            {
-              value: 5,
-              type: DamageType.Blunt
-            }
-          ],
-          level: 1,
-          mass: 5,
-          price: 5,
-          reach: 64,
-          refire: 250,
-          swing: 120
-        })
-      ],
+      inventory: [ WeaponPresets.woodenStick ],
       equipment: {
-        weapon: new Weapon({
-          name: 'Wooden stick',
-          description: 'An old wooden stick to hit people with',
-          texture: 'wooden_stick',
-          damage: [
-            {
-              value: 5,
-              type: DamageType.Blunt
-            }
-          ],
-          level: 1,
-          mass: 5,
-          price: 5,
-          reach: 64,
-          refire: 250,
-          swing: 120
-        })
+        weapon: WeaponPresets.woodenStick
       }
     };
   }
