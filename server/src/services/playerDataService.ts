@@ -88,9 +88,9 @@ export class PlayerDataService {
       level: 1,
       speed: 25,
       maxHealth: 50,
-      inventory: [ WeaponPresets.woodenStick ],
+      inventory: [ WeaponPresets.woodenStick() ],
       equipment: {
-        weapon: WeaponPresets.woodenStick
+        weapon: WeaponPresets.woodenStick()
       }
     };
   }

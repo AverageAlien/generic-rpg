@@ -11,6 +11,7 @@ import { ServerWrapperController } from '../gameData/gameplay/controllers/server
 import { PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
 import { PacketEntityDied } from '../networkPackets/fromServer/entityDied';
+import { SpawnWarriorConfig } from '../gameData/models/spawnWarriorConfig.model';
 
 export class NetworkEntitySpawner {
   constructor(private levelScene: NetworkLevel) {}
@@ -59,6 +60,54 @@ export class NetworkEntitySpawner {
       (entity.controller as ClientController).subs.forEach(s => s.unsubscribe());
       this.levelScene.broadcastPacket(ServerPackets.ENTITY_DIED, { networkId: entity.networkId } as PacketEntityDied);
     });
+
+    this.levelScene.entities.push(entity);
+
+    return entity;
+  }
+
+  public spawnWarrior(position: Phaser.Math.Vector2, cfg: SpawnWarriorConfig): HumanoidEntity {
+    const gameObject = this.createRenderTexture(
+      position,
+      new Phaser.Math.Vector2(
+        this.levelScene.textures.getFrame('humanoid', 0).width,
+        this.levelScene.textures.getFrame('humanoid', 0).height
+      )
+    )
+    .setOrigin(0.5, 0.5);
+
+    gameObject.body
+      .setSize(Constants.Character.COLLIDER_W, Constants.Character.COLLIDER_H)
+      .setOffset(Constants.Character.COLLIDER_OFFSET_X, Constants.Character.COLLIDER_OFFSET_Y);
+
+    const entity = new HumanoidEntity({
+      name: cfg.name || 'Warrior',
+      gameObject,
+      maxHealth: cfg.maxHealth || 100,
+      level: cfg.level || 1,
+      speed: cfg.speed || 10,
+      bodyTexture: 'humanoid'
+    });
+
+    entity.networkId = UUID();
+    entity.faction = cfg.faction || Faction.Baddies;
+
+    entity.controller = new ServerWrapperController(this.levelScene,
+      new WalkerController(entity, this.levelScene, cfg.sightRange),
+      entity);
+    NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
+
+    entity.destroyed.subscribe(() => {
+      const entityIndex = this.levelScene.entities.indexOf(entity);
+      if (entityIndex >= 0) {
+        this.levelScene.entities.splice(entityIndex, 1);
+      }
+
+      this.levelScene.broadcastPacket(ServerPackets.ENTITY_DIED, { networkId: entity.networkId } as PacketEntityDied);
+    });
+
+    entity.equipWeapon(cfg.weapon);
+    cfg.armor?.forEach(a => entity.equipArmor(a));
 
     this.levelScene.entities.push(entity);
 

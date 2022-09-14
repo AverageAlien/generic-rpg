@@ -1,6 +1,6 @@
 export enum BlockType {
-  Background,
-  Foreground
+  Background = 1,
+  Foreground = 2
 }
 
 export interface BlockInfo {

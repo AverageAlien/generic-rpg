@@ -83,8 +83,8 @@ export class NetworkLevel extends Scene implements LevelScene {
 
   protected spawnEntities(): HumanoidEntity[] {
     const stalker = this.entitySpawner.spawnStalker(new Phaser.Math.Vector2(-2, 12), 10);
-    stalker.equipArmor(ArmorPresets.chestplates.steelVest);
-    stalker.equipWeapon(WeaponPresets.shortSword);
+    stalker.equipArmor(ArmorPresets.chestplates.steelVest());
+    stalker.equipWeapon(WeaponPresets.shortSword());
 
     return [stalker];
   }
@@ -123,8 +123,13 @@ export class NetworkLevel extends Scene implements LevelScene {
     });
 
     this.networkBots
-      .filter(nb => !!(nb.controlledEntity as HumanoidEntity).getEquipment().weapon)
-      .forEach(nb => nb.processAttack());
+      .forEach(nb => {
+        if (!(nb.controlledEntity as HumanoidEntity).getEquipment().weapon) {
+          return;
+        }
+
+        nb.processAttack()
+      });
   }
 
   postupdate() {
@@ -176,12 +181,19 @@ export class NetworkLevel extends Scene implements LevelScene {
     }
 
     this.networkBots.push(controller);
-    controller.controlledEntity.gameObject.on('destroy', () => {
-      const controllerIndex = this.networkBots.indexOf(controller);
+    controller.controlledEntity.destroyed.subscribe(() => {
+      const controlledIndex = this.networkBots.indexOf(controller);
 
-      if (controllerIndex >= 0) {
-        this.networkBots.splice(controllerIndex, 1);
+      if (controlledIndex >= 0) {
+        this.networkBots.splice(controlledIndex, 1);
       }
     });
+    // controller.controlledEntity.gameObject.on('destroy', () => {
+    //   const controllerIndex = this.networkBots.indexOf(controller);
+
+    //   if (controllerIndex >= 0) {
+    //     this.networkBots.splice(controllerIndex, 1);
+    //   }
+    // });
   }
 }

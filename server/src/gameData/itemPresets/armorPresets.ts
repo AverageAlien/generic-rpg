@@ -3,7 +3,7 @@ import { ArmorType } from '../gameplay/items/itemEnums';
 
 export const ArmorPresets = {
   chestplates: {
-    steelVest: new Armor({
+    steelVest: () => new Armor({
       name: 'Steel vest',
       texture: 'steel_vest',
       armorType: ArmorType.Chestplate,
@@ -12,7 +12,7 @@ export const ArmorPresets = {
   },
 
   helmets: {
-    steelBowl: new Armor({
+    steelBowl: () => new Armor({
       name: 'Steel bowl',
       texture: 'steel_bowl',
       armorType: ArmorType.Helmet,
@@ -21,7 +21,7 @@ export const ArmorPresets = {
   },
 
   boots: {
-    leatherBoots: new Armor({
+    leatherBoots: () => new Armor({
       name: 'Leather boots',
       texture: 'leather_boots',
       armorType: ArmorType.Boots,

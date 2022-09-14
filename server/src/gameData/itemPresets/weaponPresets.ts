@@ -2,7 +2,7 @@ import { DamageType } from '../gameplay/items/itemEnums';
 import { Weapon } from '../gameplay/items/weapon';
 
 export const WeaponPresets = {
-  shortSword: new Weapon({
+  shortSword: () => new Weapon({
     name: 'Short sword',
     texture: 'short_sword',
     damage: [
@@ -15,7 +15,7 @@ export const WeaponPresets = {
     refire: 250,
     swing: 30
   }),
-  woodenStick: new Weapon({
+  woodenStick: () => new Weapon({
     name: 'Wooden stick',
     description: 'An old wooden stick to hit people with',
     texture: 'wooden_stick',

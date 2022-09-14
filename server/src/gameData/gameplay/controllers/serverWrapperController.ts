@@ -43,6 +43,8 @@ export class ServerWrapperController implements Controller {
     if (!this.readyForAttack) {
       return;
     }
+
+
     const myself = this.controlledEntity as HumanoidEntity;
     const target = this.internalController.attack;
 
@@ -51,9 +53,6 @@ export class ServerWrapperController implements Controller {
     }
 
     this.readyForAttack = false;
-
-    console.log('PROCESSING ATTACK FOR ' + this.controlledEntity.entityName);
-
     this.levelScene.weaponService.attackNetwork(myself, target);
 
     setTimeout(() => this.readyForAttack = true, myself.getEquipment().weapon.refire);
