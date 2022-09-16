@@ -13,7 +13,7 @@ export class WalkerController implements Controller {
   private target: Entity = null;
 
   private readonly searchFrequency = 250; // ms
-  private readonly searchIncrement = 16.67;
+  private readonly searchIncrement = 16.67; // 1000ms / 60
   private timeSinceLastSearch = 0;
 
   private pathWaypoints: Phaser.Math.Vector2[] = null;
