@@ -11,7 +11,7 @@ export const WeaponPresets = {
         value: 30
       }
     ],
-    reach: 32,
+    reach: 48,
     refire: 250,
     swing: 30
   }),
@@ -21,14 +21,14 @@ export const WeaponPresets = {
     texture: 'wooden_stick',
     damage: [
       {
-        value: 5,
+        value: 10,
         type: DamageType.Blunt
       }
     ],
     level: 1,
     mass: 5,
     price: 5,
-    reach: 64,
+    reach: 80,
     refire: 250,
     swing: 120
   })

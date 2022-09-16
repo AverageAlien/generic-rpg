@@ -6,6 +6,8 @@ import { ArmorPresets } from '../../itemPresets/armorPresets';
 export abstract class BaseBattlePreset {
   abstract generateEntities(entitySpawner: NetworkEntitySpawner): HumanoidEntity[];
 
+  addPositionOffset = (pos: Phaser.Math.Vector2) => pos;
+
   protected randomizeArmor(): Armor[] {
     const armor = [];
 

@@ -7,6 +7,8 @@ import { GameClient } from '../models/gameClient';
 import { MakeUserDataSnapshot, PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { DataTypeOIDs } from 'postgresql-client';
 import { WeaponPresets } from '../gameData/itemPresets/weaponPresets';
+import { Weapon } from '../gameData/gameplay/items/weapon';
+import { ArmorPresets } from '../gameData/itemPresets/armorPresets';
 
 export class PlayerDataService {
   constructor() {}
@@ -88,9 +90,15 @@ export class PlayerDataService {
       level: 1,
       speed: 25,
       maxHealth: 50,
-      inventory: [ WeaponPresets.woodenStick() ],
+      inventory: [
+        WeaponPresets.shortSword(),
+        WeaponPresets.woodenStick(),
+        ArmorPresets.helmets.steelBowl(),
+        ArmorPresets.chestplates.steelVest(),
+        ArmorPresets.boots.leatherBoots()
+     ],
       equipment: {
-        weapon: WeaponPresets.woodenStick()
+        weapon: WeaponPresets.shortSword()
       }
     };
   }

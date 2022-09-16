@@ -7,7 +7,7 @@ import { BaseBattlePreset } from './BaseBattlePreset';
 
 export class BattlePresetStickVsSword extends BaseBattlePreset {
   generateEntities(entitySpawner: NetworkEntitySpawner): HumanoidEntity[] {
-    const guyOne = entitySpawner.spawnWarrior(new Phaser.Math.Vector2(-5, 0), {
+    const guyOne = entitySpawner.spawnWarrior(this.addPositionOffset(new Phaser.Math.Vector2(-5, 0)), {
       name: 'Warrior A',
       level: 45,
       faction: Faction.TeamA,
@@ -16,7 +16,7 @@ export class BattlePresetStickVsSword extends BaseBattlePreset {
       sightRange: 1024
     });
 
-    const guyTwo = entitySpawner.spawnWarrior(new Phaser.Math.Vector2(5, 0), {
+    const guyTwo = entitySpawner.spawnWarrior(this.addPositionOffset(new Phaser.Math.Vector2(5, 0)), {
       name: 'Warrior B',
       level: 22,
       faction: Faction.TeamB,
