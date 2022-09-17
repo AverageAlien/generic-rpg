@@ -1,4 +1,4 @@
-import { HumanoidEntity } from "../../entities/humanoidEntity";
+import { HumanoidEntity } from '../../entities/humanoidEntity';
 
 export interface SituationContext {
   health: number;
@@ -6,6 +6,10 @@ export interface SituationContext {
   armor: number;
   speed: number;
   weaponCtx: WeaponContext;
+
+  target?: HumanoidNearby;
+  nearbyEnemies: HumanoidNearby[];
+  nearbyAllies: HumanoidNearby[];
 }
 
 export interface WeaponContext {
@@ -15,7 +19,7 @@ export interface WeaponContext {
   swing: number;
 }
 
-export interface TargetCandidate {
+export interface HumanoidNearby {
   entity: HumanoidEntity;
   distanceSq: number;
 }

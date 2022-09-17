@@ -29,9 +29,9 @@ export class WalkerController implements Controller {
   constructor(
     private myself: CharacterEntity,
     private levelScene: LevelScene,
-    public aggroRadius: number = 256,
-    public unaggroRadius: number = aggroRadius * Math.SQRT2,
-    public minRange: number = 64
+    private aggroRadius: number = 256,
+    private unaggroRadius: number = aggroRadius * Math.SQRT2,
+    private minRange: number = 64
   ) {}
 
   get movement(): Phaser.Math.Vector2 {

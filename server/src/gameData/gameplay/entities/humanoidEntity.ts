@@ -20,6 +20,10 @@ export class HumanoidEntity extends CharacterEntity {
     this.refreshRenderSprite();
   }
 
+  public get pos() {
+    return this.gameObject.body.position;
+  }
+
   public getEquipment() {
     return {
       helmet: this.helmet,
