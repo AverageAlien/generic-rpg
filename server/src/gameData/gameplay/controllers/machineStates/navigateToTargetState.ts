@@ -4,6 +4,7 @@ import { SituationContext } from '../machineInfrastructure/situationContext.mode
 import { AttackState } from './attackState';
 import { BaseState } from './baseState';
 import { IdleState } from './idleState';
+import { RetreatState } from './retreatState';
 
 export class NavigateToTargetState extends BaseState {
   private readonly searchFrequency = 250; // ms
@@ -24,8 +25,12 @@ export class NavigateToTargetState extends BaseState {
   }
 
   public transitionState(ctx: SituationContext): BaseState {
-    if (!ctx.target?.entity?.gameObject?.body) {
+    if (this.isNoTarget(ctx)) {
       return new IdleState(this.myself, this.controller, this.levelScene, this.sightRange);
+    }
+
+    if (this.shouldRetreat(ctx)) {
+      return new RetreatState(this.myself, this.controller, this.levelScene, this.sightRange);
     }
 
     if (ctx.target.distanceSq < this.rushDistanceSq) {

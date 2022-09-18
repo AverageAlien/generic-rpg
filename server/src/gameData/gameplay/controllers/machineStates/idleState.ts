@@ -13,7 +13,7 @@ export class IdleState extends BaseState {
   }
 
   public transitionState(ctx: SituationContext): BaseState {
-    if (ctx.target?.entity?.gameObject?.body) {
+    if (!this.isNoTarget(ctx)) {
       return ctx.target.distanceSq < this.rushDistanceSq
         ? new AttackState(this.myself, this.controller, this.levelScene, this.sightRange)
         : new NavigateToTargetState(this.myself, this.controller, this.levelScene, this.sightRange);

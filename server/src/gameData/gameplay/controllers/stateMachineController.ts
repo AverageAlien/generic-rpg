@@ -62,7 +62,10 @@ export class StateMachineController implements Controller {
         swing: equipment.weapon?.swing || 0
       },
       nearbyAllies: humanoids.filter(h => FactionsAreFriendly(h.entity.faction, this.myself.faction) === true),
-      nearbyEnemies: humanoids.filter(h => FactionsAreFriendly(h.entity.faction, this.myself.faction) === false)
+      nearbyEnemies: humanoids.filter(h => FactionsAreFriendly(h.entity.faction, this.myself.faction) === false),
+      target: !!this.target?.gameObject?.body
+        ? { entity: this.target, distanceSq: this.target.pos.distanceSq(this.myself.pos) }
+        : null
     }
   }
 
@@ -87,9 +90,12 @@ export class StateMachineController implements Controller {
   private reconsiderState(ctx: SituationContext) {
     let updatedTarget: HumanoidNearby;
 
-    if (!this.target?.gameObject?.body && !(this.state instanceof IdleState)) {
-      this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+    if (!!this.target && !this.target?.gameObject?.body) {
       this.target = null;
+
+      if (!(this.state instanceof IdleState)) {
+        this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+      }
     }
 
     if (this.state instanceof IdleState && !this.target) {
@@ -106,9 +112,10 @@ export class StateMachineController implements Controller {
     const targetDistance = updatedTarget?.distanceSq
       || this.target.gameObject.body.position.distanceSq(this.myself.gameObject.body.position);
 
-    if (targetDistance > this.aggroRadius ** 2 * Math.SQRT2) {
+    if (targetDistance > (this.aggroRadius ** 2) * Math.SQRT2) {
       this.target = null;
       this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+      return;
     }
 
     const nextState = this.state.transitionState(ctx);

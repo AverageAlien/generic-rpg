@@ -8,6 +8,9 @@ export abstract class BaseState {
   protected rushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X), 2);
   protected unrushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X) * 2, 2);
 
+  private retreatHealthThreshold = 0.3;
+  private retreatAllyCountThreshold = 3;
+
   constructor(
     protected myself: HumanoidEntity,
     protected controller: StateMachineController,
@@ -18,4 +21,13 @@ export abstract class BaseState {
   public abstract movement(): Phaser.Math.Vector2;
   public abstract attack(): Phaser.Math.Vector2;
   public abstract transitionState(ctx: SituationContext): BaseState;
+
+  protected isNoTarget(ctx: SituationContext) {
+    return !ctx.target?.entity?.gameObject?.body;
+  }
+
+  protected shouldRetreat(ctx: SituationContext) {
+    return ctx.nearbyAllies.length < this.retreatAllyCountThreshold
+      && this.myself.health / this.myself.maxHealth < this.retreatHealthThreshold;
+  }
 }
