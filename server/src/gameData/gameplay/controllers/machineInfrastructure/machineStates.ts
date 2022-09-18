@@ -1,6 +1,6 @@
 export enum MachineState {
   Idle,
-  MoveToPoint,
+  NavigateToTarget,
   Attack,
   Retreat
 }

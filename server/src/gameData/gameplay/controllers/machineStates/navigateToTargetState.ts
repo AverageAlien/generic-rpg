@@ -1,6 +1,9 @@
 import PF, { DiagonalMovement } from 'pathfinding';
 import { Constants } from '../../../../core/constants';
+import { SituationContext } from '../machineInfrastructure/situationContext.model';
+import { AttackState } from './attackState';
 import { BaseState } from './baseState';
+import { IdleState } from './idleState';
 
 export class NavigateToTargetState extends BaseState {
   private readonly searchFrequency = 250; // ms
@@ -15,7 +18,20 @@ export class NavigateToTargetState extends BaseState {
   public movement(): Phaser.Math.Vector2 {
     return this.calculateMovement(this.controller.target.pos);
   }
+
   public attack(): Phaser.Math.Vector2 {
+    return null;
+  }
+
+  public transitionState(ctx: SituationContext): BaseState {
+    if (!ctx.target?.entity?.gameObject?.body) {
+      return new IdleState(this.myself, this.controller, this.levelScene, this.sightRange);
+    }
+
+    if (ctx.target.distanceSq < this.rushDistanceSq) {
+      return new AttackState(this.myself, this.controller, this.levelScene, this.sightRange);
+    }
+
     return null;
   }
 
@@ -46,13 +62,13 @@ export class NavigateToTargetState extends BaseState {
     const myPos = this.myself.gameObject.body.position;
 
     const gridLowerCorner = new Phaser.Math.Vector2(
-      Math.floor((Math.min(myPos.x, targetPos.x) - this.sightRange()) / Constants.Level.GRID_SIZE_X),
-      Math.floor((Math.min(myPos.y, targetPos.y) - this.sightRange()) / Constants.Level.GRID_SIZE_Y)
+      Math.floor((Math.min(myPos.x, targetPos.x) - this.sightRange.apply(this.controller)) / Constants.Level.GRID_SIZE_X),
+      Math.floor((Math.min(myPos.y, targetPos.y) - this.sightRange.apply(this.controller)) / Constants.Level.GRID_SIZE_Y)
     );
 
     const gridUpperCorner = new Phaser.Math.Vector2(
-      Math.ceil((Math.max(myPos.x, targetPos.x) + this.sightRange()) / Constants.Level.GRID_SIZE_X),
-      Math.ceil((Math.max(myPos.y, targetPos.y) + this.sightRange()) / Constants.Level.GRID_SIZE_Y)
+      Math.ceil((Math.max(myPos.x, targetPos.x) + this.sightRange.apply(this.controller)) / Constants.Level.GRID_SIZE_X),
+      Math.ceil((Math.max(myPos.y, targetPos.y) + this.sightRange.apply(this.controller)) / Constants.Level.GRID_SIZE_Y)
     );
 
     const gridSize = new Phaser.Math.Vector2(gridUpperCorner).subtract(gridLowerCorner);

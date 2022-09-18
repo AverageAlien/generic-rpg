@@ -12,6 +12,7 @@ import { PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { ServerPackets } from '../networkPackets/fromServer/serverPackets';
 import { PacketEntityDied } from '../networkPackets/fromServer/entityDied';
 import { SpawnWarriorConfig } from '../gameData/models/spawnWarriorConfig.model';
+import { StateMachineController } from '../gameData/gameplay/controllers/stateMachineController';
 
 export class NetworkEntitySpawner {
   constructor(private levelScene: NetworkLevel) {}
@@ -140,7 +141,7 @@ export class NetworkEntitySpawner {
     entity.networkId = UUID();
     entity.faction = Faction.Baddies;
 
-    entity.controller = new ServerWrapperController(this.levelScene, new WalkerController(entity, this.levelScene, 128), entity);
+    entity.controller = new ServerWrapperController(this.levelScene, new StateMachineController(entity, this.levelScene, 128), entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
     entity.destroyed.subscribe(() => {

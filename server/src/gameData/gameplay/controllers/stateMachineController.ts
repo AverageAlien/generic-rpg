@@ -10,6 +10,7 @@ import { AttackState } from './machineStates/attackState';
 import { BaseState } from './machineStates/baseState';
 import { IdleState } from './machineStates/idleState';
 import { NavigateToTargetState } from './machineStates/navigateToTargetState';
+import { RetreatState } from './machineStates/retreatState';
 
 export class StateMachineController implements Controller {
   private state: BaseState;
@@ -69,22 +70,28 @@ export class StateMachineController implements Controller {
     const nearbyHumanoids: HumanoidNearby[] = [];
 
     this.levelScene.entities.forEach(entity => {
-      if (!(entity instanceof HumanoidEntity) || entity.health <= 0) {
+      if (entity === this.myself || !(entity instanceof HumanoidEntity) || entity.health <= 0) {
         return;
       }
 
       const distanceSq = entity.gameObject.body.position.distanceSq(this.myself.gameObject.body.position);
 
-      if (distanceSq < this.aggroRadius) {
+      if (distanceSq < this.aggroRadius ** 2) {
         nearbyHumanoids.push({ entity, distanceSq })
       }
     });
 
-    return [];
+    return nearbyHumanoids;
   }
 
   private reconsiderState(ctx: SituationContext) {
     let updatedTarget: HumanoidNearby;
+
+    if (!this.target?.gameObject?.body && !(this.state instanceof IdleState)) {
+      this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+      this.target = null;
+    }
+
     if (this.state instanceof IdleState && !this.target) {
       const enemiesLocated = ctx.nearbyEnemies.length > 0;
 
@@ -99,15 +106,27 @@ export class StateMachineController implements Controller {
     const targetDistance = updatedTarget?.distanceSq
       || this.target.gameObject.body.position.distanceSq(this.myself.gameObject.body.position);
 
-    if (targetDistance < this.rushDistanceSq
-      && (this.state instanceof AttackState) === false) {
-      this.state = new AttackState(this.myself, this, this.levelScene, this.sightRange);
-    } else if (targetDistance > this.unrushDistanceSq
-      && this.state instanceof AttackState) {
-      this.state = new NavigateToTargetState(this.myself, this, this.levelScene, this.sightRange);
-    } else if (targetDistance > this.aggroRadius * Math.SQRT2) {
+    if (targetDistance > this.aggroRadius ** 2 * Math.SQRT2) {
       this.target = null;
       this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
     }
+
+    const nextState = this.state.transitionState(ctx);
+
+    if (!!nextState) {
+      this.state = nextState;
+    }
+
+
+    // if (targetDistance < this.rushDistanceSq
+    //   && (this.state instanceof AttackState) === false) {
+    //   this.state = new AttackState(this.myself, this, this.levelScene, this.sightRange);
+    // } else if (targetDistance > this.unrushDistanceSq
+    //   && this.state instanceof RetreatState === false) {
+    //   this.state = new NavigateToTargetState(this.myself, this, this.levelScene, this.sightRange);
+    // } else if (targetDistance > this.aggroRadius ** 2 * Math.SQRT2) {
+    //   this.target = null;
+    //   this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+    // }
   }
 }

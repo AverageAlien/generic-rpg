@@ -1,11 +1,16 @@
-import { BaseState } from "./baseState";
+import { SituationContext } from '../machineInfrastructure/situationContext.model';
+import { BaseState } from './baseState';
 
 export class RetreatState extends BaseState {
   public movement(): Phaser.Math.Vector2 {
-    throw new Error("Method not implemented.");
-  }
-  public attack(): Phaser.Math.Vector2 {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
+  public attack(): Phaser.Math.Vector2 {
+    throw new Error('Method not implemented.');
+  }
+
+  public transitionState(ctx: SituationContext): BaseState {
+    throw new Error('Method not implemented.');
+  }
 }
