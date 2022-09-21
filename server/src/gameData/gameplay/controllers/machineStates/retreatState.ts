@@ -1,4 +1,5 @@
 import { HumanoidEntity } from '../../entities/humanoidEntity';
+import { MachineState } from '../machineInfrastructure/machineStates';
 import { SituationContext } from '../machineInfrastructure/situationContext.model';
 import { StateMachineController } from '../stateMachineController';
 import { AttackState } from './attackState';
@@ -33,4 +34,6 @@ export class RetreatState extends BaseState {
 
     return null;
   }
+
+  public currentState = () => MachineState.Retreat;
 }

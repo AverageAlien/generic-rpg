@@ -1,5 +1,6 @@
 import PF, { DiagonalMovement } from 'pathfinding';
 import { Constants } from '../../../../core/constants';
+import { MachineState } from '../machineInfrastructure/machineStates';
 import { SituationContext } from '../machineInfrastructure/situationContext.model';
 import { AttackState } from './attackState';
 import { BaseState } from './baseState';
@@ -129,4 +130,5 @@ export class NavigateToTargetState extends BaseState {
     ));
   }
 
+  public currentState = () => MachineState.NavigateToTarget;
 }

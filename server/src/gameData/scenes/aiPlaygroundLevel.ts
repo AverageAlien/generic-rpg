@@ -7,6 +7,7 @@ import { NetworkLevel } from './networkLevel';
 import { BattlePreset20vs20Squares } from './playgroundPresets/BattlePreset20vs20Squares';
 import { BattlePreset5v5Linear } from './playgroundPresets/BattlePreset5v5Linear';
 import { BattlePreset5Baddies } from './playgroundPresets/BattlePreset5Baddies';
+import { BattlePreset4v4v4 } from './playgroundPresets/BattlePreset4v4v4';
 
 export class AIPlaygroundLevel extends NetworkLevel {
   constructor(server: io.Server, playerDataService: PlayerDataService, roomName: string) {
@@ -24,9 +25,9 @@ export class AIPlaygroundLevel extends NetworkLevel {
   }
 
   protected spawnEntities(): HumanoidEntity[] {
-    const preset = new BattlePreset5v5Linear();
+    const preset = new BattlePreset4v4v4(this.entitySpawner);
     preset.addPositionOffset = (pos) => new Phaser.Math.Vector2(pos.x + 2 * (Math.random() - 0.5), pos.y + 2 * (Math.random() - 0.5));
 
-    return preset.generateEntities(this.entitySpawner);
+    return preset.generateEntities();
   }
 }

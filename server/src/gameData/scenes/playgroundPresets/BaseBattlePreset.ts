@@ -4,7 +4,9 @@ import { Armor } from '../../gameplay/items/armor';
 import { ArmorPresets } from '../../itemPresets/armorPresets';
 
 export abstract class BaseBattlePreset {
-  abstract generateEntities(entitySpawner: NetworkEntitySpawner): HumanoidEntity[];
+  constructor(protected entitySpawner: NetworkEntitySpawner) {}
+
+  abstract generateEntities(): HumanoidEntity[];
 
   addPositionOffset = (pos: Phaser.Math.Vector2) => pos;
 

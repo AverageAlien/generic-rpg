@@ -123,17 +123,5 @@ export class StateMachineController implements Controller {
     if (!!nextState) {
       this.state = nextState;
     }
-
-
-    // if (targetDistance < this.rushDistanceSq
-    //   && (this.state instanceof AttackState) === false) {
-    //   this.state = new AttackState(this.myself, this, this.levelScene, this.sightRange);
-    // } else if (targetDistance > this.unrushDistanceSq
-    //   && this.state instanceof RetreatState === false) {
-    //   this.state = new NavigateToTargetState(this.myself, this, this.levelScene, this.sightRange);
-    // } else if (targetDistance > this.aggroRadius ** 2 * Math.SQRT2) {
-    //   this.target = null;
-    //   this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
-    // }
   }
 }

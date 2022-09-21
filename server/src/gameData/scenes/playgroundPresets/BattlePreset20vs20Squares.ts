@@ -1,18 +1,17 @@
 import { Faction } from '../../../core/factions';
-import { NetworkEntitySpawner } from '../../../services/networkEntitySpawner';
 import { HumanoidEntity } from '../../gameplay/entities/humanoidEntity';
 import { WeaponPresets } from '../../itemPresets/weaponPresets';
 import { BaseBattlePreset } from './BaseBattlePreset';
 
 export class BattlePreset20vs20Squares extends BaseBattlePreset {
-  generateEntities(entitySpawner: NetworkEntitySpawner): HumanoidEntity[] {
+  generateEntities(): HumanoidEntity[] {
     const teamA = [];
     const teamB = [];
 
     // team A
     for (let i = 0; i < 4; ++i) {
       for (let j = 0; j < 5; ++j) {
-        teamA.push(entitySpawner.spawnWarrior(this.addPositionOffset(new Phaser.Math.Vector2(-5 - i, 3 * (Math.floor(j / 2) - 2))),
+        teamA.push(this.entitySpawner.spawnWarrior(this.addPositionOffset(new Phaser.Math.Vector2(-5 - i, 3 * (Math.floor(j / 2) - 2))),
         {
           name: `Warrior Left`,
           level: Math.ceil(Math.random() * 50),
@@ -28,7 +27,7 @@ export class BattlePreset20vs20Squares extends BaseBattlePreset {
     // team B
     for (let i = 0; i < 4; ++i) {
       for (let j = 0; j < 5; ++j) {
-        teamB.push(entitySpawner.spawnWarrior(this.addPositionOffset(new Phaser.Math.Vector2(5 + i, 3 * (j - 2))),
+        teamB.push(this.entitySpawner.spawnWarrior(this.addPositionOffset(new Phaser.Math.Vector2(5 + i, 3 * (j - 2))),
         {
           name: `Warrior Right`,
           level: Math.ceil(Math.random() * 50),

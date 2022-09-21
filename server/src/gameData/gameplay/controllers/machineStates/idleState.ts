@@ -1,3 +1,4 @@
+import { MachineState } from '../machineInfrastructure/machineStates';
 import { SituationContext } from '../machineInfrastructure/situationContext.model';
 import { AttackState } from './attackState';
 import { BaseState } from './baseState';
@@ -21,4 +22,6 @@ export class IdleState extends BaseState {
 
     return null;
   }
+
+  public currentState = () => MachineState.Idle;
 }

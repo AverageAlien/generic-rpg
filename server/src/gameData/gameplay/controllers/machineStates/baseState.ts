@@ -1,6 +1,7 @@
 import { Constants } from '../../../../core/constants';
 import { LevelScene } from '../../../../core/levelScene';
 import { HumanoidEntity } from '../../entities/humanoidEntity';
+import { MachineState } from '../machineInfrastructure/machineStates';
 import { SituationContext } from '../machineInfrastructure/situationContext.model';
 import { StateMachineController } from '../stateMachineController';
 
@@ -21,6 +22,7 @@ export abstract class BaseState {
   public abstract movement(): Phaser.Math.Vector2;
   public abstract attack(): Phaser.Math.Vector2;
   public abstract transitionState(ctx: SituationContext): BaseState;
+  public abstract currentState(): MachineState;
 
   protected isNoTarget(ctx: SituationContext) {
     return !ctx.target?.entity?.gameObject?.body;
