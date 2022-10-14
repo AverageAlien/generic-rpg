@@ -1,6 +1,9 @@
 import { Constants } from '../../../core/constants';
 import { FactionsAreFriendly } from '../../../core/factions';
 import { LevelScene } from '../../../core/levelScene';
+import { DatasetBuilderService } from '../../ai-learning/datasetBuilderService';
+import { DatasetRowAggregator } from '../../ai-learning/datasetRowAggregator';
+import { AIPlaygroundLevel } from '../../scenes/aiPlaygroundLevel';
 import { CharacterEntity } from '../entities/characterEntity';
 import { HumanoidEntity } from '../entities/humanoidEntity';
 import { Controller } from './baseController';
@@ -16,6 +19,8 @@ export class StateMachineController implements Controller {
   private state: BaseState;
   public target: HumanoidEntity;
 
+  private datasetWriter: DatasetBuilderService;
+
   private rushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X), 2);
   private unrushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X) * 2, 2);
 
@@ -25,6 +30,8 @@ export class StateMachineController implements Controller {
     private aggroRadius: number = 512
   ) {
     this.state = new IdleState(myself, this, levelScene, this.sightRange);
+
+    this.datasetWriter = (levelScene as AIPlaygroundLevel).dataSetWriter;
   }
 
   get movement(): Phaser.Math.Vector2 {
@@ -119,6 +126,15 @@ export class StateMachineController implements Controller {
     }
 
     const nextState = this.state.transitionState(ctx);
+
+    if (!!this.datasetWriter) {
+      const datasetRow = DatasetRowAggregator.MakeDatasetRow(
+        !!nextState ? nextState.currentState() : this.state.currentState(),
+        this.state.currentState(),
+        ctx);
+
+      this.datasetWriter.addRow(datasetRow);
+    }
 
     if (!!nextState) {
       this.state = nextState;

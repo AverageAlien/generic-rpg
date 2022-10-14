@@ -8,10 +8,18 @@ import { BattlePreset20vs20Squares } from './playgroundPresets/BattlePreset20vs2
 import { BattlePreset5v5Linear } from './playgroundPresets/BattlePreset5v5Linear';
 import { BattlePreset5Baddies } from './playgroundPresets/BattlePreset5Baddies';
 import { BattlePreset4v4v4 } from './playgroundPresets/BattlePreset4v4v4';
+import { DatasetBuilderService } from '../ai-learning/datasetBuilderService';
+import { PlayerDataSnapshot } from '../../models/userDataSnapshot';
+import { GameClient } from '../../models/gameClient';
+import { BattlePresetNvNLinear } from './playgroundPresets/BattlePresetNvNLinear';
 
 export class AIPlaygroundLevel extends NetworkLevel {
+  public dataSetWriter: DatasetBuilderService;
+
   constructor(server: io.Server, playerDataService: PlayerDataService, roomName: string) {
     super(server, playerDataService, roomName);
+
+    // this.dataSetWriter = new DatasetBuilderService('test-dataset-01');
   }
 
   // spawnPlayer(_player: GameClient, _playerData: PlayerDataSnapshot) {
@@ -25,7 +33,7 @@ export class AIPlaygroundLevel extends NetworkLevel {
   }
 
   protected spawnEntities(): HumanoidEntity[] {
-    const preset = new BattlePreset4v4v4(this.entitySpawner);
+    const preset = new BattlePresetNvNLinear(5, this.entitySpawner);
     preset.addPositionOffset = (pos) => new Phaser.Math.Vector2(pos.x + 2 * (Math.random() - 0.5), pos.y + 2 * (Math.random() - 0.5));
 
     return preset.generateEntities();

@@ -3,12 +3,32 @@ import { MachineState } from '../gameplay/controllers/machineInfrastructure/mach
 
 export class DatasetBuilderService {
   private fileStream: WriteStream;
+  private needHeader: boolean;
 
   constructor(private datasetName: string) {
     this.fileStream = fs.createWriteStream(`${datasetName}.csv`, { flags: 'w' })
+    this.needHeader = true;
   }
 
+  private addHeader(row: DatasetRow) {
+    this.needHeader = false;
+    const headerRow = Object.keys(row).join(',') + '\n';
 
+    this.fileStream.write(headerRow);
+  }
+
+  public addRow(row: DatasetRow) {
+    if (this.needHeader) {
+      this.addHeader(row);
+    }
+
+    const dataRow = Object.values(row).join(',') + '\n';
+    this.fileStream.write(dataRow);
+  }
+
+  public close() {
+    this.fileStream.end();
+  }
 }
 
 export interface DatasetRow {
@@ -22,7 +42,7 @@ export interface DatasetRow {
   weaponDamage: number,
   weaponReach: number,
   weaponRefire: number,
-  wewaponSwing: number,
+  weaponSwing: number,
 
   targetHealth: number,
   targetMaxHealth: number,
@@ -34,6 +54,25 @@ export interface DatasetRow {
   targetSwing: number,
   targetDistanceSq: number,
 
-  // todo: add aggregated parameters of allies
-  // todo: add aggregated parameters of enemies
+  alliesCount: number,
+  alliesTotalHealth: number,
+  alliesTotalMaxHealth: number,
+  alliesAverageArmor: number,
+  alliesAverageSpeed: number,
+  alliesAverageDamage: number,
+  alliesAverageReach: number,
+  alliesAverageRefire: number,
+  alliesAverageSwing: number,
+  alliesAverageDistanceSq: number
+
+  enemiesCount: number,
+  enemiesTotalHealth: number,
+  enemiesTotalMaxHealth: number,
+  enemiesAverageArmor: number,
+  enemiesAverageSpeed: number,
+  enemiesAverageDamage: number,
+  enemiesAverageReach: number,
+  enemiesAverageRefire: number,
+  enemiesAverageSwing: number,
+  enemiesAverageDistanceSq: number
 }

@@ -13,6 +13,7 @@ import { LoginModel } from './models/login.model';
 import { RegisterModel } from './models/register.model';
 import { AuthResult } from './models/authResult.model';
 import { PlayerDataService } from './services/playerDataService';
+import { TrainingService } from './services/trainingService';
 
 const serverPort = process.env.PORT || 42069;
 export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';
@@ -49,6 +50,10 @@ const ioServer = io(httpServer, {
 const playerDataService = new PlayerDataService();
 const authService = new AuthenticationService(playerDataService);
 const roomService = new RoomService(ioServer, playerDataService);
+
+const trainingService = new TrainingService(ioServer, playerDataService);
+
+trainingService.runGamesForDatasetGeneration('dataset-01', 20);
 
 const clientRoot = path.join(__dirname, 'client');
 

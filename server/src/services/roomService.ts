@@ -16,6 +16,8 @@ import { UserDataDTO } from '../database/models/userDataDTO';
 import { PlayerDataSnapshot } from '../models/userDataSnapshot';
 import { AuthenticationService } from './authService';
 import { AIPlaygroundLevel } from '../gameData/scenes/aiPlaygroundLevel';
+import { AITrainingLevel } from '../gameData/scenes/aiTrainingLevel';
+import { DatasetBuilderService } from '../gameData/ai-learning/datasetBuilderService';
 
 const defaultRoom = 'test01';
 global.phaserOnNodeFPS = 30;
@@ -89,7 +91,8 @@ export class RoomService {
     const room = new Room();
     room.roomName = roomName;
 
-    room.location = new AIPlaygroundLevel(this.server, this.playerDataService, roomName);
+    const datasetBuilder = new DatasetBuilderService('test-dataset-01');
+    room.location = new AITrainingLevel(this.server, this.playerDataService, roomName, datasetBuilder);
 
     const gameConfig = {
       type: Phaser.HEADLESS,
@@ -106,6 +109,12 @@ export class RoomService {
     };
 
     room.game = new Phaser.Game(gameConfig);
+
+    room.game.events.on('END_TRAINING', (a => {
+      console.log(`TRAINING OVER`);
+      room.game.destroy(true, true);
+      datasetBuilder.close();
+    }));
 
     this.rooms.push(room);
     return room;

@@ -40,7 +40,7 @@ export class NetworkLevel extends Scene implements LevelScene {
   private syncCounter = 0;
   private readonly syncThreshold = 5;
 
-  constructor(private server: io.Server, private playerDataService: PlayerDataService, private roomName: string) {
+  constructor(private server: io.Server, private playerDataService: PlayerDataService, protected roomName: string) {
     super({ key: 'networklevel' });
 
     this.levelName = roomName;
