@@ -8,6 +8,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as tf from '@tensorflow/tfjs-node';
 
+import { DecisionTreeClassifier } from 'scikitjs'
+
 import { RoomService } from './services/roomService';
 import { AuthenticationService } from './services/authService';
 import { LoginModel } from './models/login.model';
@@ -18,59 +20,62 @@ import { TrainingService } from './services/trainingService';
 
 
 (async () => {
-  const myData = tf.data.csv('file://dataset-01.csv', {
+  const myData = tf.data.csv('file://dataset-04-100games-short.csv', {
     columnConfigs: {
       currentState: {
-        isLabel: true
+        isLabel: true,
       }
     }
   });
 
   const numOfFeatures = (await myData.columnNames()).length - 1;
 
-  // console.log(myData.take(1))
+  console.log(await myData.columnNames());
 
-  const convertedData = myData.map((tc) => {
-    return { xs: Object.values((tc as any).xs), ys: Object.values((tc as any).ys) }
-  }).batch(10);
+  const convertedData = myData.map((tc: any) => {
+    const labels = [
+      tc.ys.currentState === 0,
+      tc.ys.currentState === 1,
+      tc.ys.currentState === 2,
+      tc.ys.currentState === 3
+    ]
 
-  // await convertedData.take(1).forEachAsync(i => console.log(i));
+    return { xs: Object.values((tc as any).xs), ys: Object.values(labels) }
+  }).batch(100);
 
-  // myData.toArrayForTest()
-
-  // const flattenedcsvDataset =
-  //   myData
-  //   .map((data) =>
-  //     {
-  //       return Object.values((data as any).xs)
-  //     })
-
-  // const flattenedcsvLabelset =
-  //   myData
-  //   .map((data) =>
-  //     {
-  //       return Object.values((data as any).ys)
-  //     })
-
-  // console.log(await myData.columnNames());
+  console.log(await myData.columnNames());
   const model = tf.sequential();
-  model.add(tf.layers.dense({inputShape: [ numOfFeatures ], activation: 'sigmoid', units: 5}));
-  model.add(tf.layers.dense({ activation: 'softmax', units: 3 }));
+  model.add(tf.layers.dense({inputShape: [ numOfFeatures ], activation: 'sigmoid', units: 16}));
+  model.add(tf.layers.dense({ activation: 'softmax', units: 4 }));
   model.compile({ loss: 'categoricalCrossentropy', optimizer: tf.train.adam(0.06)});
 
   await model.fitDataset(convertedData, {
     epochs: 5,
     callbacks: {
       onEpochEnd: async (epoch, logs) => {
-        console.log(`Epoch: ${epoch}; Loss: ${logs}`);
+        console.log(`Epoch: ${epoch}; Loss: ${logs.Loss}`);
       }
     }
   });
 
   await model.save('file://testmodel');
-  console.log('asdasdasd DONE');
+  console.log('Training function complete');
 
-})();
+  await myData.skip(7000).take(1).forEachAsync((tc: any) => {
+    console.log(tc);
+
+    const input = Object.values(tc.xs);
+    console.log('INPUT');
+    console.log(input);
+
+    const testVal = tf.tensor2d(input as any, [1, numOfFeatures]);
+    const pred = model.predict(testVal)
+    const pIndex = tf.argMax(pred as any, 1).dataSync();
+    console.log(pIndex);
+  });
+
+
+})(); // comment the ()s to disable running
 
 const serverPort = process.env.PORT || 42069;
 export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';
@@ -106,11 +111,11 @@ const ioServer = io(httpServer, {
 
 const playerDataService = new PlayerDataService();
 const authService = new AuthenticationService(playerDataService);
-// const roomService = new RoomService(ioServer, playerDataService);
+const roomService = new RoomService(ioServer, playerDataService);
 
 // const trainingService = new TrainingService(ioServer, playerDataService);
 
-// trainingService.runGamesForDatasetGeneration('dataset-01', 20);
+// trainingService.runGamesForDatasetGeneration('dataset-04-100games', 100);
 
 const clientRoot = path.join(__dirname, 'client');
 

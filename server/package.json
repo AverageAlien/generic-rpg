@@ -46,6 +46,7 @@
     "postgresql-client": "^1.16.5",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.2",
+    "scikitjs": "^1.24.0",
     "socket.io": "^2.3.0",
     "typescript": "^3.9.7",
     "uuid": "^8.3.0",
