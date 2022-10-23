@@ -92,7 +92,7 @@ export class RoomService {
     room.roomName = roomName;
 
     const datasetBuilder = new DatasetBuilderService('test-dataset-01');
-    room.location = new AITrainingLevel(this.server, this.playerDataService, roomName, datasetBuilder);
+    room.location = new AIPlaygroundLevel(this.server, this.playerDataService, roomName);
 
     const gameConfig = {
       type: Phaser.HEADLESS,

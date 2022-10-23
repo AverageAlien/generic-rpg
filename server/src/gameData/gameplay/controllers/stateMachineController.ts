@@ -16,7 +16,7 @@ import { NavigateToTargetState } from './machineStates/navigateToTargetState';
 import { RetreatState } from './machineStates/retreatState';
 
 export class StateMachineController implements Controller {
-  private state: BaseState;
+  protected state: BaseState;
   public target: HumanoidEntity;
 
   private datasetWriter: DatasetBuilderService;
@@ -25,8 +25,8 @@ export class StateMachineController implements Controller {
   private unrushDistanceSq = Math.pow(Math.min(Constants.Level.GRID_SIZE_Y, Constants.Level.GRID_SIZE_X) * 2, 2);
 
   constructor(
-    private myself: HumanoidEntity,
-    private levelScene: LevelScene,
+    protected myself: HumanoidEntity,
+    protected levelScene: LevelScene,
     private aggroRadius: number = 512
   ) {
     this.state = new IdleState(myself, this, levelScene, this.sightRange);
@@ -44,7 +44,7 @@ export class StateMachineController implements Controller {
     return this.state.attack();
   }
 
-  private sightRange() {
+  protected sightRange() {
     return this.aggroRadius;
   }
 
@@ -94,7 +94,7 @@ export class StateMachineController implements Controller {
     return nearbyHumanoids;
   }
 
-  private reconsiderState(ctx: SituationContext) {
+  protected reconsiderState(ctx: SituationContext) {
     let updatedTarget: HumanoidNearby;
 
     if (!!this.target && !this.target?.gameObject?.body) {
@@ -125,6 +125,10 @@ export class StateMachineController implements Controller {
       return;
     }
 
+    this.transitionState(ctx);
+  }
+
+  protected transitionState(ctx: SituationContext) {
     const nextState = this.state.transitionState(ctx);
 
     if (!!this.datasetWriter) {

@@ -20,7 +20,13 @@ import { AuthResult } from './models/authResult.model';
 import { PlayerDataService } from './services/playerDataService';
 import { TrainingService } from './services/trainingService';
 import ts from 'typescript';
+import { NeuralNetworkClassifier } from './gameData/gameplay/controllers/machineInfrastructure/neuralNetworkClassifier';
 
+
+
+(async () => {
+  await NeuralNetworkClassifier.init();
+})();
 
 (async () => {
   const myData = tfnd.data.csv('file://dataset-04-100games-short.csv', {
@@ -114,7 +120,7 @@ import ts from 'typescript';
   // console.log('EVALUATION');
   // console.log(evaluationResult);
 
-})(); // comment the ()s to disable running
+}); // comment the ()s to disable running
 
 const serverPort = process.env.PORT || 42069;
 export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';

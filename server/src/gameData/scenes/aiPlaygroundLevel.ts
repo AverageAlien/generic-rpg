@@ -33,7 +33,7 @@ export class AIPlaygroundLevel extends NetworkLevel {
   }
 
   protected spawnEntities(): HumanoidEntity[] {
-    const preset = new BattlePresetNvNLinear(5, this.entitySpawner);
+    const preset = new BattlePreset5Baddies(this.entitySpawner);
     preset.addPositionOffset = (pos) => new Phaser.Math.Vector2(pos.x + 2 * (Math.random() - 0.5), pos.y + 2 * (Math.random() - 0.5));
 
     return preset.generateEntities();
