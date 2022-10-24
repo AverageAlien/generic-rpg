@@ -14,7 +14,7 @@ export class BattlePreset4v4v4 extends BaseBattlePreset {
   }
 
   private getWeapon(): Weapon {
-    return Math.random() > 0.7 ? WeaponPresets.shortSword() : WeaponPresets.woodenStick();
+    return Math.random() > 0.5 ? this.randomizeSword() : this.randomizeStick();
   }
 
   private makeTeamOfWarriors(x: number, y: number, name: string, team: Faction): HumanoidEntity[] {
@@ -26,10 +26,11 @@ export class BattlePreset4v4v4 extends BaseBattlePreset {
         name,
         level: Math.ceil(Math.random() * 50),
         faction: team,
-        maxHealth: 100 + Math.floor(Math.random() * 50),
+        maxHealth: this.randomizeMaxHealth(),
         weapon: this.getWeapon(),
         armor: this.randomizeArmor(),
-        sightRange: 1024
+        sightRange: 1024,
+        speed: this.randomizeSpeed()
       }));
     }
 

@@ -95,7 +95,7 @@ export class NetworkEntitySpawner {
     entity.faction = cfg.faction || Faction.Baddies;
 
     entity.controller = new ServerWrapperController(this.levelScene,
-      new NeuralNetClassifierStateMachineController(entity, this.levelScene, cfg.sightRange),
+      new StateMachineController(entity, this.levelScene, cfg.sightRange),
       entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 

@@ -16,10 +16,11 @@ export class BattlePreset20vs20Squares extends BaseBattlePreset {
           name: `Warrior Left`,
           level: Math.ceil(Math.random() * 50),
           faction: Faction.TeamA,
-          maxHealth: 100 + Math.floor(Math.random() * 50),
-          weapon: Math.random() > 0.7 ? WeaponPresets.shortSword() : WeaponPresets.woodenStick(),
+          maxHealth: this.randomizeMaxHealth(),
+          weapon: Math.random() > 0.5 ? this.randomizeSword() : this.randomizeStick(),
           armor: this.randomizeArmor(),
-          sightRange: 1024
+          sightRange: 1024,
+          speed: this.randomizeSpeed()
         }));
       }
     }
@@ -32,10 +33,11 @@ export class BattlePreset20vs20Squares extends BaseBattlePreset {
           name: `Warrior Right`,
           level: Math.ceil(Math.random() * 50),
           faction: Faction.TeamB,
-          maxHealth: 100 + Math.floor(Math.random() * 50),
-          weapon: Math.random() > 0.7 ? WeaponPresets.shortSword() : WeaponPresets.woodenStick(),
+          maxHealth: this.randomizeMaxHealth(),
+          weapon: Math.random() > 0.5 ? this.randomizeSword() : this.randomizeStick(),
           armor: this.randomizeArmor(),
-          sightRange: 1024
+          sightRange: 1024,
+          speed: this.randomizeSpeed()
         }));
       }
     }

@@ -13,10 +13,11 @@ export class BattlePreset5Baddies extends BaseBattlePreset {
         name: `Angry warrior`,
         level: Math.ceil(Math.random() * 50),
         faction: Faction.Baddies,
-        maxHealth: 100 + Math.floor(Math.random() * 50),
-        weapon: Math.random() > 0.7 ? WeaponPresets.shortSword() : WeaponPresets.woodenStick(),
+        maxHealth: this.randomizeMaxHealth(),
+        weapon: Math.random() > 0.5 ? this.randomizeSword() : this.randomizeStick(),
         armor: this.randomizeArmor(),
-        sightRange: 1024
+        sightRange: 1024,
+        speed: this.randomizeSpeed()
       }));
     }
 

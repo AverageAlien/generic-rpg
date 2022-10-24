@@ -17,10 +17,11 @@ export class BattlePreset5v5Linear extends BaseBattlePreset {
         name: `Warrior ${i} (${team === Faction.TeamA ? 'A' : 'B'})`,
         level: Math.ceil(Math.random() * 50),
         faction: team,
-        maxHealth: even ? 150 : 120,
-        weapon: Math.random() > 0.5 ? WeaponPresets.shortSword() : WeaponPresets.woodenStick(),
+        maxHealth: this.randomizeMaxHealth(),
+        weapon: Math.random() > 0.5 ? this.randomizeSword() : this.randomizeStick(),
         armor: this.randomizeArmor(),
-        sightRange: 1024
+        sightRange: 1024,
+        speed: this.randomizeSpeed()
       }));
     }
 

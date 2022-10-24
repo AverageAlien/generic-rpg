@@ -13,6 +13,8 @@ import { BattlePreset5v5Linear } from './playgroundPresets/BattlePreset5v5Linear
 import { BattlePresetNvNLinear } from './playgroundPresets/BattlePresetNvNLinear';
 import { BattlePresetStickVsSword } from './playgroundPresets/BattlePresetStickVsSword';
 
+const trainingSessionTimeout = 60;
+
 export class AITrainingLevel extends AIPlaygroundLevel {
   constructor(server: io.Server, playerDataService: PlayerDataService, roomName: string, datasetWriter: DatasetBuilderService) {
     super(server, playerDataService, roomName);
@@ -69,6 +71,6 @@ export class AITrainingLevel extends AIPlaygroundLevel {
       console.log(`TIMEOUT ON ROOM ${this.roomName}`);
       subs.forEach(s => s.unsubscribe());
       this.game.events.emit('END_TRAINING');
-    }, 60 * 1000);
+    }, trainingSessionTimeout * 1000);
   }
 }
