@@ -20,11 +20,15 @@ import { AuthResult } from './models/authResult.model';
 import { PlayerDataService } from './services/playerDataService';
 import { TrainingService } from './services/trainingService';
 import ts from 'typescript';
-import { NeuralNetworkClassifier } from './gameData/gameplay/controllers/machineInfrastructure/neuralNetworkClassifier';
+import { NeuralNetworkClassification } from './gameData/gameplay/controllers/machineInfrastructure/neuralNetworkClassification';
 import { NeuralNetworkTraining } from './topLevelFunctions/neuralNetworkTraining';
+import { DecisionTreeTraining } from './topLevelFunctions/decisionTreeTraining';
+import { DecisionTreeClassification } from './gameData/gameplay/controllers/machineInfrastructure/decisionTreeClassification';
 
 
 // NeuralNetworkTraining.run();
+// DecisionTreeTraining.run();
+DecisionTreeClassification.init();
 
 const serverPort = process.env.PORT || 42069;
 export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';
@@ -60,10 +64,10 @@ const ioServer = io(httpServer, {
 
 const playerDataService = new PlayerDataService();
 const authService = new AuthenticationService(playerDataService);
-// const roomService = new RoomService(ioServer, playerDataService);
+const roomService = new RoomService(ioServer, playerDataService);
 
-const trainingService = new TrainingService(ioServer, playerDataService);
-trainingService.runGamesForDatasetGeneration('dataset-05-100games', 100);
+// const trainingService = new TrainingService(ioServer, playerDataService);
+// trainingService.runGamesForDatasetGeneration('dataset-05-100games', 100);
 
 
 const clientRoot = path.join(__dirname, 'client');

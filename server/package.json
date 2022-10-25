@@ -37,6 +37,7 @@
     "cookie": "^0.4.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "csv": "^6.2.1",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "jsonwebtoken": "^8.5.1",

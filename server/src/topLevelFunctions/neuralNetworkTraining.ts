@@ -34,7 +34,7 @@ export class NeuralNetworkTraining {
 
     const testBatch = convertedData.skip(trainSize).take(testSize);
 
-    const handler = tfnd.io.fileSystem('testmodel/model.json');
+    const handler = tfnd.io.fileSystem('trainedModels/neuralNetModel/model.json');
     const model = await tfnd.loadLayersModel(handler);
     console.log('Model loaded');
 
@@ -57,7 +57,7 @@ export class NeuralNetworkTraining {
     //   }
     // });
 
-    // await model.save('file://testmodel');
+    // await model.save('file://trainedModels/neuralNetModel');
     // console.log('Training function complete');
 
     // const evalBatch = (await testBatch.toArray())

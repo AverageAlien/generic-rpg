@@ -101,7 +101,7 @@ export class StateMachineController implements Controller {
       this.target = null;
 
       if (!(this.state instanceof IdleState)) {
-        this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+        this.state = this.createMachineState(MachineState.Idle);
       }
     }
 
@@ -121,7 +121,7 @@ export class StateMachineController implements Controller {
 
     if (targetDistance > (this.aggroRadius ** 2) * Math.SQRT2) {
       this.target = null;
-      this.state = new IdleState(this.myself, this, this.levelScene, this.sightRange);
+      this.state = this.createMachineState(MachineState.Idle);
       return;
     }
 
@@ -142,6 +142,19 @@ export class StateMachineController implements Controller {
 
     if (!!nextState) {
       this.state = nextState;
+    }
+  }
+
+  protected createMachineState(machineState: MachineState): BaseState {
+    switch (machineState) {
+      case MachineState.Idle:
+        return new IdleState(this.myself, this, this.levelScene, this.sightRange);
+      case MachineState.Attack:
+        return new AttackState(this.myself, this, this.levelScene, this.sightRange);
+      case MachineState.NavigateToTarget:
+        return new NavigateToTargetState(this.myself, this, this.levelScene, this.sightRange);
+      case MachineState.Retreat:
+        return new RetreatState(this.myself, this, this.levelScene, this.sightRange);
     }
   }
 }

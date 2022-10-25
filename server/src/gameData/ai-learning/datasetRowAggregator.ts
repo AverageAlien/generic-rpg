@@ -75,7 +75,7 @@ export class DatasetRowAggregator {
       health: e?.entity?.health ?? 0,
       maxHealth: e?.entity?.maxHealth ?? 0,
       armor,
-      speed: e?.entity?.speed,
+      speed: e?.entity?.speed ?? 0,
       damage: weapon.damage,
       reach: weapon.reach,
       refire: weapon.refire,

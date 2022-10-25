@@ -14,6 +14,7 @@ import { PacketEntityDied } from '../networkPackets/fromServer/entityDied';
 import { SpawnWarriorConfig } from '../gameData/models/spawnWarriorConfig.model';
 import { StateMachineController } from '../gameData/gameplay/controllers/stateMachineController';
 import { NeuralNetClassifierStateMachineController } from '../gameData/gameplay/controllers/neuralNetClassifierSMController';
+import { DecisionTreeClassifierStateMachineController } from '../gameData/gameplay/controllers/decisionTreeClassifierSMController';
 
 export class NetworkEntitySpawner {
   constructor(private levelScene: NetworkLevel) {}
@@ -95,7 +96,7 @@ export class NetworkEntitySpawner {
     entity.faction = cfg.faction || Faction.Baddies;
 
     entity.controller = new ServerWrapperController(this.levelScene,
-      new StateMachineController(entity, this.levelScene, cfg.sightRange),
+      new DecisionTreeClassifierStateMachineController(entity, this.levelScene, cfg.sightRange),
       entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
