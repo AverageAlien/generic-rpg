@@ -28,7 +28,9 @@ import { DecisionTreeClassification } from './gameData/gameplay/controllers/mach
 
 // NeuralNetworkTraining.run();
 // DecisionTreeTraining.run();
+
 DecisionTreeClassification.init();
+NeuralNetworkClassification.init();
 
 const serverPort = process.env.PORT || 42069;
 export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';

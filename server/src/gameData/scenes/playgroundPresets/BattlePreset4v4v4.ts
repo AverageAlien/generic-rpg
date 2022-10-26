@@ -1,7 +1,6 @@
 import { Faction } from '../../../core/factions';
 import { HumanoidEntity } from '../../gameplay/entities/humanoidEntity';
 import { Weapon } from '../../gameplay/items/weapon';
-import { WeaponPresets } from '../../itemPresets/weaponPresets';
 import { BaseBattlePreset } from './BaseBattlePreset';
 
 export class BattlePreset4v4v4 extends BaseBattlePreset {

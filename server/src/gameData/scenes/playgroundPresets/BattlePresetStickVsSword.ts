@@ -1,7 +1,6 @@
 import { Faction } from '../../../core/factions';
 import { HumanoidEntity } from '../../gameplay/entities/humanoidEntity';
 import { ArmorPresets } from '../../itemPresets/armorPresets';
-import { WeaponPresets } from '../../itemPresets/weaponPresets';
 import { BaseBattlePreset } from './BaseBattlePreset';
 
 export class BattlePresetStickVsSword extends BaseBattlePreset {

@@ -1,10 +1,13 @@
 import { NetworkEntitySpawner } from '../../../services/networkEntitySpawner';
+import { DecisionTreeClassifierStateMachineController } from '../../gameplay/controllers/decisionTreeClassifierSMController';
+import { StateMachineController } from '../../gameplay/controllers/stateMachineController';
 import { HumanoidEntity } from '../../gameplay/entities/humanoidEntity';
 import { Armor } from '../../gameplay/items/armor';
 import { DamageType } from '../../gameplay/items/itemEnums';
 import { Weapon } from '../../gameplay/items/weapon';
 import { ArmorPresets } from '../../itemPresets/armorPresets';
 import { WeaponPresets } from '../../itemPresets/weaponPresets';
+import { NetworkLevel } from '../networkLevel';
 
 export abstract class BaseBattlePreset {
   constructor(protected entitySpawner: NetworkEntitySpawner) {}
@@ -12,6 +15,15 @@ export abstract class BaseBattlePreset {
   abstract generateEntities(): HumanoidEntity[];
 
   addPositionOffset = (pos: Phaser.Math.Vector2) => pos;
+  
+  protected defaultStateMachineControllerFactory(entity: HumanoidEntity, levelScene: NetworkLevel, sightRange?: number)
+    : StateMachineController {
+    return new StateMachineController(entity, levelScene, sightRange);
+  }
+
+  protected decisionTreeStateMachineControllerFactory(entity: HumanoidEntity, levelScene: NetworkLevel, sightRange?: number) {
+    return new DecisionTreeClassifierStateMachineController(entity, levelScene, sightRange);
+  }
 
   protected randomizeArmor(): Armor[] {
     const armor = [];

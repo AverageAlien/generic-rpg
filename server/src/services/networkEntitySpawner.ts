@@ -15,6 +15,7 @@ import { SpawnWarriorConfig } from '../gameData/models/spawnWarriorConfig.model'
 import { StateMachineController } from '../gameData/gameplay/controllers/stateMachineController';
 import { NeuralNetClassifierStateMachineController } from '../gameData/gameplay/controllers/neuralNetClassifierSMController';
 import { DecisionTreeClassifierStateMachineController } from '../gameData/gameplay/controllers/decisionTreeClassifierSMController';
+import { AIControllerFactory } from '../gameData/scenes/controllerFactories/aiControllerFactory';
 
 export class NetworkEntitySpawner {
   constructor(private levelScene: NetworkLevel) {}
@@ -69,7 +70,7 @@ export class NetworkEntitySpawner {
     return entity;
   }
 
-  public spawnWarrior(position: Phaser.Math.Vector2, cfg: SpawnWarriorConfig): HumanoidEntity {
+  public spawnWarrior(position: Phaser.Math.Vector2, cfg: SpawnWarriorConfig, controllerFactory?: AIControllerFactory): HumanoidEntity {
     const gameObject = this.createRenderTexture(
       position,
       new Phaser.Math.Vector2(
@@ -95,9 +96,10 @@ export class NetworkEntitySpawner {
     entity.networkId = UUID();
     entity.faction = cfg.faction || Faction.Baddies;
 
-    entity.controller = new ServerWrapperController(this.levelScene,
-      new DecisionTreeClassifierStateMachineController(entity, this.levelScene, cfg.sightRange),
-      entity);
+    const innerController = controllerFactory?.createController(entity, this.levelScene, cfg.sightRange)
+      ?? new StateMachineController(entity, this.levelScene, cfg.sightRange);
+
+    entity.controller = new ServerWrapperController(this.levelScene, innerController, entity);
     NetworkControllerService.addServerBotInputListeners(entity.controller as ServerWrapperController, this.levelScene);
 
     entity.destroyed.subscribe(() => {

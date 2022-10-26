@@ -1,7 +1,6 @@
 import { Faction } from '../../../core/factions';
 import { NetworkEntitySpawner } from '../../../services/networkEntitySpawner';
 import { HumanoidEntity } from '../../gameplay/entities/humanoidEntity'
-import { WeaponPresets } from '../../itemPresets/weaponPresets';
 import { BaseBattlePreset } from './BaseBattlePreset';
 
 export class BattlePresetNvNLinear extends BaseBattlePreset {
