@@ -16,6 +16,11 @@ import { BattlePresetControllersComptetition } from './playgroundPresets/BattleP
 import { StateMachineControllerFactory } from './controllerFactories/stateMachineControllerFactory';
 import { DecisionTreeControllerFactory } from './controllerFactories/decisionTreeControllerFactory';
 import { NeuralNetworkControllerFactory } from './controllerFactories/neuralNetworkControllerFactory';
+import { Faction } from '../../core/factions';
+import { GameOverEventArgs } from '../eventArgs/gameOverEventArgs';
+import { InitStatsEventArgs } from '../eventArgs/initStatsEventArgs';
+
+const gameOverTimeout = 60;
 
 export class AIPlaygroundLevel extends NetworkLevel {
   public dataSetWriter: DatasetBuilderService;
@@ -37,6 +42,63 @@ export class AIPlaygroundLevel extends NetworkLevel {
       new DecisionTreeControllerFactory());
 
     preset.addPositionOffset = (pos) => new Phaser.Math.Vector2(pos.x + 2 * (Math.random() - 0.5), pos.y + 2 * (Math.random() - 0.5));
-    return preset.generateEntities();
+    const generatedEntities = preset.generateEntities();
+
+    this.initStatsForEntityTeams(generatedEntities);
+
+    return generatedEntities;
+  }
+
+  protected initStatsForEntityTeams(entities: HumanoidEntity[]) {
+    const factions = [...new Set(entities.map(e => e.faction))].filter(f => f !== Faction.Player);
+
+    factions.forEach(faction => {
+      const factionEntities = entities.filter(e => e.faction === faction);
+      const hostileEntities = entities.filter(e => e.faction !== faction);
+
+      const numOfAllies = factionEntities.length;
+      const numOfEnemies = hostileEntities.length;
+      const alliesTotalHealth = factionEntities.map(e => e.maxHealth).reduce((p, c) => p + c);
+      const enemiesTotalHealth = hostileEntities.map(e => e.maxHealth).reduce((p, c) => p + c);
+
+      this.game.events.emit(InitStatsEventArgs.eventName(), new InitStatsEventArgs({
+        faction,
+        numOfAllies,
+        numOfEnemies,
+        alliesTotalHealth,
+        enemiesTotalHealth,
+      }))
+    });
+  }
+
+  protected monitorGameEnding(entities: HumanoidEntity[]) {
+    const aliveEntities = [...entities];
+    let timeout: NodeJS.Timeout;
+
+    const subs = aliveEntities.map(e => e.destroyed.subscribe(() => {
+      const index = aliveEntities.indexOf(e);
+
+      aliveEntities.splice(index, 1);
+
+      const aliveFactions = [...new Set(aliveEntities.map(ent => ent.faction))].filter(f => f !== Faction.Player);
+      if (aliveFactions.length <= 1) {
+        // only one faction left
+        this.game.events.emit(GameOverEventArgs.eventName(), new GameOverEventArgs({
+          winningTeam: aliveFactions.length === 1 ? aliveFactions[0] : 0,
+          timeout: false
+        }));
+        subs.forEach(s => s.unsubscribe());
+        clearTimeout(timeout);
+      }
+    }));
+
+    timeout = setTimeout(() => {
+      console.log(`TIMEOUT ON ROOM ${this.roomName}`);
+      subs.forEach(s => s.unsubscribe());
+      this.game.events.emit(GameOverEventArgs.eventName(), new GameOverEventArgs({
+        winningTeam: 0,
+        timeout: true
+      }));
+    }, gameOverTimeout * 1000);
   }
 }

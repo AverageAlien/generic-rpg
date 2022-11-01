@@ -3,6 +3,7 @@ import { FactionsAreFriendly } from '../../../core/factions';
 import { LevelScene } from '../../../core/levelScene';
 import { DatasetBuilderService } from '../../ai-learning/datasetBuilderService';
 import { DatasetRowAggregator } from '../../ai-learning/datasetRowAggregator';
+import { FrameStateUpdateEventArgs } from '../../eventArgs/frameStateUpdateEventArgs';
 import { AIPlaygroundLevel } from '../../scenes/aiPlaygroundLevel';
 import { CharacterEntity } from '../entities/characterEntity';
 import { HumanoidEntity } from '../entities/humanoidEntity';
@@ -126,6 +127,12 @@ export class StateMachineController implements Controller {
     }
 
     this.transitionState(ctx);
+
+    const currentState = this.state.currentState();
+    this.levelScene.game.events.emit(FrameStateUpdateEventArgs.eventName(), new FrameStateUpdateEventArgs({
+      faction: this.myself.faction,
+      currentState
+    }))
   }
 
   protected transitionState(ctx: SituationContext) {
