@@ -8,6 +8,7 @@ import { Room } from '../models/room';
 import { AITrainingLevel } from '../gameData/scenes/aiTrainingLevel';
 import { DatasetBuilderService } from '../gameData/ai-learning/datasetBuilderService';
 import { PlayerDataService } from './playerDataService';
+import { GameOverEventArgs } from '../gameData/eventArgs/gameOverEventArgs';
 
 global.phaserOnNodeFPS = 30;
 
@@ -44,10 +45,11 @@ export class TrainingService {
 
       games.push(room);
 
-      room.game.events.on('END_TRAINING', (a => {
+      room.game.events.on(GameOverEventArgs.eventName(), ((a: GameOverEventArgs) => {
         room.game.destroy(true, true);
         games.splice(games.indexOf(room), 1);
-        console.log(`Training complete for room ${roomName} (${numOfGames - games.length} / ${numOfGames})`);
+        // tslint:disable-next-line: max-line-length
+        console.log(`Training complete for room ${roomName}. Winning team: ${a.winningTeam}. (${numOfGames - games.length} / ${numOfGames})`);
 
         if (games.length === 0) {
           console.log('TRAINING OVER');
