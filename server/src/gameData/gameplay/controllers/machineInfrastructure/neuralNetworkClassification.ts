@@ -19,7 +19,7 @@ export class NeuralNetworkClassification {
     const {currentState, speed, weaponRefire, targetSpeed, enemiesAverageSpeed, enemiesAverageRefire, ...inputModelLong} = datasetRow;
 
     const rawInput = Object.values(inputModelLong);
-    const tensor = tfnd.tensor2d(rawInput as any, [1, 38]);
+    const tensor = tfnd.tensor2d(rawInput as any, [1, 33]);
     const pred = this.model.predict(tensor);
     const pIndex = tfnd.argMax(pred as any, 1).dataSync()[0];
 

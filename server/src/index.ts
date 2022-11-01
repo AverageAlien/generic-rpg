@@ -26,11 +26,11 @@ import { DecisionTreeTraining } from './topLevelFunctions/decisionTreeTraining';
 import { DecisionTreeClassification } from './gameData/gameplay/controllers/machineInfrastructure/decisionTreeClassification';
 
 
-NeuralNetworkTraining.run();
+// NeuralNetworkTraining.run();
 // DecisionTreeTraining.run();
 
-// DecisionTreeClassification.init();
-// NeuralNetworkClassification.init();
+DecisionTreeClassification.init();
+NeuralNetworkClassification.init();
 
 const serverPort = process.env.PORT || 42069;
 export const GLOBAL_AUTH_SECRET = process.env.SECRET || 'myLocalSecret';
@@ -66,7 +66,7 @@ const ioServer = io(httpServer, {
 
 const playerDataService = new PlayerDataService();
 const authService = new AuthenticationService(playerDataService);
-// const roomService = new RoomService(ioServer, playerDataService);
+const roomService = new RoomService(ioServer, playerDataService);
 
 // const trainingService = new TrainingService(ioServer, playerDataService);
 // trainingService.runGamesForDatasetGeneration('dataset-05-100games', 100);
