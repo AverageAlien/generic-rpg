@@ -16,7 +16,7 @@ export class NeuralNetworkClassification {
 
   static predictState(previousState: MachineState, ctx: SituationContext): MachineState {
     const datasetRow = DatasetRowAggregator.MakeDatasetRow(previousState, previousState, ctx);
-    const {currentState, ...inputModelLong} = datasetRow;
+    const {currentState, speed, weaponRefire, targetSpeed, enemiesAverageSpeed, enemiesAverageRefire, ...inputModelLong} = datasetRow;
 
     const rawInput = Object.values(inputModelLong);
     const tensor = tfnd.tensor2d(rawInput as any, [1, 38]);

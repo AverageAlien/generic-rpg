@@ -2,7 +2,7 @@ import * as tf from '@tensorflow/tfjs-node';
 
 export class NeuralNetworkTraining {
   static async run() {
-    const myData = tf.data.csv('file://dataset-05-100games.csv', {
+    const myData = tf.data.csv('file://dataset-04-100games-short.csv', {
       columnConfigs: {
         currentState: {
           isLabel: true,
@@ -39,13 +39,13 @@ export class NeuralNetworkTraining {
     const trainBatch = shuffledData.take(trainSize).batch(100);
     const testBatch = shuffledData.skip(trainSize).take(testSize);
 
-    // const model = await this.loadModel();
-
+    const model = await this.loadModel();
+    // const model = await this.trainModel(trainBatch, numOfFeatures);
+    
     // await testBatch.take(1).forEachAsync((tc: any) => {
-    //   console.log(tc)
+      //   console.log(tc)
     // });
 
-    const model = await this.trainModel(trainBatch, numOfFeatures);
 
     // const evalBatch = (await testBatch.toArray())
     //   .map((tc: any) => { return { x: tc.xs, y: tc.ys }; });
