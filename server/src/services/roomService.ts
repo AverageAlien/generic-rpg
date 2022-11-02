@@ -21,6 +21,9 @@ import { DatasetBuilderService } from '../gameData/ai-learning/datasetBuilderSer
 import { InitStatsEventArgs } from '../gameData/eventArgs/initStatsEventArgs';
 import { BaseEventArgs } from '../gameData/eventArgs/eventArgs.base';
 import { DamageDealtEventArgs } from '../gameData/eventArgs/damageDealtEventArgs';
+import { FrameStateUpdateEventArgs } from '../gameData/eventArgs/frameStateUpdateEventArgs';
+import { GameOverEventArgs } from '../gameData/eventArgs/gameOverEventArgs';
+import { StatisticsGathererService } from '../gameData/ai-learning/statsGathererService';
 
 const defaultRoom = 'test01';
 global.phaserOnNodeFPS = 30;
@@ -115,20 +118,27 @@ export class RoomService {
 
     this.rooms.push(room);
 
-    this.listenToStatsEvents(room.game);
+    const statsRecorder = new StatisticsGathererService('stats-test-01');
+    this.listenToStatsEvents(room.game, statsRecorder);
 
     return room;
   }
 
-  protected listenToStatsEvents(game: Phaser.Game) {
+  protected listenToStatsEvents(game: Phaser.Game, statisticsRecorder?: StatisticsGathererService) {
     game.events.on(InitStatsEventArgs.eventName(), ((a: InitStatsEventArgs) => {
-      console.log(`Init stats`);
-      console.log(a);
+      statisticsRecorder?.initTeamStats(a);
     }));
 
     game.events.on(DamageDealtEventArgs.eventName(), ((a: DamageDealtEventArgs) => {
-      console.log('Damage');
-      console.log(a);
+      statisticsRecorder?.recordDamageDealt(a);
+    }));
+
+    game.events.on(FrameStateUpdateEventArgs.eventName(), ((a: FrameStateUpdateEventArgs) => {
+      statisticsRecorder?.recordFrameUpdate(a);
+    }));
+
+    game.events.on(GameOverEventArgs.eventName(), ((a: GameOverEventArgs) => {
+      statisticsRecorder?.endStats(a);
     }));
   }
 }

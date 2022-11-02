@@ -10,6 +10,7 @@ import { CharacterEntity } from '../gameData/gameplay/entities/characterEntity';
 import { PacketEntityAttacks } from '../networkPackets/fromServer/entityAttacks';
 import { PacketEntityDamaged } from '../networkPackets/fromServer/entityDamaged';
 import { DamageCalculationService } from './damageCalculationService';
+import { DamageDealtEventArgs } from '../gameData/eventArgs/damageDealtEventArgs';
 
 export class NetworkControllerService {
   static addPlayerInputListeners(controller: ClientController, levelScene: NetworkLevel) {
@@ -50,11 +51,11 @@ export class NetworkControllerService {
         .filter(target => !!target && target instanceof CharacterEntity) as CharacterEntity[];
 
       if (controller.controlledEntity instanceof HumanoidEntity) {
-        const humanoid = controller.controlledEntity;
+        const attacker = controller.controlledEntity;
 
         targets.forEach(t => {
           const damage = DamageCalculationService.calculateHumanoidDamage(
-            humanoid,
+            attacker,
             t as HumanoidEntity
           );
 
@@ -63,9 +64,14 @@ export class NetworkControllerService {
             damageAmount: damage
           } as PacketEntityDamaged);
 
-          t.damage(damage);
+          const killed = t.damage(damage);
 
-          // todo: raise damage dealt event
+          levelScene.game.events.emit(DamageDealtEventArgs.eventName(), new DamageDealtEventArgs({
+            attackerFaction: attacker.faction,
+            victimFaction: t.faction,
+            damageDealt: damage,
+            killed
+          }));
         });
 
         levelScene.broadcastPacket(ServerPackets.ENTITY_ATTACKS, {

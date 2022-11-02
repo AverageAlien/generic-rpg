@@ -38,6 +38,12 @@ export class StateMachineController implements Controller {
   get movement(): Phaser.Math.Vector2 {
     this.reconsiderState(this.assembleSituationContext());
 
+    const currentState = this.state.currentState();
+    this.levelScene.game.events.emit(FrameStateUpdateEventArgs.eventName(), new FrameStateUpdateEventArgs({
+      faction: this.myself.faction,
+      currentState
+    }));
+
     return this.state.movement();
   }
 
@@ -127,12 +133,6 @@ export class StateMachineController implements Controller {
     }
 
     this.transitionState(ctx);
-
-    const currentState = this.state.currentState();
-    this.levelScene.game.events.emit(FrameStateUpdateEventArgs.eventName(), new FrameStateUpdateEventArgs({
-      faction: this.myself.faction,
-      currentState
-    }))
   }
 
   protected transitionState(ctx: SituationContext) {

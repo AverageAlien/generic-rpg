@@ -19,6 +19,7 @@ import { NeuralNetworkControllerFactory } from './controllerFactories/neuralNetw
 import { Faction } from '../../core/factions';
 import { GameOverEventArgs } from '../eventArgs/gameOverEventArgs';
 import { InitStatsEventArgs } from '../eventArgs/initStatsEventArgs';
+import { AIControllerFactory } from './controllerFactories/aiControllerFactory';
 
 const gameOverTimeout = 60;
 
@@ -36,20 +37,24 @@ export class AIPlaygroundLevel extends NetworkLevel {
   }
 
   protected spawnEntities(): HumanoidEntity[] {
+    const teamAController = new NeuralNetworkControllerFactory();
+    const teamBController = new DecisionTreeControllerFactory();
+
     const preset = new BattlePresetControllersComptetition(5,
       this.entitySpawner,
-      new NeuralNetworkControllerFactory(),
-      new DecisionTreeControllerFactory());
+      teamAController,
+      teamBController);
 
     preset.addPositionOffset = (pos) => new Phaser.Math.Vector2(pos.x + 2 * (Math.random() - 0.5), pos.y + 2 * (Math.random() - 0.5));
     const generatedEntities = preset.generateEntities();
 
-    this.initStatsForEntityTeams(generatedEntities);
+    this.initStatsForEntityTeams(generatedEntities, teamAController, teamBController);
+    this.monitorGameEnding(generatedEntities);
 
     return generatedEntities;
   }
 
-  protected initStatsForEntityTeams(entities: HumanoidEntity[]) {
+  protected initStatsForEntityTeams(entities: HumanoidEntity[], teamAController: AIControllerFactory, teamBController: AIControllerFactory) {
     const factions = [...new Set(entities.map(e => e.faction))].filter(f => f !== Faction.Player);
 
     factions.forEach(faction => {
@@ -63,6 +68,7 @@ export class AIPlaygroundLevel extends NetworkLevel {
 
       this.game.events.emit(InitStatsEventArgs.eventName(), new InitStatsEventArgs({
         faction,
+        teamName: faction === Faction.TeamA ? teamAController.controllerName : teamBController.controllerName,
         numOfAllies,
         numOfEnemies,
         alliesTotalHealth,

@@ -72,7 +72,8 @@ export class WeaponService {
       const killed = t.damage(damage);
 
       this.levelScene.game.events.emit(DamageDealtEventArgs.eventName(), new DamageDealtEventArgs({
-        faction: attacker.faction,
+        attackerFaction: attacker.faction,
+        victimFaction: t.faction,
         damageDealt: damage,
         killed
       }));

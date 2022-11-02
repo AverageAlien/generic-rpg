@@ -1,33 +1,19 @@
-import fs, { WriteStream } from 'fs';
 import { MachineState } from '../gameplay/controllers/machineInfrastructure/machineStates';
+import { CsvBuilder } from './csvBuider';
 
 export class DatasetBuilderService {
-  private fileStream: WriteStream;
-  private needHeader: boolean;
+  private csvBuilder: CsvBuilder<DatasetRow>;
 
-  constructor(private datasetName: string) {
-    this.fileStream = fs.createWriteStream(`${datasetName}.csv`, { flags: 'w' })
-    this.needHeader = true;
-  }
-
-  private addHeader(row: DatasetRow) {
-    this.needHeader = false;
-    const headerRow = Object.keys(row).join(',') + '\n';
-
-    this.fileStream.write(headerRow);
+  constructor(datasetName: string) {
+    this.csvBuilder = new CsvBuilder<DatasetRow>(datasetName);
   }
 
   public addRow(row: DatasetRow) {
-    if (this.needHeader) {
-      this.addHeader(row);
-    }
-
-    const dataRow = Object.values(row).join(',') + '\n';
-    this.fileStream.write(dataRow);
+    this.csvBuilder.addRow(row);
   }
 
   public close() {
-    this.fileStream.end();
+    this.csvBuilder.close();
   }
 }
 

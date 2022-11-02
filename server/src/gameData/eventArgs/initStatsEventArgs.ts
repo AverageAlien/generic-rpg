@@ -3,6 +3,7 @@ import { BaseEventArgs } from "./eventArgs.base";
 
 export class InitStatsEventArgs extends BaseEventArgs {
   faction: Faction;
+  teamName: string;
   numOfAllies: number;
   numOfEnemies: number;
   alliesTotalHealth: number;

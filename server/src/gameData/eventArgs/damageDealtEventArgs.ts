@@ -2,7 +2,8 @@ import { Faction } from '../../core/factions';
 import { BaseEventArgs } from './eventArgs.base';
 
 export class DamageDealtEventArgs extends BaseEventArgs {
-  faction: Faction;
+  attackerFaction: Faction;
+  victimFaction: Faction;
   damageDealt: number;
   killed: boolean;
 
