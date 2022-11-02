@@ -42,12 +42,15 @@ export class CharacterEntity implements Entity, Controllable, Destroyable {
     this.move();
   }
 
-  damage(dmg: number): void {
+  damage(dmg: number): boolean {
     this.health -= dmg;
 
     if (this.health <= 0) {
       this.destroy();
+      return true;
     }
+
+    return false;
   }
 
   destroy(): void {

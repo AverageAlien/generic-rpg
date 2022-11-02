@@ -19,6 +19,8 @@ import { AIPlaygroundLevel } from '../gameData/scenes/aiPlaygroundLevel';
 import { AITrainingLevel } from '../gameData/scenes/aiTrainingLevel';
 import { DatasetBuilderService } from '../gameData/ai-learning/datasetBuilderService';
 import { InitStatsEventArgs } from '../gameData/eventArgs/initStatsEventArgs';
+import { BaseEventArgs } from '../gameData/eventArgs/eventArgs.base';
+import { DamageDealtEventArgs } from '../gameData/eventArgs/damageDealtEventArgs';
 
 const defaultRoom = 'test01';
 global.phaserOnNodeFPS = 30;
@@ -113,11 +115,20 @@ export class RoomService {
 
     this.rooms.push(room);
 
-    room.game.events.on(InitStatsEventArgs.eventName(), ((a: InitStatsEventArgs) => {
+    this.listenToStatsEvents(room.game);
+
+    return room;
+  }
+
+  protected listenToStatsEvents(game: Phaser.Game) {
+    game.events.on(InitStatsEventArgs.eventName(), ((a: InitStatsEventArgs) => {
       console.log(`Init stats`);
       console.log(a);
     }));
 
-    return room;
+    game.events.on(DamageDealtEventArgs.eventName(), ((a: DamageDealtEventArgs) => {
+      console.log('Damage');
+      console.log(a);
+    }));
   }
 }

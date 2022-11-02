@@ -8,6 +8,7 @@ import { CharacterEntity } from '../gameData/gameplay/entities/characterEntity';
 import { HumanoidEntity } from '../gameData/gameplay/entities/humanoidEntity';
 import { Weapon } from '../gameData/gameplay/items/weapon';
 import { NetworkLevel } from '../gameData/scenes/networkLevel';
+import { DamageDealtEventArgs } from '../gameData/eventArgs/damageDealtEventArgs';
 
 export class WeaponService {
   constructor(public levelScene: NetworkLevel) {}
@@ -68,7 +69,13 @@ export class WeaponService {
         damageAmount: damage
       } as PacketEntityDamaged);
 
-      t.damage(damage);
+      const killed = t.damage(damage);
+
+      this.levelScene.game.events.emit(DamageDealtEventArgs.eventName(), new DamageDealtEventArgs({
+        faction: attacker.faction,
+        damageDealt: damage,
+        killed
+      }));
     });
 
     this.levelScene.broadcastPacket(ServerPackets.ENTITY_ATTACKS, {

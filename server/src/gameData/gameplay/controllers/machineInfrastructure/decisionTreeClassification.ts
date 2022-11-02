@@ -24,7 +24,7 @@ export class DecisionTreeClassification {
 
     const prediction = this.model.predict([Object.values(inputModel)]);
 
-    console.log(`PREDICTED ${prediction[0]}`);
+    // console.log(`PREDICTED ${prediction[0]}`);
 
     return prediction[0];
   }

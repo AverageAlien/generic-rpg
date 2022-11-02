@@ -23,8 +23,8 @@ export class NeuralNetworkClassification {
     const pred = this.model.predict(tensor);
     const pIndex = tfnd.argMax(pred as any, 1).dataSync()[0];
 
-    console.log('PREDICTED');
-    console.log(pred.toString());
+    // console.log('PREDICTED');
+    // console.log(pred.toString());
 
     return pIndex;
   }

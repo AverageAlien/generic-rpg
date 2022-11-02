@@ -62,7 +62,10 @@ export class NetworkControllerService {
             networkId: t.networkId,
             damageAmount: damage
           } as PacketEntityDamaged);
+
           t.damage(damage);
+
+          // todo: raise damage dealt event
         });
 
         levelScene.broadcastPacket(ServerPackets.ENTITY_ATTACKS, {
