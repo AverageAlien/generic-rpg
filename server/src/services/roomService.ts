@@ -119,26 +119,27 @@ export class RoomService {
     this.rooms.push(room);
 
     const statsRecorder = new StatisticsGathererService('stats-test-01');
-    this.listenToStatsEvents(room.game, statsRecorder);
+    this.listenToStatsEvents(room.game, statsRecorder, roomName);
 
     return room;
   }
 
-  protected listenToStatsEvents(game: Phaser.Game, statisticsRecorder?: StatisticsGathererService) {
+  protected listenToStatsEvents(game: Phaser.Game, statisticsRecorder?: StatisticsGathererService, roomName?: string) {
     game.events.on(InitStatsEventArgs.eventName(), ((a: InitStatsEventArgs) => {
-      statisticsRecorder?.initTeamStats(a);
+      statisticsRecorder?.initTeamStats(a, roomName);
     }));
 
     game.events.on(DamageDealtEventArgs.eventName(), ((a: DamageDealtEventArgs) => {
-      statisticsRecorder?.recordDamageDealt(a);
+      statisticsRecorder?.recordDamageDealt(a, roomName);
     }));
 
     game.events.on(FrameStateUpdateEventArgs.eventName(), ((a: FrameStateUpdateEventArgs) => {
-      statisticsRecorder?.recordFrameUpdate(a);
+      statisticsRecorder?.recordFrameUpdate(a, roomName);
     }));
 
     game.events.on(GameOverEventArgs.eventName(), ((a: GameOverEventArgs) => {
-      statisticsRecorder?.endStats(a);
+      statisticsRecorder?.saveTeamSummary(a, roomName);
+      statisticsRecorder?.close();
     }));
   }
 }

@@ -1,26 +1,29 @@
-import { Faction } from "../../core/factions";
-import { DamageDealtEventArgs } from "../eventArgs/damageDealtEventArgs";
-import { FrameStateUpdateEventArgs } from "../eventArgs/frameStateUpdateEventArgs";
-import { GameOverEventArgs } from "../eventArgs/gameOverEventArgs";
-import { InitStatsEventArgs } from "../eventArgs/initStatsEventArgs";
-import { MachineState } from "../gameplay/controllers/machineInfrastructure/machineStates";
-import { CsvBuilder } from "./csvBuider";
+import { Faction } from '../../core/factions';
+import { DamageDealtEventArgs } from '../eventArgs/damageDealtEventArgs';
+import { FrameStateUpdateEventArgs } from '../eventArgs/frameStateUpdateEventArgs';
+import { GameOverEventArgs } from '../eventArgs/gameOverEventArgs';
+import { InitStatsEventArgs } from '../eventArgs/initStatsEventArgs';
+import { MachineState } from '../gameplay/controllers/machineInfrastructure/machineStates';
+import { CsvBuilder } from './csvBuider';
 
 export class StatisticsGathererService {
   private teamsStatistics: TeamStats[] = [];
+  private csvBuilder: CsvBuilder<TeamSummary>;
 
-  constructor(private statisticsFileName: string) {
+  constructor(statisticsFileName: string) {
     console.log(`Recording team statistics into file ${statisticsFileName}.csv`);
+    this.csvBuilder = new CsvBuilder<TeamSummary>(statisticsFileName);
   }
 
-  public initTeamStats(initData: InitStatsEventArgs) {
-    const existingTeam = this.teamsStatistics.find(ts => ts.faction === initData.faction);
+  public initTeamStats(initData: InitStatsEventArgs, roomName: string) {
+    const existingTeam = this.teamsStatistics.find(ts => ts.roomName === roomName && ts.faction === initData.faction);
 
     if (!!existingTeam) {
       throw new Error('Team already initialized');
     }
 
     const newTeam: TeamStats = {
+      roomName,
       faction: initData.faction,
       teamName: initData.teamName,
       framesSpent: 0,
@@ -41,8 +44,8 @@ export class StatisticsGathererService {
     this.teamsStatistics.push(newTeam);
   }
 
-  public recordFrameUpdate(frameArgs: FrameStateUpdateEventArgs) {
-    const team = this.getTeam(frameArgs.faction);
+  public recordFrameUpdate(frameArgs: FrameStateUpdateEventArgs, roomName: string) {
+    const team = this.getTeam(frameArgs.faction, roomName);
     team.framesSpent++;
 
     switch (frameArgs.currentState) {
@@ -60,9 +63,9 @@ export class StatisticsGathererService {
     }
   }
 
-  public recordDamageDealt(damageArgs: DamageDealtEventArgs) {
-    const attackerTeam = this.getTeam(damageArgs.attackerFaction);
-    const victimTeam = this.getTeam(damageArgs.victimFaction);
+  public recordDamageDealt(damageArgs: DamageDealtEventArgs, roomName: string) {
+    const attackerTeam = this.getTeam(damageArgs.attackerFaction, roomName);
+    const victimTeam = this.getTeam(damageArgs.victimFaction, roomName);
 
     attackerTeam.damageDealt += damageArgs.damageDealt;
     victimTeam.damageReceived += damageArgs.damageDealt;
@@ -73,28 +76,31 @@ export class StatisticsGathererService {
     }
   }
 
-  public endStats(gameOver: GameOverEventArgs) {
+  public saveTeamSummary(gameOver: GameOverEventArgs, roomName: string) {
     try {
-      const winnerTeam = this.getTeam(gameOver.winningTeam);
+      const winnerTeam = this.getTeam(gameOver.winningTeam, roomName);
 
       winnerTeam.winner = true;
     } catch (error) {
       console.log('Game ended in a DRAW!');
     }
 
-    const summaries = this.teamsStatistics.map(this.buildSummary);
+    const summaries = this.teamsStatistics
+      .filter(ts => ts.roomName === roomName)
+      .map(ts => this.buildSummary(ts, roomName));
 
-    const csvBuilder = new CsvBuilder<TeamSummary>(this.statisticsFileName);
-    summaries.forEach(s => csvBuilder.addRow(s));
-    csvBuilder.close();
-
-    console.log(`Statistics recorded and saved into ${this.statisticsFileName}.csv. Team ${gameOver.winningTeam} won!`);
+    summaries.forEach(s => this.csvBuilder.addRow(s));
   }
 
-  private buildSummary(teamStats: TeamStats): TeamSummary {
+  public close() {
+    this.csvBuilder.close();
+  }
+
+  private buildSummary(teamStats: TeamStats, roomName: string): TeamSummary {
     return {
       faction: teamStats.faction,
       teamName: teamStats.teamName,
+      wonGame: teamStats.winner,
       percentageOfTimeSpentAttacking: teamStats.framesSpentAttacking / teamStats.framesSpent,
       percentageOfTimeSpentNavigating: teamStats.framesSpentNavigating / teamStats.framesSpent,
       percentageOfTimeSpentRetreating: teamStats.framesSpentRetreating / teamStats.framesSpent,
@@ -105,12 +111,13 @@ export class StatisticsGathererService {
       damageDealt: teamStats.damageDealt,
       damageDealtPercentage: teamStats.damageDealt / teamStats.enemyTotalHealth,
       damageReceived: teamStats.damageReceived,
-      damageReceivedPercentage: teamStats.damageReceived / teamStats.allyTotalHealth
+      damageReceivedPercentage: teamStats.damageReceived / teamStats.allyTotalHealth,
+      roomName
     };
   }
 
-  private getTeam(faction: Faction): TeamStats {
-    const foundTeam = this.teamsStatistics.find(ts => ts.faction === faction);
+  private getTeam(faction: Faction, roomName: string): TeamStats {
+    const foundTeam = this.teamsStatistics.find(ts => ts.roomName === roomName && ts.faction === faction);
 
     if (!foundTeam) {
       throw new Error('Team not initialized');
@@ -121,6 +128,7 @@ export class StatisticsGathererService {
 }
 
 interface TeamStats {
+  roomName: string,
   faction: Faction,
   teamName: string,
   framesSpent: number,
@@ -141,6 +149,7 @@ interface TeamStats {
 interface TeamSummary {
   faction: Faction,
   teamName: string,
+  wonGame: boolean,
   percentageOfTimeSpentNavigating: number,
   percentageOfTimeSpentAttacking: number,
   percentageOfTimeSpentRetreating: number,
@@ -151,5 +160,6 @@ interface TeamSummary {
   damageDealt: number,
   damageDealtPercentage: number,
   damageReceived: number,
-  damageReceivedPercentage: number
+  damageReceivedPercentage: number,
+  roomName: string
 }

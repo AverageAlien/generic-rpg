@@ -21,12 +21,15 @@ import { GameOverEventArgs } from '../eventArgs/gameOverEventArgs';
 import { InitStatsEventArgs } from '../eventArgs/initStatsEventArgs';
 import { AIControllerFactory } from './controllerFactories/aiControllerFactory';
 
-const gameOverTimeout = 60;
+const gameOverTimeout = 90;
 
 export class AIPlaygroundLevel extends NetworkLevel {
   public dataSetWriter: DatasetBuilderService;
 
-  constructor(server: io.Server, playerDataService: PlayerDataService, roomName: string) {
+  constructor(
+      server: io.Server,
+      playerDataService: PlayerDataService,
+      roomName: string) {
     super(server, playerDataService, roomName);
   }
 
@@ -36,9 +39,12 @@ export class AIPlaygroundLevel extends NetworkLevel {
     return from([true]);
   }
 
+  protected getTeamsControllers(): [AIControllerFactory, AIControllerFactory] {
+    return [ new NeuralNetworkControllerFactory(), new DecisionTreeControllerFactory() ];
+  }
+
   protected spawnEntities(): HumanoidEntity[] {
-    const teamAController = new NeuralNetworkControllerFactory();
-    const teamBController = new DecisionTreeControllerFactory();
+    const [teamAController, teamBController] = this.getTeamsControllers();
 
     const preset = new BattlePresetControllersComptetition(5,
       this.entitySpawner,
@@ -54,7 +60,10 @@ export class AIPlaygroundLevel extends NetworkLevel {
     return generatedEntities;
   }
 
-  protected initStatsForEntityTeams(entities: HumanoidEntity[], teamAController: AIControllerFactory, teamBController: AIControllerFactory) {
+  protected initStatsForEntityTeams(
+      entities: HumanoidEntity[],
+      teamAController: AIControllerFactory,
+      teamBController: AIControllerFactory) {
     const factions = [...new Set(entities.map(e => e.faction))].filter(f => f !== Faction.Player);
 
     factions.forEach(faction => {

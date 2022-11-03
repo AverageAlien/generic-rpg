@@ -24,6 +24,9 @@ import { NeuralNetworkClassification } from './gameData/gameplay/controllers/mac
 import { NeuralNetworkTraining } from './topLevelFunctions/neuralNetworkTraining';
 import { DecisionTreeTraining } from './topLevelFunctions/decisionTreeTraining';
 import { DecisionTreeClassification } from './gameData/gameplay/controllers/machineInfrastructure/decisionTreeClassification';
+import { StatisticsCollectorService } from './services/statisticsTesterService';
+import { NeuralNetworkControllerFactory } from './gameData/scenes/controllerFactories/neuralNetworkControllerFactory';
+import { DecisionTreeControllerFactory } from './gameData/scenes/controllerFactories/decisionTreeControllerFactory';
 
 
 // NeuralNetworkTraining.run();
@@ -66,10 +69,16 @@ const ioServer = io(httpServer, {
 
 const playerDataService = new PlayerDataService();
 const authService = new AuthenticationService(playerDataService);
-const roomService = new RoomService(ioServer, playerDataService);
+// const roomService = new RoomService(ioServer, playerDataService);
 
 // const trainingService = new TrainingService(ioServer, playerDataService);
 // trainingService.runGamesForDatasetGeneration('dataset-05-100games', 100);
+
+const statsCollector = new StatisticsCollectorService(ioServer,
+  playerDataService,
+  new DecisionTreeControllerFactory(),
+  new NeuralNetworkControllerFactory());
+statsCollector.collectStatisticsInGames('stats-decisiontree-neuralnet-1000games', 20, 50);
 
 
 const clientRoot = path.join(__dirname, 'client');
